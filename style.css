@@ -1,0 +1,145 @@
+body {
+  background-color: #f0f4f8;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+
+header {
+  background-color: #1b2a4e;
+  color: #fff;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+
+nav ul {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+
+nav a {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+nav a:hover,
+nav a.ativo {
+  color: #00c4cc;
+  background-color: rgba(0, 196, 204, 0.1);
+}
+
+main {
+  padding: 2rem 0;
+}
+
+
+section {
+  margin-bottom: 3rem;
+}
+
+section h2 {
+  font-size: 2rem;
+  color: #1b2a4e;
+  margin-bottom: 1rem;
+  border-left: 6px solid #00c4cc;
+  padding-left: 1rem;
+  font-weight: 700;
+}
+
+
+section p,
+section ul {
+  font-size: 1.1rem;
+}
+
+
+section ul li {
+  margin-bottom: 0.7rem;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #00c4cc;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+
+.btn:hover {
+  background-color: #009aa0;
+}
+
+
+footer {
+  background-color: #1b2a4e;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 2rem;
+  font-size: 0.9rem;
+  margin-top: 4rem;
+  user-select: none;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+section {
+  opacity: 0;
+  animation-fill-mode: forwards;
+  animation-name: fadeInUp;
+  animation-duration: 0.8s;
+  animation-timing-function: ease-out;
+  animation-delay: 0s;
+}
+
+
+.btn:hover {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}

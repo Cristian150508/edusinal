@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="reset.css"/>
+    <link rel="stylesheet" href="login.css"/>
+    <link rel="stylesheet" href="responsivo.css"/>
+    <style>
+      .hidden { display: none; }
+      .role-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+      .role-buttons button {
+        width: 80%;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        font-size: 1rem;
+        transition: 0.3s;
+      }
+      .role-buttons button:hover {
+        background-color: #0056b3;
+      }
+      .back-btn {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #555;
+        cursor: pointer;
+      }
+      a {
+        color: #007bff;
+        cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+  <div class="container" id="main-container">
+    <h2>Login</h2>
+
+    <!-- Escolha inicial -->
+    <div id="role-selection" class="role-buttons">
+      <button onclick="chooseRole('professor')">Entrar como Professor</button>
+      <button onclick="chooseRole('aluno')">Entrar como Aluno / Responsável</button>
+    </div>
+
+    <!-- Formulário de Login -->
+    <div id="login-form" class="hidden">
+      <h2 id="role-title"></h2>
+      <form action="index.html">
+        <input type="text" placeholder="Usuário ou E-mail" required>
+        <input type="password" placeholder="Senha" required>
+        <button class="btn">Entrar</button>
+      </form>
+      <p>Não tem uma conta? <a onclick="openRegister()">Cadastre-se</a></p>
+      <span class="back-btn" onclick="goBack()">← Voltar</span>
+    </div>
+
+    <!-- Formulário de Cadastro -->
+    <div id="register-form" class="hidden">
+      <h2>Cadastro</h2>
+      <form action="#">
+        <input type="text" placeholder="Nome completo" required>
+        <input type="email" placeholder="E-mail" required>
+        <input type="password" placeholder="Senha" required>
+        <button class="btn">Cadastrar</button>
+      </form>
+      <span class="back-btn" onclick="closeRegister()">← Voltar</span>
+    </div>
+  </div>
+
+  <script>
+    const roleSelection = document.getElementById("role-selection");
+    const loginForm = document.getElementById("login-form");
+    const registerForm = document.getElementById("register-form");
+    const roleTitle = document.getElementById("role-title");
+
+    function chooseRole(role) {
+      roleSelection.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+      roleTitle.textContent = role === "professor" ? "Login do Professor" : "Login do Aluno / Responsável";
+    }
+
+    function goBack() {
+      loginForm.classList.add("hidden");
+      roleSelection.classList.remove("hidden");
+    }
+
+    function openRegister() {
+      loginForm.classList.add("hidden");
+      registerForm.classList.remove("hidden");
+    }
+
+    function closeRegister() {
+      registerForm.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

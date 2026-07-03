@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduSinal</title>
+  <link rel="stylesheet" href="reset.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="responsivo.css"/>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>EduSinal</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="sobre.html">Sobre</a></li>
+          <li><a href="recursos.html">Recursos</a></li>
+          <li><a href="https://www.instagram.com/edusinal.ofc?igsh=dDltNGlldjNlandw">Contato</a></li>
+          <li><a href="fluxograma.html">Fluxograma</a></li>
+          <li><a href="login.html">Login</a></li>
+          
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <h2>Bem-vindo ao EduSinal</h2>
+      <p>Oferecer educação acessível, inclusiva e de qualidade para pessoas com deficiência auditiva, por meio de tecnologias interativas em Libras, promovendo a equidade no aprendizado e a autonomia do aluno surdo.</p>   
+      <p>Ser a principal referência nacional em educação digital acessível em Libras, conectando alunos, educadores e famílias por meio de uma plataforma inovadora, segura e inclusiva, que transforma a realidade da educação para surdos no Brasil e no mundo.</p>
+      <br>
+      <h2>Valores da empresa</h2>
+     <ul><li> Inclusão: Compromisso com a eliminação de barreiras na educação.</li>
+
+<li>Acessibilidade: Garantia de acesso pleno aos conteúdos por meio de Libras, legendas e recursos visuais.</li>
+
+<li>Respeito à diversidade: Valorização da cultura surda e respeito à individualidade de cada usuário.</li>
+
+<li>Inovação: Uso de tecnologia de ponta para promover uma experiência educativa eficaz e envolvente.</li>
+
+<li>Segurança e privacidade: Proteção dos dados dos usuários conforme as normas legais.</li>
+
+<li>Colaboração: Trabalho conjunto com especialistas, comunidade surda e educadores.</li>
+
+<li>Qualidade: Conteúdo validado e pedagogicamente relevante para o desenvolvimento educacional dos alunos.</li>
+
+<li>Empatia: Olhar humano para as necessidades reais dos usuários.</li>
+      </ul>
+    </section>
+  </main>
+  <img src="logo new.png"/>
+  <footer>
+    <p>&copy; 2025 EduSinal. Todos os direitos reservados.</p>
+  </footer>
+  <script>
+  function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.bottom >= 0
+    );
+  }
+
+  function animaSections() {
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      if (isInViewport(section)) {
+        section.style.opacity = '1';
+        section.style.animationPlayState = 'running';
+      }
+    });
+  }
+
+  window.addEventListener('scroll', animaSections);
+  window.addEventListener('load', animaSections);
+</script>
+</body>
+</html>
