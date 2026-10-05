@@ -6,7 +6,7 @@ Plataforma de aprendizagem de Libras. O protótipo é a experiência principal e
 
 ### Estado atual
 
-- **Interface:** o endereço raiz abre o protótipo, que contém a apresentação inicial, a trilha, atividades e áreas para aluno, responsável e professor. A landing pública pode ser acessada separadamente.
+- **Interface:** o endereço raiz abre o protótipo, com apresentação inicial, trilha, atividades, perfil personalizável, lojinha demonstrativa e área do responsável. O serviço de aulas particulares foi adiado.
 - **Persistência:** a área de aprendizagem usa dados fictícios e `localStorage`; não há autenticação nem gravação no MySQL.
 - **API:** `backend/api/super-dev-09-curso-trabalho-trio/` contém uma API FastAPI com conexão MySQL e CRUDs para alunos, professores e administradores. Ainda não está integrada ao site.
 - **Etapa atual:** interface demonstrativa e API EduSinal separadas; integração e autenticação ainda pendentes.
@@ -28,6 +28,7 @@ Em `backend/api/super-dev-09-curso-trabalho-trio/src/app.py`, a aplicação regi
 - O arquivo `src/settings/settings.py` carrega as configurações de `src/.env`; use `src/.env.example` como referência e não publique credenciais.
 - O frontend ainda usa dados demonstrativos. CORS e integração com `fetch` serão necessários ao conectá-lo à API.
 - `estrutura.sql` cria o banco `edusinal` e suas três tabelas sem apagar bancos existentes. `estrutura_inserts.sql` inclui dados fictícios de demonstração.
+- A lojinha usa moedas fictícias do protótipo, sem pagamentos reais. A confirmação de responsável e qualquer verificação etária ainda não são autenticação nem validação legal.
 
 ## Como conferir localmente
 

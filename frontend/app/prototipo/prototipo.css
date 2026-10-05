@@ -200,12 +200,6 @@ a {
   color: #9f7b18;
 }
 
-.topbar-player-stats {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
 .sidebar-bottom {
   display: grid;
   gap: 12px;
@@ -261,69 +255,19 @@ a {
   flex-direction: column;
 }
 
-.topbar {
-  min-height: 78px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 0 clamp(22px, 4vw, 58px);
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.topbar-title {
-  min-width: 0;
-}
-
-.prototype-tag {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--muted);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.topbar h1 {
-  margin: 0;
+.screen-title-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
   overflow: hidden;
-  font-family: "Manrope", sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  text-overflow: ellipsis;
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+  clip-path: inset(50%);
 }
 
-.topbar-actions {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 10px;
-}
-
-.top-stat {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 7px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.top-stat strong {
-  color: var(--text);
-  font-size: 12px;
-}
-
-.streak-stat > span:first-child {
-  color: var(--coral);
-  font-size: 16px;
-}
-
-.xp-stat > span:first-child {
-  color: #c39b26;
-  font-size: 16px;
+.mobile-menu-control {
+  display: none;
 }
 
 .menu-toggle {
@@ -350,22 +294,24 @@ a {
   outline: none;
 }
 
-.app-shell[data-screen="intro"],
-.app-shell[data-screen="signup"] {
+.app-shell[data-current-screen="intro"],
+.app-shell[data-current-screen="login"],
+.app-shell[data-current-screen="signup"] {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.app-shell[data-screen="intro"] .sidebar,
-.app-shell[data-screen="signup"] .sidebar {
+.app-shell[data-current-screen="intro"] .sidebar,
+.app-shell[data-current-screen="login"] .sidebar,
+.app-shell[data-current-screen="signup"] .sidebar {
   display: none;
 }
 
-.app-shell[data-screen="intro"] .menu-toggle,
-.app-shell[data-screen="signup"] .menu-toggle,
-.app-shell[data-screen="intro"] .topbar-player-stats,
-.app-shell[data-screen="signup"] .topbar-player-stats,
-.app-shell[data-screen="intro"] #signup-entry,
-.app-shell[data-screen="signup"] #signup-entry {
+.app-shell[data-current-screen="intro"] .menu-toggle,
+.app-shell[data-current-screen="login"] .menu-toggle,
+.app-shell[data-current-screen="signup"] .menu-toggle,
+.app-shell[data-current-screen="intro"] .mobile-menu-control,
+.app-shell[data-current-screen="login"] .mobile-menu-control,
+.app-shell[data-current-screen="signup"] .mobile-menu-control {
   display: none;
 }
 
@@ -446,6 +392,240 @@ a {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.shop-intro {
+  align-items: center;
+}
+
+.shop-balance {
+  flex: 0 0 auto;
+  padding: 10px 13px;
+  border-radius: 5px;
+  background: var(--yellow-soft);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.shop-balance span {
+  color: #9f7b18;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.shop-item {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.shop-item-art {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  grid-row: span 2;
+  border-radius: 18px;
+  background: var(--surface-soft);
+}
+
+.mascot-item-icon {
+  font-size: 32px;
+}
+
+.shop-item-copy {
+  min-width: 0;
+}
+
+.shop-item-source {
+  color: var(--green-strong);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.shop-item-copy h3 {
+  margin: 4px 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 15px;
+}
+
+.shop-item-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.shop-item > .button {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 38px;
+  font-size: 10px;
+}
+
+.shop-item > .button:disabled {
+  opacity: 0.65;
+}
+
+.profile-avatar-panel {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.mascot-avatar {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+
+.mascot-avatar img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.mascot-accessory {
+  position: absolute;
+  top: 5px;
+  right: 3px;
+  min-width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--yellow-soft);
+  font-size: 17px;
+}
+
+.profile-identity h3 {
+  margin: 0 0 4px;
+  font-family: "Manrope", sans-serif;
+  font-size: 21px;
+}
+
+.profile-identity > p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.profile-currency {
+  display: grid;
+  gap: 10px;
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+
+.profile-currency > div {
+  display: grid;
+  gap: 3px;
+}
+
+.profile-currency strong {
+  font-family: "Manrope", sans-serif;
+  font-size: 15px;
+}
+
+.profile-currency span {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.login-layout {
+  width: min(900px, 100%);
+  min-height: min(610px, calc(100vh - 165px));
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  align-items: center;
+  gap: 42px;
+  margin: 0 auto;
+}
+
+.login-intro {
+  position: static;
+  padding: 0;
+}
+
+.login-intro h2 {
+  max-width: 390px;
+  font-size: 34px;
+}
+
+.login-intro > p:not(.eyebrow) {
+  max-width: 360px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.login-intro > .text-button {
+  margin-top: 12px;
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 470px;
+  justify-self: end;
+  padding: 30px;
+}
+
+.login-panel .signup-title h3 {
+  font-size: 23px;
+}
+
+.login-panel form {
+  display: grid;
+  gap: 13px;
+}
+
+.login-panel .form-error {
+  min-height: 0;
+  margin: 0;
+  color: #ad3d33;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.login-panel .form-legal {
+  margin-top: 16px;
+  font-size: 10px;
+}
+
+.login-register {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .home-dashboard {
@@ -754,7 +934,7 @@ button.route-node:hover {
   font-size: 11px;
 }
 
-.app-shell[data-screen="trail"] > .workspace .demo-disclaimer {
+.app-shell[data-current-screen="trail"] > .workspace .demo-disclaimer {
   font-size: 10px;
 }
 
@@ -2313,11 +2493,11 @@ textarea {
     margin-top: 34px;
   }
 
-  .topbar {
-    min-height: 70px;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 0 16px;
+  .mobile-menu-control {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 7px 17px 0;
   }
 
   .menu-toggle {
@@ -2325,35 +2505,32 @@ textarea {
     display: inline-flex;
   }
 
-  .topbar-title {
-    flex: 1;
-  }
-
-  .topbar-actions {
-    gap: 4px;
-  }
-
-  .top-stat {
-    gap: 3px;
-    padding: 0 3px;
-  }
-
-  .topbar-player-stats[hidden] {
-    display: none;
-  }
-
-  .top-stat > span:last-child {
-    display: none;
-  }
-
-  .topbar-actions .button-small {
-    min-height: 34px;
-    padding: 0 9px;
-    font-size: 9px;
-  }
-
   .screen-root {
     padding: 22px 17px 25px;
+  }
+
+  .shop-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profile-avatar-panel {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .mascot-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-currency {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
   }
 
   .intro-screen {
@@ -2387,6 +2564,26 @@ textarea {
   .intro-points > div + div {
     border-top: 1px solid var(--line);
     border-left: 0;
+  }
+
+  .login-layout {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .login-intro h2 {
+    max-width: 500px;
+    font-size: 27px;
+  }
+
+  .login-intro > p:not(.eyebrow) {
+    font-size: 12px;
+  }
+
+  .login-panel {
+    max-width: none;
+    padding: 20px;
   }
 
   .welcome-banner {
@@ -2582,44 +2779,91 @@ textarea {
 }
 
 @media (max-width: 480px) {
-  .topbar {
-    gap: 8px;
-    padding: 0 10px;
-  }
-
   .menu-toggle {
     width: 34px;
     height: 34px;
   }
 
-  .topbar h1 {
-    font-size: 14px;
-  }
-
-  .prototype-tag {
-    font-size: 7px;
-  }
-
-  .topbar-actions {
-    gap: 2px;
-  }
-
-  .top-stat {
-    font-size: 9px;
-  }
-
-  .top-stat strong {
-    font-size: 10px;
-  }
-
-  .topbar-actions .button-small {
-    padding: 0 7px;
-    font-size: 8px;
-  }
-
   .screen-root {
     padding-right: 13px;
     padding-left: 13px;
+  }
+
+  .shop-item {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .shop-item-art {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+  }
+
+  .mascot-item-icon {
+    font-size: 25px;
+  }
+
+  .shop-item-copy h3 {
+    font-size: 13px;
+  }
+
+  .shop-item-copy p {
+    font-size: 10px;
+  }
+
+  .shop-item > .button {
+    min-height: 35px;
+    font-size: 9px;
+  }
+
+  .shop-intro {
+    gap: 10px;
+  }
+
+  .shop-balance {
+    padding: 8px 9px;
+    font-size: 10px;
+  }
+
+  .profile-avatar-panel {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .mascot-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .mascot-accessory {
+    min-width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .profile-identity h3 {
+    font-size: 17px;
+  }
+
+  .profile-identity > p {
+    font-size: 10px;
+  }
+
+  .profile-identity .button {
+    min-height: 36px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+
+  .profile-currency strong {
+    font-size: 12px;
+  }
+
+  .profile-currency span {
+    font-size: 8px;
   }
 
   .welcome-banner {

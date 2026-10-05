@@ -9,39 +9,35 @@ const toast = document.getElementById("toast");
 const savedPrototype = JSON.parse(localStorage.getItem("edusinal-prototype") || "{}");
 const requestedScreen = new URLSearchParams(location.search).get("tela");
 const state = {
-  screen: requestedScreen === "cadastro" ? "signup" : requestedScreen === "home" ? "trail" : savedPrototype.role === "teacher" ? "teacherHome" : savedPrototype.role === "guardian" ? "family" : savedPrototype.role ? "trail" : "intro",
+  screen: requestedScreen === "login" ? "login" : requestedScreen === "cadastro" ? "signup" : requestedScreen === "home" ? "trail" : savedPrototype.role === "guardian" ? "family" : savedPrototype.role ? "trail" : "intro",
   theme: savedPrototype.theme || "light",
   xp: savedPrototype.xp || 120,
+  coins: savedPrototype.coins ?? 40,
   streak: savedPrototype.streak || 4,
   name: savedPrototype.name || "Marina",
-  role: savedPrototype.role || "student",
+  role: savedPrototype.role === "guardian" ? "guardian" : "student",
   isRegistered: Boolean(savedPrototype.role),
   isMinor: savedPrototype.isMinor || false,
   linkedStudent: savedPrototype.linkedStudent || "",
+  unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
+  equippedItem: savedPrototype.equippedItem || "",
+  hasFirstActivityReward: Boolean(savedPrototype.hasFirstActivityReward),
   answered: false,
-  selectedTeacher: "camila",
-  search: "",
 };
 
 const screenTitles = {
   intro: "Conheça o EduSinal",
+  login: "Entrar",
   trail: "Minha trilha",
+  shop: "Lojinha do EduSinal",
   signs: "Sinais",
   lesson: "Atividade do dia",
   leagues: "Ligas",
   missions: "Missões",
-  teachers: "Professores particulares",
-  teacherProfile: "Perfil do professor",
-  booking: "Solicitar conversa",
   family: "Área do responsável",
   familyProgress: "Progresso do aluno",
   routine: "Rotina de estudos",
   guardianProfile: "Perfil do responsável",
-  teacherHome: "Área do professor",
-  teacherStudents: "Meus alunos",
-  teacherActivities: "Atividades",
-  teacherSchedule: "Agenda",
-  teacherAccount: "Perfil profissional",
   profile: "Meu perfil",
   more: "Mais opções",
   signup: "Criar conta",
@@ -56,19 +52,9 @@ const navigationByRole = {
       ["lesson", "Desafios", "✳"],
       ["leagues", "Ligas", "⬟"],
       ["missions", "Missões", "▣"],
-      ["teachers", "Professores", "◉"],
+      ["shop", "Lojinha", "✿"],
       ["profile", "Perfil", "●"],
       ["more", "Mais", "•••"],
-    ],
-  },
-  teacher: {
-    label: "ESPAÇO DO PROFESSOR",
-    items: [
-      ["teacherHome", "Visão geral", "⌂"],
-      ["teacherStudents", "Meus alunos", "◉"],
-      ["teacherActivities", "Atividades", "✳"],
-      ["teacherSchedule", "Agenda", "▦"],
-      ["teacherAccount", "Meu perfil", "●"],
     ],
   },
   guardian: {
@@ -82,22 +68,27 @@ const navigationByRole = {
   },
 };
 
-const teachers = [
-  { id: "camila", name: "Camila Souza", initials: "CS", detail: "Libras para iniciantes", method: "Online · individual", price: "R$ 55", color: "coral", available: "Hoje, 18h" },
-  { id: "joao", name: "João Lima", initials: "JL", detail: "Conversação e cultura surda", method: "Online · individual", price: "R$ 65", color: "blue", available: "Amanhã, 10h" },
-  { id: "marina", name: "Marina Alves", initials: "MA", detail: "Libras para crianças e famílias", method: "Online · individual", price: "R$ 60", color: "yellow", available: "Qui, 16h" },
+const avatarItems = [
+  { id: "broche-sinal", name: "Broche de sinais", icon: "🤟", source: "Recompensa da primeira atividade", reward: true },
+  { id: "estrela-coral", name: "Estrela coral", icon: "✦", source: "Lojinha", cost: 25 },
+  { id: "flor-amarela", name: "Flor amarela", icon: "✿", source: "Lojinha", cost: 40 },
+  { id: "folha-azul", name: "Folha azul", icon: "❋", source: "Lojinha", cost: 60 },
 ];
 
 function persist() {
   localStorage.setItem("edusinal-prototype", JSON.stringify({
     theme: state.theme,
     xp: state.xp,
+    coins: state.coins,
     streak: state.streak,
     name: state.name,
     role: state.role,
     isRegistered: state.isRegistered,
     isMinor: state.isMinor,
     linkedStudent: state.linkedStudent,
+    unlockedItems: state.unlockedItems,
+    equippedItem: state.equippedItem,
+    hasFirstActivityReward: state.hasFirstActivityReward,
   }));
 }
 
@@ -118,9 +109,10 @@ function renderIntro() {
       <div class="intro-copy">
         <p class="eyebrow"><span class="status-dot"></span> APRENDIZAGEM VISUAL EM LIBRAS</p>
         <h2 id="intro-title">Aprender Libras é abrir espaço para novas conexões.</h2>
-        <p>O EduSinal reúne uma trilha de aprendizagem, atividades para praticar e acompanhamento para alunos, famílias e professores.</p>
+        <p>O EduSinal reúne uma trilha de aprendizagem, atividades para praticar e acompanhamento para alunos e responsáveis.</p>
         <div class="intro-actions">
           <button class="button button-primary" type="button" data-screen="signup">Criar minha conta <span aria-hidden="true">→</span></button>
+          <button class="text-button" type="button" data-screen="login">Já tenho cadastro <span aria-hidden="true">→</span></button>
           <a class="quiet-link" href="../../landing/index.html">Conhecer o projeto <span aria-hidden="true">↗</span></a>
         </div>
       </div>
@@ -129,7 +121,7 @@ function renderIntro() {
     <section class="intro-points" aria-label="Sobre o EduSinal">
       <div><strong>Aprenda no seu ritmo</strong><span>Uma trilha visual com etapas para praticar.</span></div>
       <div><strong>Acompanhe seu caminho</strong><span>Veja atividades e progresso em um só lugar.</span></div>
-      <div><strong>Conecte diferentes perfis</strong><span>Espaços pensados para alunos, famílias e professores.</span></div>
+      <div><strong>Conecte diferentes perfis</strong><span>Espaços pensados para alunos e responsáveis.</span></div>
     </section>`;
 }
 
@@ -175,7 +167,7 @@ function renderTrail() {
           <div class="home-stat"><span>Experiência</span><strong>${state.xp} XP</strong></div>
           <div class="home-stat"><span>Meta de hoje</span><strong>1 / 3 atividades</strong></div>
           <div class="progress-track" role="progressbar" aria-label="Progresso da meta diária" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3"><span style="width: 34%"></span></div>
-          <button class="text-button" type="button" data-screen="teachers">Encontrar professor <span aria-hidden="true">→</span></button>
+          <button class="text-button" type="button" data-screen="shop">Abrir a lojinha <span aria-hidden="true">→</span></button>
         </section>
       </aside>
     </div>
@@ -203,40 +195,25 @@ function renderLesson() {
     </section>`;
 }
 
-function renderTeachers() {
-  const query = state.search.trim().toLocaleLowerCase("pt-BR");
-  const filtered = teachers.filter((teacher) => `${teacher.name} ${teacher.detail}`.toLocaleLowerCase("pt-BR").includes(query));
-  return `
-    <section class="page-intro"><div><p class="eyebrow">APRENDIZADO COM ACOMPANHAMENTO</p><h2>Encontre seu professor</h2><p>Explore perfis de demonstração e veja como poderia funcionar a busca por aulas particulares.</p></div><span class="demo-pill">PERFIS FICTÍCIOS</span></section>
-    <section class="teacher-tools" aria-label="Buscar professor"><label class="search-box"><span aria-hidden="true">⌕</span><input id="teacher-search" type="search" placeholder="Buscar por nome ou especialidade" value="${escapeHtml(state.search)}" /></label><label class="select-box">Formato<select aria-label="Formato da aula"><option>Todos</option><option>Online</option><option>Presencial</option></select></label></section>
-    <section class="teacher-results" aria-label="Professores disponíveis">${filtered.length ? filtered.map((teacher) => `
-      <article class="teacher-card">
-        <div class="teacher-avatar avatar-${teacher.color}" aria-hidden="true">${teacher.initials}</div>
-        <div class="teacher-info"><span class="teacher-availability"><span class="status-dot"></span> Disponível · ${teacher.available}</span><h3>${teacher.name}</h3><p>${teacher.detail}</p><span class="teacher-method">${teacher.method}</span></div>
-        <div class="teacher-price"><strong>${teacher.price}</strong><span>por aula</span><button class="button button-small button-outline" type="button" data-action="view-teacher" data-teacher="${teacher.id}">Ver perfil</button></div>
-      </article>`).join("") : `<p class="empty-state">Não encontramos perfis com esse termo.</p>`}</section>
-    <p class="demo-disclaimer">Nomes, horários e valores são fictícios. Nenhuma aula é contratada neste protótipo.</p>`;
-}
+function renderShop() {
+  const items = avatarItems.map((item) => {
+    const isOwned = state.unlockedItems.includes(item.id);
+    const isEquipped = state.equippedItem === item.id;
+    const isUnavailable = item.reward && !isOwned;
+    const cannotAfford = !isOwned && !item.reward && state.coins < item.cost;
+    const actionLabel = isEquipped ? "Em uso" : isOwned ? "Usar item" : item.reward ? "Ganhe no desafio" : `Comprar · ${item.cost} moedas`;
+    return `
+      <article class="shop-item">
+        <div class="shop-item-art"><span class="mascot-item-icon">${item.icon}</span></div>
+        <div class="shop-item-copy"><span class="shop-item-source">${item.source}</span><h3>${item.name}</h3><p>${item.reward ? "Complete sua primeira atividade para desbloquear este item." : "Um detalhe para personalizar o mascote do seu perfil."}</p></div>
+        <button class="button ${isOwned ? "button-outline" : "button-primary"}" type="button" data-shop-item="${item.id}" ${isEquipped || isUnavailable || cannotAfford ? "disabled" : ""}>${actionLabel}</button>
+      </article>`;
+  }).join("");
 
-function renderTeacherProfile() {
-  const teacher = teachers.find((item) => item.id === state.selectedTeacher) || teachers[0];
   return `
-    <section class="profile-layout">
-      <div class="profile-main">
-        <button class="back-button" type="button" data-screen="teachers"><span aria-hidden="true">←</span> Todos os professores</button>
-        <article class="profile-header"><div class="teacher-avatar avatar-${teacher.color} avatar-large" aria-hidden="true">${teacher.initials}</div><div><span class="teacher-availability"><span class="status-dot"></span> Disponível · ${teacher.available}</span><h2>${teacher.name}</h2><p>${teacher.detail}</p><span class="teacher-method">${teacher.method}</span></div></article>
-        <div class="profile-section"><p class="eyebrow">SOBRE AS AULAS</p><h3>Aprenda com acompanhamento individual</h3><p>Este espaço pode apresentar a experiência, a metodologia e os horários de cada professor. As informações aqui são apenas uma prévia de interface.</p></div>
-        <div class="profile-section"><p class="eyebrow">ESPECIALIDADES</p><div class="tag-list"><span>Iniciantes</span><span>Conversação</span><span>Cultura surda</span></div></div>
-      </div>
-      <aside class="booking-panel"><span class="eyebrow">AULA PARTICULAR</span><div class="booking-price"><strong>${teacher.price}</strong><span>/ aula</span></div><p>Formato: online e individual</p><button class="button button-primary button-full" type="button" data-screen="booking">Ver horários <span aria-hidden="true">→</span></button><span class="booking-note">Agendamento ilustrativo</span></aside>
-    </section>
-    <p class="demo-disclaimer">Perfil e condições de aula fictícios; sem contratação ou contato real.</p>`;
-}
-
-function renderBooking() {
-  const teacher = teachers.find((item) => item.id === state.selectedTeacher) || teachers[0];
-  return `
-    <section class="booking-content"><button class="back-button" type="button" data-screen="teacherProfile"><span aria-hidden="true">←</span> Voltar ao perfil</button><div class="booking-form-wrap"><p class="eyebrow">PRÓXIMO PASSO</p><h2>Converse com ${teacher.name}</h2><p>Escolha uma opção para visualizar o fluxo de solicitação.</p><form id="booking-form"><fieldset class="choice-fieldset"><legend>Horários disponíveis</legend><label class="time-choice"><input type="radio" name="time" value="${teacher.available}" checked /><span>${teacher.available}</span></label><label class="time-choice"><input type="radio" name="time" value="Sexta, 14h" /><span>Sexta, 14h</span></label></fieldset><label class="field-label" for="booking-message">Mensagem <span>opcional</span></label><textarea id="booking-message" rows="3" placeholder="Conte um pouco sobre seu objetivo"></textarea><button class="button button-primary button-full" type="submit">Solicitar conversa <span aria-hidden="true">→</span></button></form><p class="demo-disclaimer">A solicitação não será enviada; este fluxo é apenas demonstrativo.</p></div></section>`;
+    <section class="page-intro shop-intro"><div><p class="eyebrow">RECOMPENSAS DA JORNADA</p><h2>Lojinha do mascote</h2><p>Use moedas demonstrativas para escolher acessórios. Não há compras com dinheiro real.</p></div><span class="shop-balance"><span aria-hidden="true">✦</span> ${state.coins} moedas</span></section>
+    <section class="shop-grid" aria-label="Itens para personalizar o mascote">${items}</section>
+    <p class="demo-disclaimer">As moedas são de demonstração e os itens ficam salvos somente neste navegador.</p>`;
 }
 
 function renderFamily() {
@@ -252,8 +229,6 @@ function renderNavigation() {
   const config = navigationByRole[state.role] || navigationByRole.student;
   const activeScreens = {
     lesson: "lesson",
-    teacherProfile: "teachers",
-    booking: "teachers",
     familyProgress: "familyProgress",
   };
   const activeScreen = activeScreens[state.screen] || state.screen;
@@ -262,8 +237,6 @@ function renderNavigation() {
     <button class="nav-item${activeScreen === screen ? " is-active" : ""}" type="button" data-screen="${screen}"${activeScreen === screen ? ' aria-current="page"' : ""}>
       <span class="nav-icon nav-icon-${index + 1}" aria-hidden="true">${icon}</span><span>${label}</span>
     </button>`).join("");
-  document.getElementById("signup-entry").hidden = state.isRegistered;
-  document.getElementById("player-stats").hidden = state.role !== "student";
 }
 
 function renderSigns() {
@@ -289,31 +262,17 @@ function renderMissions() {
 }
 
 function renderProfile() {
+  const equippedItem = avatarItems.find((item) => item.id === state.equippedItem);
   return `
     <section class="page-intro"><div><p class="eyebrow">SEU ESPAÇO</p><h2>Perfil de aluno</h2><p>Resumo do perfil de demonstração usado nesta prévia.</p></div><span class="demo-pill">ALUNO</span></section>
-    <section class="account-panel"><span class="student-avatar">${escapeHtml(state.name.slice(0, 1).toUpperCase())}</span><div><span class="eyebrow">NOME</span><h3>${escapeHtml(state.name)}</h3><p>${state.isMinor ? "Aluno menor de idade · responsável vinculado" : "Aluno · trilha iniciante"}</p></div><div class="account-stat"><strong>${state.xp} XP</strong><span>Experiência demonstrativa</span></div></section>
+    <section class="account-panel profile-avatar-panel"><div class="mascot-avatar"><img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="Mascote personalizado de ${escapeHtml(state.name)}" />${equippedItem ? `<span class="mascot-accessory" aria-label="${equippedItem.name}">${equippedItem.icon}</span>` : ""}</div><div class="profile-identity"><span class="eyebrow">NOME</span><h3>${escapeHtml(state.name)}</h3><p>${state.isMinor ? "Aluno menor de idade · responsável vinculado" : "Aluno · trilha iniciante"}</p><button class="button button-outline" type="button" data-screen="shop">Personalizar mascote <span aria-hidden="true">→</span></button></div><div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ✦</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens liberados</span></div></div></section>
     <p class="demo-disclaimer">Este perfil é local e não representa uma conta autenticada.</p>`;
 }
 
 function renderMore() {
   return `
     <section class="page-intro"><div><p class="eyebrow">EDUSINAL</p><h2>Mais opções</h2><p>Acesse outras áreas da plataforma.</p></div></section>
-    <section class="more-links"><a href="#sinais" data-screen="signs"><span class="more-link-icon">▤</span><span><strong>Explorar sinais</strong><small>Acesse a biblioteca visual</small></span><span aria-hidden="true">→</span></a><a href="../../landing/index.html"><span class="more-link-icon">◉</span><span><strong>Página inicial</strong><small>Volte à apresentação do EduSinal</small></span><span aria-hidden="true">↗</span></a></section>`;
-}
-
-function renderTeacherHome() {
-  return `
-    <section class="page-intro"><div><p class="eyebrow">ESPAÇO DO EDUCADOR</p><h2>Olá, ${escapeHtml(state.name)}.</h2><p>Uma visão inicial para organizar seu perfil e acompanhar alunos.</p></div><span class="demo-pill">PERFIL PROFESSOR</span></section>
-    <section class="teacher-dashboard-grid"><article class="teacher-dashboard-main"><p class="eyebrow">SEU PERFIL</p><h3>Apresente seu trabalho</h3><p>Adicione sua experiência, especialidades e disponibilidade para aparecer na busca de professores.</p><button class="button button-primary" type="button" data-action="edit-teacher">Editar perfil <span aria-hidden="true">→</span></button></article><article class="teacher-dashboard-stat"><span class="metric-mark">◉</span><div><strong>0</strong><span>Alunos acompanhados</span></div></article><article class="teacher-dashboard-stat"><span class="metric-mark">◷</span><div><strong>0</strong><span>Aulas agendadas</span></div></article></section>
-    <section class="empty-teacher-state"><span class="empty-icon" aria-hidden="true">✳</span><div><h3>Seu espaço começa por aqui</h3><p>Quando o cadastro estiver conectado ao sistema, você poderá configurar aulas e acompanhar solicitações.</p></div></section>
-    <p class="demo-disclaimer">Nenhum perfil profissional ou agendamento é publicado neste protótipo.</p>`;
-}
-
-function renderTeacherSection(title, label, description, actionScreen) {
-  return `
-    <section class="page-intro"><div><p class="eyebrow">ESPAÇO DO PROFESSOR</p><h2>${title}</h2><p>${description}</p></div><span class="demo-pill">VISÃO DEMONSTRATIVA</span></section>
-    <section class="empty-teacher-state"><span class="empty-icon" aria-hidden="true">✳</span><div><h3>${label}</h3><p>Esta área ficará vinculada ao perfil de professor quando o cadastro e os dados estiverem integrados.</p></div></section>
-    ${actionScreen ? `<button class="text-button" type="button" data-screen="${actionScreen}">Voltar à visão geral <span aria-hidden="true">→</span></button>` : ""}`;
+    <section class="more-links"><a href="#sinais" data-screen="signs"><span class="more-link-icon">▤</span><span><strong>Explorar sinais</strong><small>Acesse a biblioteca visual</small></span><span aria-hidden="true">→</span></a><a href="#lojinha" data-screen="shop"><span class="more-link-icon">✿</span><span><strong>Lojinha do mascote</strong><small>Use moedas para escolher acessórios</small></span><span aria-hidden="true">→</span></a><a href="../../landing/index.html"><span class="more-link-icon">◉</span><span><strong>Página inicial</strong><small>Volte à apresentação do EduSinal</small></span><span aria-hidden="true">↗</span></a></section>`;
 }
 
 function renderRoutine() {
@@ -331,7 +290,30 @@ function renderGuardianProfile() {
 
 function renderSignup() {
   return `
-    <section class="signup-layout"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Escolha como quer participar. Esta tela demonstra os campos e as regras de cadastro.</p><div class="signup-aside"><span aria-hidden="true">✳</span><span>Cadastro e validação ainda não estão conectados ao banco de dados.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3>Como você quer participar?</h3></div><div class="role-options" role="group" aria-label="Escolha o tipo de perfil"><button class="role-option is-selected" type="button" data-role-choice="student"><span class="role-symbol">◉</span><strong>Aluno</strong><small>Aprender na trilha</small></button><button class="role-option" type="button" data-role-choice="teacher"><span class="role-symbol">✎</span><strong>Professor</strong><small>Ensinar Libras</small></button><button class="role-option" type="button" data-role-choice="guardian"><span class="role-symbol">⌂</span><strong>Responsável</strong><small>Acompanhar um aluno</small></button></div><form id="signup-form" novalidate><input type="hidden" id="selected-role" value="student"/><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label></div><fieldset class="age-fieldset" id="age-fieldset"><legend>Faixa etária do aluno</legend><label class="radio-line"><input type="radio" name="age" value="adult" checked /><span>18 anos ou mais</span></label><label class="radio-line"><input type="radio" name="age" value="minor" /><span>Menos de 18 anos</span></label></fieldset><div class="guardian-fields" id="student-link-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Aluno acompanhado</strong><span>Informe o estudante vinculado a este responsável</span></div></div><div class="form-grid"><label class="field-label" for="student-name">Nome do aluno<input id="student-name" name="studentName" placeholder="Nome do aluno" /></label></div></div><div class="guardian-fields" id="guardian-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Dados do responsável</strong><span>Obrigatórios para aluno menor de idade</span></div></div><div class="form-grid"><label class="field-label" for="guardian-name">Nome do responsável<input id="guardian-name" name="guardianName" autocomplete="name" placeholder="Nome completo" /></label><label class="field-label" for="guardian-email">E-mail do responsável<input id="guardian-email" name="guardianEmail" type="email" autocomplete="email" placeholder="responsavel@email.com" /></label></div></div><p class="form-error" id="form-error" role="alert"></p><button class="button button-primary button-full" type="submit">Criar perfil de demonstração <span aria-hidden="true">→</span></button><p class="form-legal">Ao continuar, você visualiza apenas um fluxo de protótipo. Nenhum dado será enviado.</p></form></div></section>`;
+    <section class="signup-layout"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Escolha como quer participar. Esta tela demonstra os campos e as regras de cadastro.</p><div class="signup-aside"><span aria-hidden="true">✳</span><span>Cadastro e validação ainda não estão conectados ao banco de dados.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3>Como você quer participar?</h3></div><div class="role-options" role="group" aria-label="Escolha o tipo de perfil"><button class="role-option is-selected" type="button" data-role-choice="student"><span class="role-symbol">◉</span><strong>Aluno</strong><small>Aprender na trilha</small></button><button class="role-option" type="button" data-role-choice="guardian"><span class="role-symbol">⌂</span><strong>Responsável</strong><small>Acompanhar um aluno</small></button></div><form id="signup-form" novalidate><input type="hidden" id="selected-role" value="student"/><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label></div><fieldset class="age-fieldset" id="age-fieldset"><legend>Faixa etária do aluno</legend><label class="radio-line"><input type="radio" name="age" value="adult" checked /><span>18 anos ou mais</span></label><label class="radio-line"><input type="radio" name="age" value="minor" /><span>Menos de 18 anos</span></label></fieldset><div class="guardian-fields" id="student-link-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Aluno acompanhado</strong><span>Informe o estudante vinculado a este responsável</span></div></div><div class="form-grid"><label class="field-label" for="student-name">Nome do aluno<input id="student-name" name="studentName" placeholder="Nome do aluno" /></label></div></div><div class="guardian-fields" id="guardian-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Dados do responsável</strong><span>Obrigatórios para aluno menor de idade</span></div></div><div class="form-grid"><label class="field-label" for="guardian-name">Nome do responsável<input id="guardian-name" name="guardianName" autocomplete="name" placeholder="Nome completo" /></label><label class="field-label" for="guardian-email">E-mail do responsável<input id="guardian-email" name="guardianEmail" type="email" autocomplete="email" placeholder="responsavel@email.com" /></label></div></div><p class="form-error" id="form-error" role="alert"></p><button class="button button-primary button-full" type="submit">Criar perfil de demonstração <span aria-hidden="true">→</span></button><p class="form-legal">Ao continuar, você visualiza apenas um fluxo de protótipo. Nenhum dado será enviado.</p></form></div></section>`;
+}
+
+function renderLogin() {
+  return `
+    <section class="login-layout" aria-labelledby="login-title">
+      <div class="signup-intro login-intro">
+        <p class="eyebrow">BEM-VINDE DE VOLTA</p>
+        <h2 id="login-title">Continue sua jornada no EduSinal.</h2>
+        <p>Entre para acessar seu espaço de aprendizagem.</p>
+        <button class="text-button" type="button" data-screen="intro"><span aria-hidden="true">←</span> Voltar ao início</button>
+      </div>
+      <div class="signup-form-panel login-panel">
+        <div class="signup-title"><span class="eyebrow">ACESSO</span><h3>Entrar na sua conta</h3></div>
+        <form id="login-form" novalidate>
+          <label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label>
+          <label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required /></label>
+          <p class="form-error" id="login-message" role="status" aria-live="polite"></p>
+          <button class="button button-primary button-full" type="button" data-action="demo-login">Entrar <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="form-legal">Protótipo demonstrativo: a autenticação ainda não está conectada. Não use uma senha real; ela não será salva nem enviada.</p>
+        <div class="login-register"><span>Ainda não tem conta?</span><button class="text-button" type="button" data-screen="signup">Criar cadastro <span aria-hidden="true">→</span></button></div>
+      </div>
+    </section>`;
 }
 
 function escapeHtml(value) {
@@ -343,33 +325,25 @@ function escapeHtml(value) {
 function render() {
   const renderers = {
     intro: renderIntro,
+    login: renderLogin,
     trail: renderTrail,
+    shop: renderShop,
     signs: renderSigns,
     lesson: renderLesson,
     leagues: renderLeagues,
     missions: renderMissions,
-    teachers: renderTeachers,
-    teacherProfile: renderTeacherProfile,
-    booking: renderBooking,
     family: renderFamily,
     familyProgress: renderFamily,
     routine: renderRoutine,
     guardianProfile: renderGuardianProfile,
-    teacherHome: renderTeacherHome,
-    teacherStudents: () => renderTeacherSection("Meus alunos", "Nenhum aluno vinculado ainda", "Acompanhe as pessoas que estudam com você.", "teacherHome"),
-    teacherActivities: () => renderTeacherSection("Atividades", "Organize sua primeira atividade", "Crie e acompanhe materiais para suas turmas.", "teacherHome"),
-    teacherSchedule: () => renderTeacherSection("Agenda", "Sua agenda está livre", "Horários e solicitações de aula aparecerão aqui.", "teacherHome"),
-    teacherAccount: () => renderTeacherSection("Meu perfil", "Apresente sua experiência", "Configure especialidades e disponibilidade para aulas particulares.", "teacherHome"),
     profile: renderProfile,
     more: renderMore,
     signup: renderSignup,
   };
   heading.textContent = screenTitles[state.screen] || "EduSinal";
-  app.dataset.screen = state.screen;
+  app.dataset.currentScreen = state.screen;
   renderNavigation();
   screenRoot.innerHTML = renderers[state.screen]();
-  document.getElementById("xp-value").textContent = state.xp;
-  document.getElementById("streak-value").textContent = state.streak;
   app.dataset.theme = state.theme;
   themeToggle.setAttribute("aria-pressed", String(state.theme === "dark"));
   document.getElementById("theme-label").textContent = state.theme === "dark" ? "Tema claro" : "Tema escuro";
@@ -405,11 +379,34 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const actionButton = event.target.closest("[data-action]");
+  const actionButton = event.target.closest("[data-action], [data-shop-item]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
 
-  if (action === "start-lesson") {
+  if (action === "demo-login") {
+    document.getElementById("login-form").reset();
+    document.getElementById("login-message").textContent = "A API de autenticação ainda não está disponível. Nenhum dado foi enviado.";
+  } else if (actionButton.dataset.shopItem) {
+    const item = avatarItems.find((entry) => entry.id === actionButton.dataset.shopItem);
+    if (!item) return;
+    const isOwned = state.unlockedItems.includes(item.id);
+    if (!isOwned && item.reward) {
+      showToast("Complete a primeira atividade para receber este item.");
+      return;
+    }
+    if (!isOwned && state.coins < item.cost) {
+      showToast("Você ainda não tem moedas suficientes.");
+      return;
+    }
+    if (!isOwned) {
+      state.coins -= item.cost;
+      state.unlockedItems.push(item.id);
+    }
+    state.equippedItem = item.id;
+    persist();
+    render();
+    showToast(`${item.name} equipado no mascote.`);
+  } else if (action === "start-lesson") {
     setScreen("lesson");
   } else if (action === "answer") {
     if (state.answered) return;
@@ -429,16 +426,20 @@ document.addEventListener("click", (event) => {
     continueButton.dataset.correct = String(isCorrect);
   } else if (action === "finish-lesson") {
     if (actionButton.dataset.correct === "true") {
-      state.xp += 20;
+      if (!state.hasFirstActivityReward) {
+        state.xp += 20;
+        state.coins += 15;
+        state.unlockedItems.push("broche-sinal");
+        state.equippedItem = "broche-sinal";
+        state.hasFirstActivityReward = true;
+        showToast("Desafio concluído: +20 XP, +15 moedas e broche para o mascote!");
+      } else {
+        state.xp += 20;
+        showToast("Atividade concluída: +20 XP");
+      }
       persist();
-      showToast("Atividade concluída: +20 XP");
     }
     setScreen("trail");
-  } else if (action === "view-teacher") {
-    state.selectedTeacher = actionButton.dataset.teacher;
-    setScreen("teacherProfile");
-  } else if (action === "edit-teacher") {
-    setScreen("teacherAccount");
   }
 });
 
@@ -456,17 +457,6 @@ document.addEventListener("change", (event) => {
     state.theme = state.theme === "dark" ? "light" : "dark";
     persist();
     render();
-  }
-});
-
-document.addEventListener("input", (event) => {
-  if (event.target.id === "teacher-search") {
-    const cursor = event.target.selectionStart;
-    state.search = event.target.value;
-    render();
-    const search = document.getElementById("teacher-search");
-    search.focus();
-    search.setSelectionRange(cursor, cursor);
   }
 });
 
@@ -501,13 +491,7 @@ document.addEventListener("submit", (event) => {
     state.linkedStudent = isMinor ? name.split(" ")[0] : linkedStudent;
     persist();
     showToast("Perfil de demonstração criado neste navegador.");
-    setScreen(role === "teacher" ? "teacherHome" : role === "guardian" ? "family" : "trail");
-  }
-
-  if (event.target.id === "booking-form") {
-    event.preventDefault();
-    showToast("Solicitação demonstrativa concluída; nada foi enviado.");
-    setScreen("teachers");
+    setScreen(role === "guardian" ? "family" : "trail");
   }
 });
 
