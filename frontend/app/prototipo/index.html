@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f2f7f3" />
+  <title>EduSinal | Aprender Libras</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="prototipo.css?v=3" />
+</head>
+<body>
+  <a class="skip-link" href="#screen-root">Pular para o conteúdo</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#trilha" data-screen="trail" aria-label="EduSinal, trilha">
+        <img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="" />
+        <span>Edu<span class="brand-accent">Sinal</span></span>
+      </a>
+      <p class="sidebar-label" id="sidebar-label">ESPAÇO DO ALUNO</p>
+      <nav class="side-nav" id="side-nav" aria-label="Navegação principal"></nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="sidebar-note-mark" aria-hidden="true">✳</span><span>Um sinal por dia já faz diferença.</span></div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false"><span class="theme-icon" aria-hidden="true">◐</span><span id="theme-label">Tema escuro</span></button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button>
+        <div class="topbar-title"><span class="prototype-tag">ÁREA DE APRENDIZAGEM</span><h1 id="screen-heading">Minha trilha</h1></div>
+        <div class="topbar-actions">
+          <div class="topbar-player-stats" id="player-stats"><div class="top-stat streak-stat"><span aria-hidden="true">✦</span><strong id="streak-value">4</strong><span>dias</span></div>
+          <div class="top-stat xp-stat"><span aria-hidden="true">✳</span><strong id="xp-value">120</strong><span>XP</span></div></div>
+          <button class="button button-small button-outline" id="signup-entry" type="button" data-screen="signup">Criar conta</button>
+        </div>
+      </header>
+      <main class="screen-root" id="screen-root" tabindex="-1"></main>
+      <footer class="app-footer"><span>EduSinal <span class="footer-dot">•</span> Ambiente demonstrativo</span><a href="../../landing/index.html">Página inicial <span aria-hidden="true">↗</span></a></footer>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="prototipo.js" defer></script>
+</body>
+</html>
