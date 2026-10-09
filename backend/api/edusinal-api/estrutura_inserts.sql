@@ -8,3 +8,8 @@ INSERT INTO professores (nome, cpf, email, telefone, formacao, data_contratacao)
 
 INSERT INTO administradores (nome, email, telefone) VALUES
 ('Administrador Demonstração', 'admin@example.test', '11900000003');
+
+INSERT INTO respostas_atividade (id_atividade, id_resposta, correta) VALUES
+('primeiros-sinais-01', 'desviar-olhar', FALSE),
+('primeiros-sinais-01', 'contato-visual', TRUE),
+('primeiros-sinais-01', 'falar-alto', FALSE);

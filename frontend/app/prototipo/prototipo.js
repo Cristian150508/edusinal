@@ -8,12 +8,17 @@ const toast = document.getElementById("toast");
 
 const savedPrototype = JSON.parse(localStorage.getItem("edusinal-prototype") || "{}");
 const requestedScreen = new URLSearchParams(location.search).get("tela");
+const MAX_LIVES = 3;
+const LIFE_RECHARGE_MS = 30 * 60 * 1000;
+let selectedAlphabetLetter = "A";
 const state = {
   screen: requestedScreen === "login" ? "login" : requestedScreen === "cadastro" ? "signup" : requestedScreen === "home" ? "trail" : savedPrototype.role === "guardian" ? "family" : savedPrototype.role ? "trail" : "intro",
   theme: savedPrototype.theme || "light",
   xp: savedPrototype.xp || 120,
   coins: savedPrototype.coins ?? 40,
   streak: savedPrototype.streak || 4,
+  lives: savedPrototype.lives ?? MAX_LIVES,
+  nextLifeAt: savedPrototype.nextLifeAt || null,
   name: savedPrototype.name || "Marina",
   role: savedPrototype.role === "guardian" ? "guardian" : "student",
   isRegistered: Boolean(savedPrototype.role),
@@ -81,6 +86,8 @@ function persist() {
     xp: state.xp,
     coins: state.coins,
     streak: state.streak,
+    lives: state.lives,
+    nextLifeAt: state.nextLifeAt,
     name: state.name,
     role: state.role,
     isRegistered: state.isRegistered,
@@ -92,7 +99,58 @@ function persist() {
   }));
 }
 
+function refreshLives() {
+  if (state.lives >= MAX_LIVES) {
+    state.lives = MAX_LIVES;
+    state.nextLifeAt = null;
+    return;
+  }
+
+  const now = Date.now();
+  let nextLifeAt = Date.parse(state.nextLifeAt || "");
+  if (!Number.isFinite(nextLifeAt)) {
+    nextLifeAt = now + LIFE_RECHARGE_MS;
+  }
+
+  let livesChanged = false;
+  while (state.lives < MAX_LIVES && now >= nextLifeAt) {
+    state.lives += 1;
+    nextLifeAt += LIFE_RECHARGE_MS;
+    livesChanged = true;
+  }
+
+  state.nextLifeAt = state.lives >= MAX_LIVES ? null : new Date(nextLifeAt).toISOString();
+  if (livesChanged) persist();
+}
+
+function timeUntilNextLife() {
+  if (state.lives >= MAX_LIVES || !state.nextLifeAt) return "Vidas completas";
+  const minutes = Math.max(1, Math.ceil((Date.parse(state.nextLifeAt) - Date.now()) / 60000));
+  return `+1 em ${minutes} min`;
+}
+
+function updateLifeIndicator() {
+  refreshLives();
+  const indicator = document.querySelector(".home-lives");
+  if (!indicator) return;
+
+  indicator.querySelector(".lives-hearts").innerHTML = Array.from(
+    { length: MAX_LIVES },
+    (_, index) => `<span class="life-heart${index < state.lives ? " is-full" : ""}" aria-hidden="true">♥</span>`,
+  ).join("");
+  indicator.querySelector(".lives-hearts").setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas`);
+  indicator.querySelector("strong").textContent = `${state.lives} / ${MAX_LIVES}`;
+  indicator.querySelector("small").textContent = timeUntilNextLife();
+}
+
 function setScreen(screen) {
+  if (screen === "lesson") {
+    refreshLives();
+    if (state.lives === 0) {
+      showToast("Suas vidas estão recarregando. Você ainda pode revisar sinais e conteúdos.");
+      return;
+    }
+  }
   state.screen = screen;
   state.answered = false;
   heading.textContent = screenTitles[screen] || "EduSinal";
@@ -126,6 +184,10 @@ function renderIntro() {
 }
 
 function renderTrail() {
+  refreshLives();
+  const hearts = Array.from({ length: MAX_LIVES }, (_, index) =>
+    `<span class="life-heart${index < state.lives ? " is-full" : ""}" aria-hidden="true">♥</span>`,
+  ).join("");
   return `
     <div class="home-dashboard">
       <div class="home-main-column">
@@ -134,7 +196,7 @@ function renderTrail() {
             <p class="eyebrow"><span class="status-dot"></span> SUA JORNADA EM LIBRAS</p>
             <h2>Oi, ${escapeHtml(state.name)}! <span>Pronto para aprender?</span></h2>
             <p>Um desafio rápido hoje ajuda você a se aproximar de novas conversas.</p>
-            <button class="button button-primary" type="button" data-action="start-lesson">Iniciar desafio <span aria-hidden="true">→</span></button>
+            <button class="button button-primary" type="button" data-action="start-lesson" ${state.lives === 0 ? "disabled" : ""}>Iniciar desafio <span aria-hidden="true">→</span></button>
           </div>
           <div class="home-hero-art" aria-hidden="true"><span>🤟</span><small>UM SINAL<br />DE CADA VEZ</small></div>
         </section>
@@ -145,7 +207,7 @@ function renderTrail() {
             <span class="section-count">UNIDADE 01 <span aria-hidden="true">·</span> 4 etapas</span>
           </div>
           <div class="learning-route">
-            <article class="route-step route-step-active"><button class="route-node node-coral" type="button" data-action="start-lesson" aria-label="Iniciar Primeiros sinais">01</button><span class="path-label">COMECE POR AQUI</span><h3>Primeiros sinais</h3><p>Saudações do dia a dia</p></article>
+            <article class="route-step route-step-active"><button class="route-node node-coral" type="button" data-action="start-lesson" aria-label="Iniciar Primeiros sinais" ${state.lives === 0 ? "disabled" : ""}>01</button><span class="path-label">COMECE POR AQUI</span><h3>Primeiros sinais</h3><p>Saudações do dia a dia</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-yellow" aria-label="Etapa bloqueada">02</span><span class="path-label">PRÓXIMA ETAPA</span><h3>Apresentações</h3><p>Seu nome e novas conexões</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-green" aria-label="Etapa bloqueada">03</span><span class="path-label">EM SEGUIDA</span><h3>Pessoas e família</h3><p>Quem faz parte da sua vida</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-blue" aria-label="Etapa bloqueada">04</span><span class="path-label">EM SEGUIDA</span><h3>Rotina e lugares</h3><p>Palavras para o cotidiano</p></article>
@@ -156,13 +218,14 @@ function renderTrail() {
       <aside class="home-side-column" aria-label="Resumo e tarefas">
         <section class="home-side-card home-tasks">
           <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Tarefas</h2></div>
-          <button class="home-task" type="button" data-action="start-lesson"><span class="task-check">01</span><span><strong>Faça um desafio</strong><small>Pratique uma saudação</small></span><span aria-hidden="true">→</span></button>
+          <button class="home-task" type="button" data-action="start-lesson" ${state.lives === 0 ? "disabled" : ""}><span class="task-check">01</span><span><strong>Faça um desafio</strong><small>Pratique uma saudação</small></span><span aria-hidden="true">→</span></button>
           <button class="home-task" type="button" data-screen="signs"><span class="task-check">02</span><span><strong>Explore o dicionário</strong><small>Descubra novos sinais</small></span><span aria-hidden="true">→</span></button>
           <button class="home-task" type="button" data-screen="missions"><span class="task-check">03</span><span><strong>Veja suas missões</strong><small>Acompanhe seus objetivos</small></span><span aria-hidden="true">→</span></button>
         </section>
 
         <section class="home-side-card home-stats">
           <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">◷</span><h2>Seu ritmo</h2></div>
+          <div class="home-stat home-lives"><span>Vidas</span><div class="lives-summary"><div class="lives-hearts" aria-label="${state.lives} de ${MAX_LIVES} vidas">${hearts}</div><strong>${state.lives} / ${MAX_LIVES}</strong><small>${timeUntilNextLife()}</small></div></div>
           <div class="home-stat"><span>Ofensiva</span><strong>${state.streak} dias</strong></div>
           <div class="home-stat"><span>Experiência</span><strong>${state.xp} XP</strong></div>
           <div class="home-stat"><span>Meta de hoje</span><strong>1 / 3 atividades</strong></div>
@@ -240,10 +303,18 @@ function renderNavigation() {
 }
 
 function renderSigns() {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const letters = alphabet.map((letter) => {
+    const isUnlocked = "ABC".includes(letter);
+    const isSelected = selectedAlphabetLetter === letter;
+    return `<button class="alphabet-letter${isUnlocked ? " is-unlocked" : " is-locked"}${isSelected ? " is-selected" : ""}" type="button" data-alphabet-letter="${letter}" aria-label="${isUnlocked ? `Letra ${letter}` : `Letra ${letter}, bloqueada`}" ${isUnlocked ? `aria-pressed="${isSelected}"` : "disabled"}>${isUnlocked ? "" : '<span class="alphabet-lock" aria-hidden="true">&#128274;</span>'}<span>${letter}</span></button>`;
+  }).join("");
+
   return `
-    <section class="page-intro"><div><p class="eyebrow">BIBLIOTECA VISUAL</p><h2>Explore os sinais</h2><p>Um espaço para consultar vocabulário em Libras por tema.</p></div><span class="demo-pill">CONTEÚDO EM CONSTRUÇÃO</span></section>
-    <section class="vocabulary-grid"><article class="vocabulary-item"><span class="vocabulary-icon">01</span><div><span class="path-label">SAUDAÇÕES</span><h3>Olá e despedidas</h3><p>Vídeo demonstrativo será inserido nesta etapa.</p></div></article><article class="vocabulary-item"><span class="vocabulary-icon">02</span><div><span class="path-label">DIA A DIA</span><h3>Por favor e obrigado</h3><p>Vídeo demonstrativo será inserido nesta etapa.</p></div></article><article class="vocabulary-item"><span class="vocabulary-icon">03</span><div><span class="path-label">PESSOAS</span><h3>Família e amigos</h3><p>Vídeo demonstrativo será inserido nesta etapa.</p></div></article></section>
-    <p class="demo-disclaimer">Os itens mostram a organização da biblioteca; ainda não são materiais de ensino.</p>`;
+    <section class="page-intro"><div><p class="eyebrow">DICIONÁRIO DE LIBRAS</p><h2>Alfabeto manual</h2><p>Explore as primeiras letras liberadas. As próximas serão adicionadas em etapas futuras.</p></div><span class="demo-pill">3 DE 26 LETRAS</span></section>
+    <section class="alphabet-section" aria-labelledby="alphabet-title"><div class="section-heading"><div><p class="eyebrow">PRIMEIROS PASSOS</p><h2 id="alphabet-title">Escolha uma letra</h2></div><span class="alphabet-legend"><span aria-hidden="true">&#128274;</span> Em breve</span></div><div class="alphabet-grid" aria-label="Alfabeto manual, letras A a Z">${letters}</div></section>
+    <section class="alphabet-detail" aria-live="polite" aria-labelledby="selected-letter-title"><div class="alphabet-detail-letter" aria-hidden="true">${selectedAlphabetLetter}</div><div class="alphabet-detail-copy"><p class="eyebrow">LETRA LIBERADA</p><h2 id="selected-letter-title">Letra ${selectedAlphabetLetter}</h2><p>O material visual desta letra está sendo preparado para revisão por pessoas fluentes em Libras. Consulte um professor ou intérprete para aprender a configuração correta da mão.</p></div><span class="alphabet-detail-mark" aria-hidden="true">✳</span></section>
+    <p class="demo-disclaimer">O alfabeto manual representa letras; Libras é uma língua completa, com gramática e sinais próprios.</p>`;
 }
 
 function renderLeagues() {
@@ -265,7 +336,7 @@ function renderProfile() {
   const equippedItem = avatarItems.find((item) => item.id === state.equippedItem);
   return `
     <section class="page-intro"><div><p class="eyebrow">SEU ESPAÇO</p><h2>Perfil de aluno</h2><p>Resumo do perfil de demonstração usado nesta prévia.</p></div><span class="demo-pill">ALUNO</span></section>
-    <section class="account-panel profile-avatar-panel"><div class="mascot-avatar"><img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="Mascote personalizado de ${escapeHtml(state.name)}" />${equippedItem ? `<span class="mascot-accessory" aria-label="${equippedItem.name}">${equippedItem.icon}</span>` : ""}</div><div class="profile-identity"><span class="eyebrow">NOME</span><h3>${escapeHtml(state.name)}</h3><p>${state.isMinor ? "Aluno menor de idade · responsável vinculado" : "Aluno · trilha iniciante"}</p><button class="button button-outline" type="button" data-screen="shop">Personalizar mascote <span aria-hidden="true">→</span></button></div><div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ✦</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens liberados</span></div></div></section>
+    <section class="account-panel profile-avatar-panel"><div class="mascot-avatar"><img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="Mascote personalizado de ${escapeHtml(state.name)}" />${equippedItem ? `<span class="mascot-accessory" aria-label="${equippedItem.name}">${equippedItem.icon}</span>` : ""}</div><div class="profile-identity"><span class="eyebrow">NOME</span><h3>${escapeHtml(state.name)}</h3><p>${state.isMinor ? "Aluno menor de idade" : "Aluno · trilha iniciante"}</p><button class="button button-outline" type="button" data-screen="shop">Personalizar mascote <span aria-hidden="true">→</span></button></div><div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ✦</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens liberados</span></div></div></section>
     <p class="demo-disclaimer">Este perfil é local e não representa uma conta autenticada.</p>`;
 }
 
@@ -288,9 +359,17 @@ function renderGuardianProfile() {
     <section class="account-panel"><span class="student-avatar">${escapeHtml(state.name.slice(0, 1).toUpperCase())}</span><div><span class="eyebrow">RESPONSÁVEL</span><h3>${escapeHtml(state.name)}</h3><p>Aluno acompanhado: ${escapeHtml(state.linkedStudent || "não informado")}</p></div></section>`;
 }
 
+function hasStrongPassword(password) {
+  return password.length >= 8
+    && /[a-z]/.test(password)
+    && /[A-Z]/.test(password)
+    && /\d/.test(password)
+    && /[^A-Za-z0-9]/.test(password);
+}
+
 function renderSignup() {
   return `
-    <section class="signup-layout"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Escolha como quer participar. Esta tela demonstra os campos e as regras de cadastro.</p><div class="signup-aside"><span aria-hidden="true">✳</span><span>Cadastro e validação ainda não estão conectados ao banco de dados.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3>Como você quer participar?</h3></div><div class="role-options" role="group" aria-label="Escolha o tipo de perfil"><button class="role-option is-selected" type="button" data-role-choice="student"><span class="role-symbol">◉</span><strong>Aluno</strong><small>Aprender na trilha</small></button><button class="role-option" type="button" data-role-choice="guardian"><span class="role-symbol">⌂</span><strong>Responsável</strong><small>Acompanhar um aluno</small></button></div><form id="signup-form" novalidate><input type="hidden" id="selected-role" value="student"/><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label></div><fieldset class="age-fieldset" id="age-fieldset"><legend>Faixa etária do aluno</legend><label class="radio-line"><input type="radio" name="age" value="adult" checked /><span>18 anos ou mais</span></label><label class="radio-line"><input type="radio" name="age" value="minor" /><span>Menos de 18 anos</span></label></fieldset><div class="guardian-fields" id="student-link-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Aluno acompanhado</strong><span>Informe o estudante vinculado a este responsável</span></div></div><div class="form-grid"><label class="field-label" for="student-name">Nome do aluno<input id="student-name" name="studentName" placeholder="Nome do aluno" /></label></div></div><div class="guardian-fields" id="guardian-fields" hidden><div class="guardian-heading"><span class="guardian-icon" aria-hidden="true">⌂</span><div><strong>Dados do responsável</strong><span>Obrigatórios para aluno menor de idade</span></div></div><div class="form-grid"><label class="field-label" for="guardian-name">Nome do responsável<input id="guardian-name" name="guardianName" autocomplete="name" placeholder="Nome completo" /></label><label class="field-label" for="guardian-email">E-mail do responsável<input id="guardian-email" name="guardianEmail" type="email" autocomplete="email" placeholder="responsavel@email.com" /></label></div></div><p class="form-error" id="form-error" role="alert"></p><button class="button button-primary button-full" type="submit">Criar perfil de demonstração <span aria-hidden="true">→</span></button><p class="form-legal">Ao continuar, você visualiza apenas um fluxo de protótipo. Nenhum dado será enviado.</p></form></div></section>`;
+    <section class="signup-layout" aria-labelledby="signup-title"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Crie seu perfil de aluno e comece uma jornada de aprendizagem no seu ritmo.</p><div class="signup-aside"><span aria-hidden="true">✳</span><span>Cadastro demonstrativo: não há autenticação conectada e os dados não são enviados.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3 id="signup-title">Dados do aluno</h3></div><form id="signup-form" novalidate><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-age">Idade<input id="signup-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1" placeholder="Idade em anos" required /></label><label class="field-label" for="signup-email">Gmail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@gmail.com" required /></label><label class="field-label" for="signup-password">Senha<input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required /></label><label class="field-label signup-field-full" for="signup-confirm-password">Confirme a senha<input id="signup-confirm-password" name="passwordConfirmation" type="password" autocomplete="new-password" placeholder="Digite a senha novamente" required /></label></div><p class="field-hint">Use ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" id="form-error" role="alert" aria-live="polite"></p><button class="button button-primary button-full" type="submit">Criar perfil de demonstração <span aria-hidden="true">→</span></button><p class="form-legal">A idade não é verificada e a senha não será salva nem enviada.</p><div class="login-register"><span>Já tem uma conta?</span><button class="text-button" type="button" data-screen="login">Entrar <span aria-hidden="true">→</span></button></div></form></div></section>`;
 }
 
 function renderLogin() {
@@ -299,18 +378,21 @@ function renderLogin() {
       <div class="signup-intro login-intro">
         <p class="eyebrow">BEM-VINDE DE VOLTA</p>
         <h2 id="login-title">Continue sua jornada no EduSinal.</h2>
-        <p>Entre para acessar seu espaço de aprendizagem.</p>
+        <p>Informe seus dados para validar o acesso demonstrativo.</p>
         <button class="text-button" type="button" data-screen="intro"><span aria-hidden="true">←</span> Voltar ao início</button>
       </div>
       <div class="signup-form-panel login-panel">
         <div class="signup-title"><span class="eyebrow">ACESSO</span><h3>Entrar na sua conta</h3></div>
         <form id="login-form" novalidate>
-          <label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label>
+          <label class="field-label" for="login-name">Nome completo<input id="login-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label>
+          <label class="field-label" for="login-age">Idade<input id="login-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1" placeholder="Idade em anos" required /></label>
+          <label class="field-label" for="login-email">Gmail<input id="login-email" name="email" type="email" autocomplete="username" placeholder="voce@gmail.com" required /></label>
           <label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required /></label>
+          <p class="field-hint">Use ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p>
           <p class="form-error" id="login-message" role="status" aria-live="polite"></p>
-          <button class="button button-primary button-full" type="button" data-action="demo-login">Entrar <span aria-hidden="true">→</span></button>
+          <button class="button button-primary button-full" type="submit">Entrar <span aria-hidden="true">→</span></button>
         </form>
-        <p class="form-legal">Protótipo demonstrativo: a autenticação ainda não está conectada. Não use uma senha real; ela não será salva nem enviada.</p>
+        <p class="form-legal">Protótipo demonstrativo: a autenticação não está conectada. Os dados não serão salvos nem enviados.</p>
         <div class="login-register"><span>Ainda não tem conta?</span><button class="text-button" type="button" data-screen="signup">Criar cadastro <span aria-hidden="true">→</span></button></div>
       </div>
     </section>`;
@@ -357,6 +439,13 @@ function showToast(message) {
 }
 
 document.addEventListener("click", (event) => {
+  const alphabetButton = event.target.closest("[data-alphabet-letter]");
+  if (alphabetButton && !alphabetButton.disabled) {
+    selectedAlphabetLetter = alphabetButton.dataset.alphabetLetter;
+    render();
+    return;
+  }
+
   const screenButton = event.target.closest("[data-screen]");
   if (screenButton) {
     event.preventDefault();
@@ -364,29 +453,11 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const roleButton = event.target.closest("[data-role-choice]");
-  if (roleButton) {
-    document.querySelectorAll(".role-option").forEach((item) => item.classList.toggle("is-selected", item === roleButton));
-    document.getElementById("selected-role").value = roleButton.dataset.roleChoice;
-    const ageFieldset = document.getElementById("age-fieldset");
-    const guardianFields = document.getElementById("guardian-fields");
-    const studentLinkFields = document.getElementById("student-link-fields");
-    const isStudent = roleButton.dataset.roleChoice === "student";
-    const isGuardian = roleButton.dataset.roleChoice === "guardian";
-    ageFieldset.hidden = !isStudent;
-    guardianFields.hidden = true;
-    studentLinkFields.hidden = !isGuardian;
-    return;
-  }
-
   const actionButton = event.target.closest("[data-action], [data-shop-item]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
 
-  if (action === "demo-login") {
-    document.getElementById("login-form").reset();
-    document.getElementById("login-message").textContent = "A API de autenticação ainda não está disponível. Nenhum dado foi enviado.";
-  } else if (actionButton.dataset.shopItem) {
+  if (actionButton.dataset.shopItem) {
     const item = avatarItems.find((entry) => entry.id === actionButton.dataset.shopItem);
     if (!item) return;
     const isOwned = state.unlockedItems.includes(item.id);
@@ -412,6 +483,14 @@ document.addEventListener("click", (event) => {
     if (state.answered) return;
     state.answered = true;
     const isCorrect = actionButton.dataset.answer === "correct";
+    if (!isCorrect) {
+      refreshLives();
+      state.lives = Math.max(0, state.lives - 1);
+      if (state.lives < MAX_LIVES && !state.nextLifeAt) {
+        state.nextLifeAt = new Date(Date.now() + LIFE_RECHARGE_MS).toISOString();
+      }
+      persist();
+    }
     document.querySelectorAll(".answer-option").forEach((option) => {
       option.disabled = true;
       if (option.dataset.answer === "correct") option.classList.add("is-correct");
@@ -435,7 +514,8 @@ document.addEventListener("click", (event) => {
         showToast("Desafio concluído: +20 XP, +15 moedas e broche para o mascote!");
       } else {
         state.xp += 20;
-        showToast("Atividade concluída: +20 XP");
+        state.coins += 5;
+        showToast("Atividade concluída: +20 XP e +5 moedas");
       }
       persist();
     }
@@ -444,15 +524,6 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("change", (event) => {
-  if (event.target.name === "age") {
-    const isMinor = event.target.value === "minor";
-    const guardianFields = document.getElementById("guardian-fields");
-    guardianFields.hidden = !isMinor;
-    guardianFields.querySelectorAll("input").forEach((input) => {
-      input.required = isMinor;
-    });
-  }
-
   if (event.target.id === "theme-toggle") {
     state.theme = state.theme === "dark" ? "light" : "dark";
     persist();
@@ -461,37 +532,78 @@ document.addEventListener("change", (event) => {
 });
 
 document.addEventListener("submit", (event) => {
+  if (event.target.id === "login-form") {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.elements.name.value.trim();
+    const age = Number(form.elements.age.value);
+    const email = form.elements.email.value.trim().toLowerCase();
+    const password = form.elements.password.value;
+    const message = document.getElementById("login-message");
+    message.classList.remove("is-success");
+
+    if (name.length < 3) {
+      message.textContent = "Informe seu nome completo (pelo menos 3 caracteres).";
+      return;
+    }
+    if (!Number.isInteger(age) || age < 1 || age > 120) {
+      message.textContent = "Informe uma idade válida entre 1 e 120 anos.";
+      return;
+    }
+    if (!form.elements.email.validity.valid || !email.endsWith("@gmail.com")) {
+      message.textContent = "Informe um endereço válido terminado em @gmail.com.";
+      return;
+    }
+    if (!hasStrongPassword(password)) {
+      message.textContent = "A senha precisa ter 8 caracteres, maiúscula, minúscula, número e símbolo.";
+      return;
+    }
+
+    message.classList.add("is-success");
+    message.textContent = "Dados válidos. A autenticação ainda não está conectada; nada foi enviado ou salvo.";
+    form.elements.password.value = "";
+    return;
+  }
+
   if (event.target.id === "signup-form") {
     event.preventDefault();
     const form = event.target;
     const name = form.elements.name.value.trim();
-    const role = document.getElementById("selected-role").value;
-    const isMinor = role === "student" && form.elements.age.value === "minor";
-    const linkedStudent = role === "guardian" ? form.elements.studentName.value.trim() : "";
+    const age = Number(form.elements.age.value);
+    const email = form.elements.email.value.trim().toLowerCase();
+    const password = form.elements.password.value;
     const error = document.getElementById("form-error");
     error.textContent = "";
 
-    if (!name || !form.elements.email.value.trim()) {
-      error.textContent = "Preencha nome e e-mail para continuar.";
+    if (name.length < 3) {
+      error.textContent = "Informe seu nome completo (pelo menos 3 caracteres).";
       return;
     }
-    if (isMinor && (!form.elements.guardianName.value.trim() || !form.elements.guardianEmail.value.trim())) {
-      error.textContent = "Para aluno menor de idade, preencha os dados do responsável.";
+    if (!Number.isInteger(age) || age < 1 || age > 120) {
+      error.textContent = "Informe uma idade válida entre 1 e 120 anos.";
       return;
     }
-    if (role === "guardian" && !linkedStudent) {
-      error.textContent = "Informe o aluno que este responsável acompanhará.";
+    if (!form.elements.email.validity.valid || !email.endsWith("@gmail.com")) {
+      error.textContent = "Informe um endereço válido terminado em @gmail.com.";
+      return;
+    }
+    if (!hasStrongPassword(password)) {
+      error.textContent = "A senha precisa ter 8 caracteres, maiúscula, minúscula, número e símbolo.";
+      return;
+    }
+    if (password !== form.elements.passwordConfirmation.value) {
+      error.textContent = "As senhas não conferem.";
       return;
     }
 
     state.name = name.split(" ")[0];
-    state.role = role;
+    state.role = "student";
     state.isRegistered = true;
-    state.isMinor = isMinor || role === "guardian";
-    state.linkedStudent = isMinor ? name.split(" ")[0] : linkedStudent;
+    state.isMinor = age < 18;
+    state.linkedStudent = "";
     persist();
     showToast("Perfil de demonstração criado neste navegador.");
-    setScreen(role === "guardian" ? "family" : "trail");
+    setScreen("trail");
   }
 });
 
@@ -512,5 +624,9 @@ document.addEventListener("keydown", (event) => {
     menuToggle.setAttribute("aria-expanded", "false");
   }
 });
+
+window.setInterval(() => {
+  if (state.screen === "trail") updateLifeIndicator();
+}, 15000);
 
 render();

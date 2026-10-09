@@ -1,9 +1,13 @@
 # EduSinal backend
 
-API em Python/FastAPI com MySQL para três perfis do EduSinal: alunos, professores e administradores.
+API em Python/FastAPI com MySQL para os perfis e o progresso do EduSinal.
 
-Os endpoints de cadastro ficam em `/alunos`, `/professores` e `/administradores`. Cada grupo oferece operações de consulta, criação, edição e exclusão. A documentação interativa fica em `/docs` quando a API estiver rodando.
+Os endpoints de cadastro ficam em `/alunos`, `/professores` e `/administradores`. O módulo inicial de jogo adiciona `GET /alunos/{id_aluno}/progresso` e `POST /alunos/{id_aluno}/atividades/{id_atividade}/respostas`.
 
-O banco de desenvolvimento é criado pelo `api/super-dev-09-curso-trabalho-trio/estrutura.sql`. O script não apaga bancos existentes. `estrutura_inserts.sql` contém registros demonstrativos para os três perfis.
+O endpoint de jogo usa três vidas, recupera uma vida a cada 30 minutos e retira uma por erro. Uma conclusão correta nova concede 20 XP; a primeira atividade também dá 15 moedas, as seguintes dão 5 moedas. Repetir uma atividade já concluída não rende outra recompensa. O corpo recebe `id_tentativa` e `id_resposta`; o servidor consulta o gabarito no MySQL e não confia em um campo `correta` enviado pelo navegador.
 
-O CRUD de administradores ainda não tem autenticação e deve ser usado somente em desenvolvimento até existir controle de acesso por perfil.
+O banco de desenvolvimento é criado por `api/edusinal-api/estrutura.sql`, sem apagar bancos existentes. O script de exemplo insere o gabarito da primeira atividade demonstrativa.
+
+Para iniciar: entre em `api/edusinal-api/`, crie um ambiente virtual, instale `requirements.txt`, copie `src/.env.example` para `src/.env`, configure um MySQL local, aplique os scripts SQL e rode `python -m uvicorn src.app:app --reload`. A documentação interativa fica em `/docs`.
+
+Este módulo ainda não tem autenticação nem está conectado ao frontend. Não o exponha publicamente; os identificadores de aluno precisam ser vinculados a uma sessão autenticada antes de produção. Revisão sem vidas deve permanecer livre na interface. A futura leitura de mãos deve ficar em um módulo isolado, sem armazenar imagens por padrão e com análise específica de privacidade para menores.
