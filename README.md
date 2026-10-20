@@ -16,9 +16,7 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 frontend/
   app/prototipo/       Aplicação principal (HTML, CSS e JavaScript)
   assets/images/       Imagens compartilhadas
-  auth/                Redirecionamento para o login do protótipo
   landing/             Página pública de apresentação
-  pages/               Redirecionamentos de páginas antigas
 backend/
   api/edusinal-api/
     src/controllers/   Rotas HTTP da API
