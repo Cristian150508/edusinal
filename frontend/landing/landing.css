@@ -1,17 +1,17 @@
 :root {
-  --ink: #203331;
-  --muted: #6b7a74;
-  --paper: #f4f7f0;
+  --ink: #1d2f45;
+  --muted: #566b81;
+  --paper: #f1f6fb;
   --white: #fff;
-  --line: #dfe8de;
-  --green: #187a67;
-  --green-dark: #145d51;
-  --green-light: #e4f0e6;
+  --line: #dde7f0;
+  --primary: #1f6fb8;
+  --primary-dark: #14548e;
+  --primary-light: #d6e7f7;
   --coral: #ed7b66;
   --coral-light: #f8e1da;
   --yellow: #ecc850;
   --yellow-light: #f8efce;
-  --blue-light: #dce9f2;
+  --accent-light: #d3f0ee;
 }
 
 * {
@@ -78,7 +78,7 @@ a:focus-visible {
 
 .brand > span > span,
 .footer-brand > span > span {
-  color: var(--green);
+  color: var(--primary);
 }
 
 .main-nav {
@@ -95,7 +95,7 @@ a:focus-visible {
 }
 
 .main-nav a:hover {
-  color: var(--green-dark);
+  color: var(--primary-dark);
 }
 
 .header-cta {
@@ -105,17 +105,17 @@ a:focus-visible {
   align-items: center;
   gap: 13px;
   padding: 0 15px;
-  border: 1px solid #bdd0c4;
+  border: 1px solid #bcd0e4;
   border-radius: 5px;
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-size: 11px;
   font-weight: 700;
   transition: background-color 150ms ease, border-color 150ms ease;
 }
 
 .header-cta:hover {
-  border-color: var(--green);
-  background: var(--green-light);
+  border-color: var(--primary);
+  background: var(--primary-light);
 }
 
 .header-cta span {
@@ -147,7 +147,7 @@ main {
 
 .eyebrow {
   margin: 0 0 14px;
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -169,7 +169,7 @@ main {
 }
 
 .hero h1 span {
-  color: var(--green);
+  color: var(--primary);
 }
 
 .hero-description {
@@ -206,12 +206,12 @@ main {
 }
 
 .button-primary {
-  background: var(--green);
+  background: var(--primary);
   color: var(--white);
 }
 
 .button-primary:hover {
-  background: var(--green-dark);
+  background: var(--primary-dark);
 }
 
 .button span {
@@ -220,7 +220,7 @@ main {
 
 .quiet-link,
 .text-link {
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-size: 11px;
   font-weight: 700;
 }
@@ -257,10 +257,10 @@ main {
   width: min(100%, 430px);
   justify-self: end;
   padding: 20px 20px 0;
-  border: 1px solid #dce6dc;
+  border: 1px solid #dbe5ef;
   border-radius: 7px;
   background: var(--white);
-  box-shadow: 0 24px 55px rgba(29, 59, 48, 0.11);
+  box-shadow: 0 24px 55px rgba(24, 52, 86, 0.11);
   transform: rotate(1.2deg);
   animation: rise-in 620ms 90ms ease-out both;
 }
@@ -322,7 +322,7 @@ main {
 }
 
 .preview-progress {
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-family: "Manrope", sans-serif;
   font-size: 17px;
   font-weight: 800;
@@ -365,7 +365,7 @@ main {
 }
 
 .marker-green {
-  background: var(--green-light);
+  background: var(--primary-light);
 }
 
 .preview-step > div {
@@ -386,7 +386,7 @@ main {
 
 .step-state {
   margin-left: auto;
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -394,7 +394,7 @@ main {
 
 .step-lock {
   margin-left: auto;
-  color: #b5c0b7;
+  color: #b3c0cf;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -427,7 +427,7 @@ main {
   place-items: center;
   border-radius: 50%;
   background: var(--yellow);
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-family: "Manrope", sans-serif;
   font-size: 11px;
   font-weight: 800;
@@ -438,7 +438,7 @@ main {
   position: absolute;
   right: 8px;
   bottom: 48px;
-  color: #8d9b92;
+  color: #8a9bb0;
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -454,8 +454,8 @@ main {
   padding: 42px 6.5%;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  background-color: #ebf2e8;
-  background-image: linear-gradient(90deg, transparent 0, transparent 49.9%, rgba(24, 122, 103, 0.08) 50%, transparent 50.1%);
+  background-color: #e8f0f8;
+  background-image: linear-gradient(90deg, transparent 0, transparent 49.9%, rgba(31, 111, 184, 0.08) 50%, transparent 50.1%);
 }
 
 .approach .eyebrow {
@@ -470,7 +470,7 @@ main {
 }
 
 .approach h2 span {
-  color: var(--green);
+  color: var(--primary);
 }
 
 .approach-copy {
@@ -532,7 +532,7 @@ main {
 
 .resource-item:hover {
   transform: translateY(-3px);
-  border-color: #a9c5b1;
+  border-color: #a9bfd8;
 }
 
 .resource-item:nth-child(4) {
@@ -550,8 +550,8 @@ main {
   place-items: center;
   margin-bottom: 15px;
   border-radius: 9px;
-  background: var(--green-light);
-  color: var(--green-dark);
+  background: var(--primary-light);
+  color: var(--primary-dark);
   font-size: 18px;
 }
 
@@ -563,7 +563,7 @@ main {
 
 .resource-classes .resource-mark,
 .resource-levels .resource-mark {
-  background: var(--blue-light);
+  background: var(--accent-light);
   color: #456d90;
 }
 
@@ -596,7 +596,7 @@ main {
 .resource-status {
   margin-top: auto;
   padding-top: 8px;
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -625,12 +625,12 @@ main {
   grid-template-columns: minmax(250px, 0.78fr) minmax(0, 1.22fr);
   gap: 60px;
   padding: 44px 6.5%;
-  background: #203b36;
+  background: #16304a;
   color: #f5f8f3;
 }
 
 .roles .eyebrow {
-  color: #a9d5bd;
+  color: #a6d3f7;
 }
 
 .roles-intro h2 {
@@ -643,7 +643,7 @@ main {
 .roles-intro > p:not(.eyebrow) {
   max-width: 290px;
   margin: 0 0 17px;
-  color: #b9c9c0;
+  color: #b9c9d9;
   font-size: 11px;
   line-height: 1.6;
 }
@@ -651,7 +651,7 @@ main {
 .button-light {
   min-height: 42px;
   background: var(--yellow);
-  color: #30483e;
+  color: #1d3752;
 }
 
 .button-light:hover {
@@ -676,7 +676,7 @@ main {
 }
 
 .role-number {
-  color: #a9d5bd;
+  color: #a6d3f7;
   font-family: "Manrope", sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -690,7 +690,7 @@ main {
 
 .role-row p {
   margin: 0;
-  color: #b9c9c0;
+  color: #b9c9d9;
   font-size: 9px;
   line-height: 1.5;
 }
@@ -742,7 +742,7 @@ main {
 }
 
 .site-footer > a:last-child {
-  color: var(--green-dark);
+  color: var(--primary-dark);
   font-weight: 700;
 }
 

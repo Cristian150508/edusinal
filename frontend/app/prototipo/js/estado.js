@@ -33,6 +33,8 @@ const state = {
   unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
   equippedItem: savedPrototype.equippedItem || "",
   hasFirstActivityReward: Boolean(savedPrototype.hasFirstActivityReward),
+  completedLessons: Array.isArray(savedPrototype.completedLessons) ? savedPrototype.completedLessons : [], // ex.: "primeiros-sinais:alfabeto"
+  currentLesson: null,  // galho que o aluno está fazendo agora (não é salvo)
   answered: false,      // já respondeu a pergunta da tela atual? (não é salvo)
   focusTopic: null,     // etapa aberta no modo foco (não é salvo)
   selectedLetter: "A",  // letra escolhida no dicionário (não é salva)
@@ -86,6 +88,7 @@ function persist() {
     unlockedItems: state.unlockedItems,
     equippedItem: state.equippedItem,
     hasFirstActivityReward: state.hasFirstActivityReward,
+    completedLessons: state.completedLessons,
   }));
 }
 

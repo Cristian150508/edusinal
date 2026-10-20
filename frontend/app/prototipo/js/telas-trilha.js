@@ -24,55 +24,117 @@ function renderIntro() {
     </section>`;
 }
 
+// ----- Etapas do modo foco -----
+// Cada etapa tem 5 galhos (exercícios) e uma prova final no centro.
+// Por enquanto todos os galhos usam a mesma atividade de demonstração.
 const learningTopics = {
   "primeiros-sinais": {
     number: "01",
     title: "Primeiros sinais",
     subtitle: "Saudações do dia a dia",
-    study: [
-      { icon: "A", label: "Alfabeto", hint: "Consulta livre, sem vidas", screen: "signs" },
-      { icon: "👋", label: "Saudações", hint: "Oi, tchau e bom dia", screen: "signs" },
-    ],
-    practice: [
-      { icon: "✳", label: "Desafio do dia", hint: "+20 XP · usa vidas", action: "start-lesson" },
-      { icon: "⇄", label: "Combinar sinais", hint: "Em breve" },
+    branches: [
+      { id: "alfabeto", icon: "A", label: "Alfabeto", hint: "Letras em Libras" },
+      { id: "oi-tchau", icon: "👋", label: "Oi e tchau", hint: "Cumprimentos" },
+      { id: "bom-dia", icon: "☀", label: "Bom dia", hint: "Saudações do dia" },
+      { id: "por-favor", icon: "✋", label: "Por favor", hint: "Gentileza" },
+      { id: "obrigado", icon: "♥", label: "Obrigado(a)", hint: "Agradecer" },
     ],
   },
 };
 
+// ----- Progresso das lições (salvo no navegador) -----
+
+function lessonKey(topicId, branchId) {
+  return `${topicId}:${branchId}`;
+}
+
+function isLessonDone(topicId, branchId) {
+  return state.completedLessons.includes(lessonKey(topicId, branchId));
+}
+
+// Quantos dos 5 galhos desta etapa já foram concluídos.
+function doneBranchCount(topicId) {
+  return learningTopics[topicId].branches.filter((branch) => isLessonDone(topicId, branch.id)).length;
+}
+
+// A prova final só abre quando todos os galhos estão concluídos.
+function isFinalUnlocked(topicId) {
+  return doneBranchCount(topicId) === learningTopics[topicId].branches.length;
+}
+
+// Marca a lição como concluída. Devolve true se foi a primeira vez.
+function markLessonDone(topicId, branchId) {
+  if (isLessonDone(topicId, branchId)) return false;
+  state.completedLessons.push(lessonKey(topicId, branchId));
+  persist();
+  return true;
+}
+
+// ----- Árvore -----
+
+// Os 5 galhos ficam em volta do centro, como um pentágono (ângulos em graus).
+const BRANCH_ANGLES = [-90, -18, 54, 126, 198];
+const TREE_RADIUS_X = 36; // % da largura
+const TREE_RADIUS_Y = 34; // % da altura
+
+function branchPosition(index) {
+  const radians = (BRANCH_ANGLES[index] * Math.PI) / 180;
+  return {
+    x: 50 + TREE_RADIUS_X * Math.cos(radians),
+    y: 50 + TREE_RADIUS_Y * Math.sin(radians),
+  };
+}
+
+function renderBranch(topicId, branch, index) {
+  const { x, y } = branchPosition(index);
+  const isDone = isLessonDone(topicId, branch.id);
+  const icon = isDone ? "✓" : branch.icon;
+  const hint = isDone ? "Concluído · refazer" : `${branch.hint} · +20 XP`;
+  return `<button class="tree-leaf${isDone ? " is-done" : ""}" type="button" style="--x:${x}%;--y:${y}%;--i:${index}" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}><span class="tree-icon" aria-hidden="true">${icon}</span><strong>${branch.label}</strong><small>${hint}</small></button>`;
+}
+
+// O centro é a prova final. Trancada ou concluída, ele só leva de volta à trilha.
+function renderFinalNode(topicId) {
+  const topic = learningTopics[topicId];
+  const done = doneBranchCount(topicId);
+  const total = topic.branches.length;
+  const isFinalDone = isLessonDone(topicId, "final");
+  const isOpen = isFinalUnlocked(topicId) && !isFinalDone;
+
+  let icon = "🔒";
+  let hint = `Conclua os galhos (${done} / ${total}) · toque para voltar`;
+  if (isFinalDone) {
+    icon = "✓";
+    hint = "Etapa concluída · toque para voltar";
+  } else if (isOpen) {
+    icon = "★";
+    hint = "Liberada! Toque para começar";
+  }
+  const attrs = isOpen ? `data-action="start-branch" data-topic="${topicId}" data-branch="final"` : 'data-action="close-topic"';
+  const disabled = isOpen && state.lives === 0 ? "disabled" : "";
+  return `<button class="tree-center${isOpen ? " is-open" : ""}${isFinalDone ? " is-done" : ""}" type="button" ${attrs} ${disabled}><span class="route-node node-coral" aria-hidden="true">${icon}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${hint}</small></button>`;
+}
+
 function renderTopicTree() {
   refreshLives();
   const hearts = livesHeartsHtml();
-  const topic = learningTopics[state.focusTopic];
-  const rows = [["study", 15, "ESTUDAR", "tree-study"], ["practice", 85, "PRATICAR", "tree-practice"]];
-  const leaves = [];
-  const lines = [];
-  rows.forEach(([group, y, label, cls]) => {
-    topic[group].forEach((leaf, index, list) => {
-      const x = ((index + 0.5) / list.length) * 100;
-      const ready = Boolean(leaf.screen || leaf.action);
-      const attrs = leaf.screen ? `data-screen="${leaf.screen}"` : leaf.action ? `data-action="${leaf.action}"` : "";
-      const livesOff = leaf.action === "start-lesson" && state.lives === 0;
-      const body = `<span class="tree-icon" aria-hidden="true">${leaf.icon}</span><strong>${leaf.label}</strong><small>${leaf.hint}</small>`;
-      leaves.push(ready
-        ? `<button class="tree-leaf ${cls}" type="button" style="--x:${x}%;--y:${y}%;--i:${index}" ${attrs} ${livesOff ? "disabled" : ""}>${body}</button>`
-        : `<div class="tree-leaf ${cls} is-locked" style="--x:${x}%;--y:${y}%;--i:${index}" aria-disabled="true">${body}</div>`);
-      const mid = (50 + y) / 2;
-      lines.push(`<path class="${ready ? "" : "is-locked"}" d="M50 50 C 50 ${mid}, ${x} ${mid}, ${x} ${y}" />`);
-    });
+  const topicId = state.focusTopic;
+  const topic = learningTopics[topicId];
+  const lines = topic.branches.map((branch, index) => {
+    const { x, y } = branchPosition(index);
+    return `<path class="${isLessonDone(topicId, branch.id) ? "is-done" : ""}" d="M50 50 L ${x} ${y}" />`;
   });
   return `
     <section class="topic-tree" aria-labelledby="topic-title">
       <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back"><span aria-hidden="true">←</span> Voltar à trilha</button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
       <div class="tree-canvas">
         <svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join("")}</svg>
-        <span class="tree-label tree-label-top">ESTUDAR</span>
-        <span class="tree-label tree-label-bottom">PRATICAR</span>
-        <div class="tree-center"><span class="route-node node-coral">${topic.number}</span><h2 id="topic-title">${topic.title}</h2><p>${topic.subtitle}</p></div>
-        ${leaves.join("")}
+        ${renderFinalNode(topicId)}
+        ${topic.branches.map((branch, index) => renderBranch(topicId, branch, index)).join("")}
       </div>
     </section>`;
 }
+
 
 function renderTrail() {
   if (state.focusTopic) return renderTopicTree();

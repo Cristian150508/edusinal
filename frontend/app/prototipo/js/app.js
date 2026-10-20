@@ -61,6 +61,7 @@ function setScreen(screen) {
   state.screen = screen;
   state.answered = false;
   state.focusTopic = null;
+  if (screen !== "lesson") state.currentLesson = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
   sidebar.classList.remove("is-open");
   menuToggle.setAttribute("aria-expanded", "false");
@@ -130,9 +131,26 @@ function answerQuestion(clickedButton) {
   continueButton.dataset.correct = String(isCorrect);
 }
 
+// Termina a atividade. Se veio de um galho da árvore, volta para a árvore.
+// A recompensa só vem na primeira vez que o galho é concluído.
 function finishLesson(continueButton) {
-  if (continueButton.dataset.correct === "true") giveActivityReward();
+  const lesson = state.currentLesson;
+  if (continueButton.dataset.correct === "true") {
+    const isFirstTime = lesson ? markLessonDone(lesson.topicId, lesson.branchId) : true;
+    if (isFirstTime) giveActivityReward();
+  }
   setScreen("trail");
+  if (lesson) openTopic(lesson.topicId);
+}
+
+function startDailyChallenge() {
+  state.currentLesson = null;
+  setScreen("lesson");
+}
+
+function startBranch(topicId, branchId) {
+  state.currentLesson = { topicId, branchId };
+  setScreen("lesson");
 }
 
 // ----- Eventos -----
@@ -164,7 +182,8 @@ document.addEventListener("click", (event) => {
 
   if (action === "open-topic") openTopic(actionButton.dataset.topic);
   else if (action === "close-topic") closeTopic();
-  else if (action === "start-lesson") setScreen("lesson");
+  else if (action === "start-lesson") startDailyChallenge();
+  else if (action === "start-branch") startBranch(actionButton.dataset.topic, actionButton.dataset.branch);
   else if (action === "answer") answerQuestion(actionButton);
   else if (action === "finish-lesson") finishLesson(actionButton);
 });
