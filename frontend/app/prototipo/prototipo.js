@@ -28,6 +28,7 @@ const state = {
   equippedItem: savedPrototype.equippedItem || "",
   hasFirstActivityReward: Boolean(savedPrototype.hasFirstActivityReward),
   answered: false,
+  focusTopic: null,
 };
 
 const screenTitles = {
@@ -153,6 +154,7 @@ function setScreen(screen) {
   }
   state.screen = screen;
   state.answered = false;
+  state.focusTopic = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
   sidebar.classList.remove("is-open");
   menuToggle.setAttribute("aria-expanded", "false");
@@ -183,7 +185,60 @@ function renderIntro() {
     </section>`;
 }
 
+const learningTopics = {
+  "primeiros-sinais": {
+    number: "01",
+    title: "Primeiros sinais",
+    subtitle: "Saudações do dia a dia",
+    study: [
+      { icon: "A", label: "Alfabeto", hint: "Consulta livre, sem vidas", screen: "signs" },
+      { icon: "👋", label: "Saudações", hint: "Oi, tchau e bom dia", screen: "signs" },
+    ],
+    practice: [
+      { icon: "✳", label: "Desafio do dia", hint: "+20 XP · usa vidas", action: "start-lesson" },
+      { icon: "⇄", label: "Combinar sinais", hint: "Em breve" },
+    ],
+  },
+};
+
+function renderTopicTree() {
+  refreshLives();
+  const hearts = Array.from({ length: MAX_LIVES }, (_, index) =>
+    `<span class="life-heart${index < state.lives ? " is-full" : ""}" aria-hidden="true">♥</span>`,
+  ).join("");
+  const topic = learningTopics[state.focusTopic];
+  const rows = [["study", 15, "ESTUDAR", "tree-study"], ["practice", 85, "PRATICAR", "tree-practice"]];
+  const leaves = [];
+  const lines = [];
+  rows.forEach(([group, y, label, cls]) => {
+    topic[group].forEach((leaf, index, list) => {
+      const x = ((index + 0.5) / list.length) * 100;
+      const ready = Boolean(leaf.screen || leaf.action);
+      const attrs = leaf.screen ? `data-screen="${leaf.screen}"` : leaf.action ? `data-action="${leaf.action}"` : "";
+      const livesOff = leaf.action === "start-lesson" && state.lives === 0;
+      const body = `<span class="tree-icon" aria-hidden="true">${leaf.icon}</span><strong>${leaf.label}</strong><small>${leaf.hint}</small>`;
+      leaves.push(ready
+        ? `<button class="tree-leaf ${cls}" type="button" style="--x:${x}%;--y:${y}%;--i:${index}" ${attrs} ${livesOff ? "disabled" : ""}>${body}</button>`
+        : `<div class="tree-leaf ${cls} is-locked" style="--x:${x}%;--y:${y}%;--i:${index}" aria-disabled="true">${body}</div>`);
+      const mid = (50 + y) / 2;
+      lines.push(`<path class="${ready ? "" : "is-locked"}" d="M50 50 C 50 ${mid}, ${x} ${mid}, ${x} ${y}" />`);
+    });
+  });
+  return `
+    <section class="topic-tree" aria-labelledby="topic-title">
+      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back"><span aria-hidden="true">←</span> Voltar à trilha</button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
+      <div class="tree-canvas">
+        <svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join("")}</svg>
+        <span class="tree-label tree-label-top">ESTUDAR</span>
+        <span class="tree-label tree-label-bottom">PRATICAR</span>
+        <div class="tree-center"><span class="route-node node-coral">${topic.number}</span><h2 id="topic-title">${topic.title}</h2><p>${topic.subtitle}</p></div>
+        ${leaves.join("")}
+      </div>
+    </section>`;
+}
+
 function renderTrail() {
+  if (state.focusTopic) return renderTopicTree();
   refreshLives();
   const hearts = Array.from({ length: MAX_LIVES }, (_, index) =>
     `<span class="life-heart${index < state.lives ? " is-full" : ""}" aria-hidden="true">♥</span>`,
@@ -207,7 +262,7 @@ function renderTrail() {
             <span class="section-count">UNIDADE 01 <span aria-hidden="true">·</span> 4 etapas</span>
           </div>
           <div class="learning-route">
-            <article class="route-step route-step-active"><button class="route-node node-coral" type="button" data-action="start-lesson" aria-label="Iniciar Primeiros sinais" ${state.lives === 0 ? "disabled" : ""}>01</button><span class="path-label">COMECE POR AQUI</span><h3>Primeiros sinais</h3><p>Saudações do dia a dia</p></article>
+            <article class="route-step route-step-active"><button class="route-node node-coral" type="button" data-action="open-topic" data-topic="primeiros-sinais" aria-label="Abrir Primeiros sinais">01</button><span class="path-label">COMECE POR AQUI</span><h3>Primeiros sinais</h3><p>Saudações do dia a dia</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-yellow" aria-label="Etapa bloqueada">02</span><span class="path-label">PRÓXIMA ETAPA</span><h3>Apresentações</h3><p>Seu nome e novas conexões</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-green" aria-label="Etapa bloqueada">03</span><span class="path-label">EM SEGUIDA</span><h3>Pessoas e família</h3><p>Quem faz parte da sua vida</p></article>
             <article class="route-step route-step-locked"><span class="route-node node-blue" aria-label="Etapa bloqueada">04</span><span class="path-label">EM SEGUIDA</span><h3>Rotina e lugares</h3><p>Palavras para o cotidiano</p></article>
@@ -424,6 +479,7 @@ function render() {
   };
   heading.textContent = screenTitles[state.screen] || "EduSinal";
   app.dataset.currentScreen = state.screen;
+  app.dataset.focus = state.focusTopic ? "on" : "off";
   renderNavigation();
   screenRoot.innerHTML = renderers[state.screen]();
   app.dataset.theme = state.theme;
@@ -477,6 +533,12 @@ document.addEventListener("click", (event) => {
     persist();
     render();
     showToast(`${item.name} equipado no mascote.`);
+  } else if (action === "open-topic") {
+    state.focusTopic = actionButton.dataset.topic;
+    render();
+    document.getElementById("topic-back").focus({ preventScroll: true });
+  } else if (action === "close-topic") {
+    closeTopic();
   } else if (action === "start-lesson") {
     setScreen("lesson");
   } else if (action === "answer") {
@@ -618,8 +680,16 @@ menuToggle.addEventListener("click", () => {
   menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
 
+function closeTopic() {
+  const topicId = state.focusTopic;
+  state.focusTopic = null;
+  render();
+  screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    if (state.focusTopic) closeTopic();
     sidebar.classList.remove("is-open");
     menuToggle.setAttribute("aria-expanded", "false");
   }
