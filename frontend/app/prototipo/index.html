@@ -2,13 +2,22 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f1f6fb" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f1f6fb" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f1d2b" media="(prefers-color-scheme: dark)" />
+  <!-- Permite instalar o protótipo na tela inicial do celular -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icones/icone-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icones/icone-180.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="EduSinal" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>EduSinal | Aprender Libras</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="prototipo.css?v=24" />
+  <link rel="stylesheet" href="prototipo.css?v=26" />
 </head>
 <body>
   <a class="skip-link" href="#screen-root">Pular para o conteúdo</a>
@@ -28,24 +37,30 @@
 
     <div class="workspace">
       <h1 class="screen-title-sr" id="screen-heading">Minha trilha</h1>
-      <div class="mobile-menu-control">
+      <!-- Barra de cima, só no celular: ofensiva, moedas, vidas e o menu completo -->
+      <header class="mobile-topbar">
+        <button class="mobile-brand" type="button" data-screen="trail" aria-label="EduSinal, ir para a Home"><img src="icones/icone-192.png" alt="" /><span>Edu<span class="brand-accent">Sinal</span></span></button>
+        <div class="mobile-stats" id="mobile-stats"></div>
         <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button>
-      </div>
+      </header>
       <main class="screen-root" id="screen-root" tabindex="-1"></main>
       <footer class="app-footer"><span>EduSinal <span class="footer-dot">•</span> Ambiente demonstrativo</span><a href="../../landing/index.html">Página inicial <span aria-hidden="true">↗</span></a></footer>
     </div>
+
+    <!-- Barra de baixo, só no celular: as abas principais -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Abas principais"></nav>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="js/estado.js?v=24" defer></script>
-  <script src="js/mascote-desenho.js?v=24" defer></script>
-  <script src="js/telas-trilha.js?v=24" defer></script>
-  <script src="js/telas-dicionario.js?v=24" defer></script>
-  <script src="js/telas-ligas.js?v=24" defer></script>
-  <script src="js/telas-missoes.js?v=24" defer></script>
-  <script src="js/telas-lojinha.js?v=24" defer></script>
-  <script src="js/telas-perfil.js?v=24" defer></script>
-  <script src="js/telas-mascote.js?v=24" defer></script>
-  <script src="js/telas-conta.js?v=24" defer></script>
-  <script src="js/app.js?v=24" defer></script>
+  <script src="js/estado.js?v=26" defer></script>
+  <script src="js/mascote-desenho.js?v=26" defer></script>
+  <script src="js/telas-trilha.js?v=26" defer></script>
+  <script src="js/telas-dicionario.js?v=26" defer></script>
+  <script src="js/telas-ligas.js?v=26" defer></script>
+  <script src="js/telas-missoes.js?v=26" defer></script>
+  <script src="js/telas-lojinha.js?v=26" defer></script>
+  <script src="js/telas-perfil.js?v=26" defer></script>
+  <script src="js/telas-mascote.js?v=26" defer></script>
+  <script src="js/telas-conta.js?v=26" defer></script>
+  <script src="js/app.js?v=26" defer></script>
 </body>
 </html>

@@ -28,6 +28,10 @@ frontend/
     js/telas-missoes.js     Missões do dia e da semana, com resgate de moedas
     js/telas-lojinha.js     Lojinha: ajudas, acessórios e fundos do mascote
     js/telas-perfil.js      Perfil (conquistas, nome) e "Mais opções"
+    js/mascote-desenho.js   Desenho do mascote em SVG (partes do personagem da logo)
+    js/telas-mascote.js     Itens do mascote, regras de liberação e o editor
+    manifest.webmanifest    Permite instalar o protótipo na tela inicial do celular
+    icones/                 Ícones do app (gerados a partir do mascote)
     js/telas-conta.js  Cadastro, login e validação dos dados
     js/app.js          Troca de telas, cliques e teclado (carrega por último)
   assets/images/       Imagens compartilhadas
@@ -54,6 +58,19 @@ Abra <http://localhost:5500/>. Se a porta 5500 já estiver ocupada, encerre o se
 A landing de apresentação fica em <http://localhost:5500/frontend/landing/index.html>.
 
 Para abrir uma tela direto, use `?tela=` no endereço: `home`, `login`, `cadastro`, `dicionario`, `ligas`, `missoes`, `lojinha`, `perfil` ou `mais`. Exemplo: <http://localhost:5500/frontend/app/prototipo/index.html?tela=ligas>. Depois de mudar o código, recarregue com `Ctrl+Shift+R` para o navegador não usar a versão antiga em cache.
+
+## Testar no celular
+
+O protótipo tem um layout próprio para celular (até 760 px de largura), no estilo do Duolingo: barra de cima com ofensiva, moedas e vidas; barra de baixo com Home, Dicionário, Ligas, Missões e Perfil; lojinha e "Mais" no menu ☰ (as moedas também abrem a lojinha); atividade e árvore de lições em tela cheia.
+
+1. Deixe o computador e o celular na mesma rede Wi-Fi.
+2. Na raiz do projeto, rode `python3 -m http.server 5500`.
+3. Descubra o IP do computador com `hostname -I` (ex.: `192.168.0.10`).
+4. No navegador do celular, abra `http://192.168.0.10:5500/`.
+
+No computador, dá para simular o celular com `F12` → ícone de celular (modo responsivo).
+
+Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.webmanifest` e os ícones de `icones/`. Abrindo pelo IP local, o navegador cria um atalho; o modo app completo, sem a barra do navegador, precisa de HTTPS, por exemplo quando o projeto for publicado no GitHub Pages.
 
 ## Como mexer no protótipo
 

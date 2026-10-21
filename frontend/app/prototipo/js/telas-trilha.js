@@ -126,7 +126,7 @@ function renderTopicTree() {
   });
   return `
     <section class="topic-tree" aria-labelledby="topic-title">
-      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back"><span aria-hidden="true">←</span> Voltar à trilha</button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
+      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar à trilha"><span aria-hidden="true">←</span> <span class="back-label">Voltar à trilha</span></button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
       <div class="tree-canvas">
         <svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join("")}</svg>
         ${renderFinalNode(topicId)}
@@ -215,13 +215,22 @@ ${renderHeroProgress()}
     <p class="demo-disclaimer">Pontos, sequência e conteúdo exibidos são dados demonstrativos deste protótipo.</p>`;
 }
 
+// Título pequeno da atividade: etapa / exercício (ou prova final).
+function lessonEyebrow() {
+  const lesson = state.currentLesson;
+  if (!lesson) return "PRIMEIROS SINAIS";
+  const topic = learningTopics[lesson.topicId];
+  const name = lesson.branchId === "final" ? "Prova final" : topic.branches.find((branch) => branch.id === lesson.branchId).label;
+  return `${topic.title.toUpperCase()} <span class="eyebrow-separator">/</span> ${name.toUpperCase()}`;
+}
+
 function renderLesson() {
   return `
     <section class="lesson-wrap">
-      <div class="lesson-topline"><button class="back-button" type="button" data-screen="trail"><span aria-hidden="true">←</span> Voltar à trilha</button><span class="lesson-xp">✳ +20 XP</span></div>
+      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><span aria-hidden="true">←</span> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">✳ +20 XP</span></div>
       <div class="lesson-progress"><span></span></div>
       <div class="lesson-content">
-        <p class="eyebrow">PRIMEIROS SINAIS <span class="eyebrow-separator">/</span> ETAPA 01</p>
+        <p class="eyebrow">${lessonEyebrow()}</p>
         <h2>Qual atitude ajuda a manter uma conversa em Libras?</h2>
         <p class="lesson-hint">Escolha a melhor resposta para continuar.</p>
         <div class="answer-list" role="group" aria-label="Opções de resposta">

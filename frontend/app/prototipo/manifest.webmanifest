@@ -1,0 +1,17 @@
+{
+  "name": "EduSinal — Aprender Libras",
+  "short_name": "EduSinal",
+  "description": "Aprenda Libras de forma visual, no seu ritmo.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f6fb",
+  "theme_color": "#1f6fb8",
+  "icons": [
+    { "src": "icones/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icones/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

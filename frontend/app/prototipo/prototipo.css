@@ -267,9 +267,6 @@ a {
   clip-path: inset(50%);
 }
 
-.mobile-menu-control {
-  display: none;
-}
 
 .menu-toggle {
   display: none;
@@ -309,10 +306,7 @@ a {
 
 .app-shell[data-current-screen="intro"] .menu-toggle,
 .app-shell[data-current-screen="login"] .menu-toggle,
-.app-shell[data-current-screen="signup"] .menu-toggle,
-.app-shell[data-current-screen="intro"] .mobile-menu-control,
-.app-shell[data-current-screen="login"] .mobile-menu-control,
-.app-shell[data-current-screen="signup"] .mobile-menu-control {
+.app-shell[data-current-screen="signup"] .menu-toggle {
   display: none;
 }
 
@@ -1700,13 +1694,6 @@ textarea {
   
   }
 
-  .mobile-menu-control {
-    display: flex;
-    align-items: center;
-    min-height: 48px;
-    padding: 7px 17px 0;
-  
-  }
 
   .menu-toggle {
     flex: 0 0 auto;
@@ -2218,7 +2205,6 @@ textarea {
   }
 }
 
-.app-shell[data-focus="on"] .mobile-menu-control,
 .app-shell[data-focus="on"] .demo-disclaimer {
   display: none;
 }
@@ -3023,3 +3009,333 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
 .mascot-backdrop.bg-fundo-sol { background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); }
 .mascot-option-art.is-head .mascot-svg { margin-top: 0; }
 .mascot-option-art .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }
+
+/* ===================================================================
+   CELULAR
+   Segue o padrão do Duolingo: barra de cima com ofensiva, moedas e
+   vidas; barra de baixo com as abas; atividade e modo foco em tela cheia.
+   "env(safe-area-inset-*)" deixa espaço para o "notch" e a barra do iPhone.
+   =================================================================== */
+.mobile-topbar,
+.bottom-nav { display: none; }
+
+@media (max-width: 760px) {
+  /* ----- Barra de cima ----- */
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(8px + env(safe-area-inset-top)) 16px 8px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    font-family: "Manrope", sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .mobile-brand img { width: 32px; height: 32px; border-radius: 9px; }
+  .mobile-stats { display: flex; gap: 6px; margin-left: auto; }
+
+  .stat-chip {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .stat-chip strong { font-family: "Manrope", sans-serif; }
+  .stat-coins > span { color: #d9a20f; }
+  .stat-lives > span { color: var(--coral); }
+  .menu-toggle { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; color: var(--text); }
+
+  /* ----- Barra de baixo ----- */
+  .bottom-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 14;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: 0 -8px 24px rgba(10, 30, 70, 0.06);
+  }
+
+  .bottom-tab {
+    position: relative;
+    min-height: 54px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .bottom-tab-icon {
+    width: 40px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 17px;
+    transition: background-color 150ms ease;
+  }
+
+  .bottom-tab.is-active { color: var(--primary-strong); }
+  .bottom-tab.is-active .bottom-tab-icon { background: var(--primary-soft); }
+
+  .bottom-badge {
+    position: absolute;
+    top: 2px;
+    left: calc(50% + 8px);
+    min-width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--coral);
+    color: #fff;
+    font-size: 10px;
+  }
+
+  /* espaço para o conteúdo não ficar atrás da barra de baixo */
+  .workspace { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  .toast { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; max-width: none; text-align: center; }
+
+  /* Sem barras na apresentação, no login, no cadastro, na atividade e no modo foco */
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) :is(.mobile-topbar, .bottom-nav, .app-footer) { display: none; }
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) .workspace { padding-bottom: env(safe-area-inset-bottom); }
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"]) .app-footer { display: flex; }
+  .app-footer { display: none; }
+
+  /* ----- Tamanhos de texto e de toque (mínimo de 12px e 44px) ----- */
+  .screen-root { padding: 18px 16px 24px; }
+  .eyebrow { font-size: 11px; }
+  .demo-disclaimer { font-size: 11px; }
+  .button { min-height: 46px; padding: 0 16px; font-size: 14px; }
+  .text-button,
+  .back-button { min-height: 40px; font-size: 13px; }
+  .page-intro { flex-direction: row; align-items: flex-start; gap: 12px; padding: 4px 0 14px; }
+  .page-intro > div { flex: 1; min-width: 0; }
+  .page-intro h2 { font-size: 26px; }
+  .page-intro p:not(.eyebrow) { font-size: 14px; }
+  .page-intro > .demo-pill { margin-top: 22px; font-size: 10px; }
+  .page-intro > .shop-balance { margin-top: 18px; font-size: 13px; }
+  .page-intro > .league-badge-large { width: 52px; height: 52px; margin-top: 16px; border-radius: 16px; font-size: 26px; }
+  .section-heading h2 { font-size: 20px; }
+  input,
+  select,
+  textarea,
+  .dictionary-search { font-size: 16px; } /* 16px evita o zoom automático do iPhone */
+
+  /* Categorias e abas em uma linha só, rolando para o lado */
+  .dictionary-categories {
+    flex-wrap: nowrap;
+    margin: 0 -16px;
+    padding: 2px 16px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dictionary-categories::-webkit-scrollbar { display: none; }
+  .category-chip,
+  .choice-button { flex: 0 0 auto; min-height: 40px; font-size: 13px; }
+
+  /* ----- Home ----- */
+  .home-hero { padding: 20px 18px; }
+  .home-hero-copy h2 { font-size: 24px; }
+  .home-hero-copy > p:not(.eyebrow) { font-size: 13px; }
+  .home-hero-copy .button { min-height: 46px; padding: 0 16px; font-size: 14px; }
+  .home-hero-art { width: 84px; height: 84px; }
+
+  /* Trilha vira um caminho vertical, como no app */
+  .learning-route { grid-template-columns: minmax(0, 1fr); row-gap: 16px; margin-top: 18px; }
+  .learning-route::before {
+    display: block;
+    top: 26px;
+    right: auto;
+    bottom: 26px;
+    left: 28px;
+    width: 3px;
+    height: auto;
+    background: repeating-linear-gradient(180deg, var(--line) 0 8px, transparent 8px 14px);
+  }
+
+  .route-step {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: center;
+    text-align: left;
+  }
+
+  .route-step > .route-node { grid-row: 1 / span 3; margin: 0; }
+  .route-step .path-label { font-size: 10px; }
+  .route-step h3 { min-height: 0; font-size: 15px; }
+  .route-step p { max-width: none; font-size: 13px; }
+  .home-task strong { font-size: 14px; }
+  .home-task small { font-size: 12px; }
+
+  /* ----- Modo foco: árvore vira um caminho vertical com a prova no fim ----- */
+  .topic-topline { gap: 8px; }
+  .topic-topline .back-label,
+  .lesson-topline .back-label { display: none; }
+  .topic-topline .back-button,
+  .lesson-topline .back-button {
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    font-size: 18px;
+  }
+
+  .topic-hud { flex-wrap: nowrap; gap: 6px; }
+  .hud-item { padding: 7px 10px; font-size: 13px; }
+  .hud-item small { display: none; }
+  .tree-canvas { padding: 18px 14px 16px; }
+  .tree-canvas::before {
+    position: absolute;
+    top: 46px;
+    bottom: 160px;
+    left: 50px;
+    border-left: 3px dashed var(--line);
+    content: "";
+  }
+
+  .tree-leaf { position: relative; top: auto; left: auto; z-index: 1; padding: 10px 6px; }
+  .tree-leaf strong { font-size: 15px; }
+  .tree-leaf small { font-size: 12px; }
+  .tree-center {
+    margin-top: 10px;
+    padding: 18px 14px;
+    border: 2px solid var(--line);
+    border-radius: 20px;
+  }
+
+  .tree-center.is-open { border-color: var(--yellow); background: var(--yellow-soft); }
+  .tree-center h2 { font-size: 20px; }
+  .tree-center small { max-width: none; font-size: 12px; }
+
+  /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
+  .app-shell[data-current-screen="lesson"] .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
+  .lesson-topline { gap: 12px; margin-bottom: 12px; }
+  .lesson-lives { display: flex; gap: 2px; margin-left: auto; font-size: 16px; }
+  .lesson-progress { margin-bottom: 18px; }
+  .lesson-content {
+    min-height: calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+  }
+
+  .lesson-content h2 { font-size: 24px; }
+  .lesson-hint { font-size: 14px; }
+  .answer-list { gap: 10px; }
+  .answer-option { min-height: 58px; padding: 12px 14px; border-width: 2px; border-radius: 14px; font-size: 15px; }
+  .continue-button { min-height: 52px; margin-top: auto; border-radius: 14px; font-size: 15px; }
+  .lesson-wrap > .demo-disclaimer { display: none; }
+
+  /* ----- Telas das abas ----- */
+  .ranking-row strong { font-size: 14px; }
+  .league-ladder { scrollbar-width: none; }
+  .league-step { min-width: 62px; }
+  .league-status p { font-size: 14px; }
+  .mission-row { grid-template-columns: 40px minmax(0, 1fr) auto; row-gap: 8px; }
+  .mission-copy { grid-column: 2 / -1; }
+  .mission-count { grid-column: 2; }
+  .mission-row > :last-child { grid-column: 3; justify-self: end; min-width: 0; }
+  .mission-claim { min-height: 40px; padding: 0 14px; font-size: 13px; }
+  .mission-copy h3 { font-size: 15px; }
+  .mission-copy p { font-size: 13px; }
+  .shop-item-copy h3 { font-size: 15px; }
+  .shop-item-copy p { font-size: 13px; }
+  .shop-item > .button { min-height: 42px; font-size: 13px; }
+  .shop-mascot-banner p { font-size: 13px; }
+  .profile-identity > p { font-size: 13px; }
+  .profile-identity .button { min-height: 42px; padding: 0 14px; font-size: 13px; }
+  .profile-currency span,
+  .profile-stat small { font-size: 11px; }
+  .achievement p { font-size: 13px; }
+  .word-card strong { font-size: 16px; }
+  .alphabet-grid { gap: 8px; }
+  .setting-row small,
+  .faq,
+  .more-list,
+  .more-text { font-size: 14px; }
+
+  /* Editor do mascote: o personagem fica preso no topo enquanto você rola as opções */
+  .mascot-stage {
+    position: sticky;
+    top: calc(57px + env(safe-area-inset-top));
+    z-index: 5;
+    grid-template-columns: 104px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 2px;
+    padding: 12px 14px;
+    text-align: left;
+    box-shadow: 0 10px 24px rgba(10, 30, 70, 0.08);
+  }
+
+  .mascot-stage > .mascot-avatar { grid-row: 1 / span 3; width: 104px; }
+  .mascot-stage > strong { margin-top: 0; font-size: 17px; }
+  .mascot-stage .text-button { margin-top: 0; }
+  .mascot-options { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .mascot-option { padding: 8px 4px 10px; }
+  .mascot-option-art { width: min(84px, 100%); height: auto; aspect-ratio: 1; }
+  .mascot-option strong { font-size: 13px; }
+
+  /* Cadastro e login: campos grandes e fáceis de tocar */
+  .field-label { font-size: 14px; }
+  .field-label input { min-height: 50px; font-size: 16px; }
+  .field-hint,
+  .form-legal,
+  .signup-aside { font-size: 12px; }
+  .signup-intro > p:not(.eyebrow) { font-size: 14px; }
+  .login-register { font-size: 14px; }
+
+  /* Menu lateral (☰) desliza por cima, com a altura certa no iPhone */
+  .sidebar { padding-top: calc(24px + env(safe-area-inset-top)); padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 360px) {
+  .mobile-brand span { display: none; }
+  .stat-chip { padding: 0 8px; font-size: 13px; }
+  .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

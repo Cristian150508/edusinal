@@ -27,6 +27,32 @@ const screenRenderers = {
 
 // ----- Desenho da página -----
 
+// Celular: abas da barra de baixo (o resto fica no menu ☰).
+const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "profile"];
+
+// Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
+const PARENT_TAB = { lesson: "trail", mascot: "profile" };
+
+function renderBottomNav() {
+  const activeTab = PARENT_TAB[state.screen] || state.screen;
+  const ready = readyMissionsCount();
+  document.getElementById("bottom-nav").innerHTML = MOBILE_TABS.map((screen) => {
+    const [, label, icon] = navigationItems.find(([id]) => id === screen);
+    const isActive = activeTab === screen;
+    const badge = screen === "missions" && ready > 0 ? `<span class="bottom-badge" aria-label="${ready} para resgatar">${ready}</span>` : "";
+    return `<button class="bottom-tab${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}><span class="bottom-tab-icon" aria-hidden="true">${icon}</span><span>${label}</span>${badge}</button>`;
+  }).join("");
+}
+
+// Celular: ofensiva, moedas e vidas na barra de cima (como no Duolingo).
+function renderMobileStats() {
+  refreshLives();
+  document.getElementById("mobile-stats").innerHTML = `
+    <button class="stat-chip stat-streak" type="button" data-screen="profile" aria-label="Ofensiva: ${state.streak} dias"><span aria-hidden="true">🔥</span><strong>${state.streak}</strong></button>
+    <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha"><span aria-hidden="true">✦</span><strong>${state.coins}</strong></button>
+    <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span aria-hidden="true">♥</span><strong>${state.lives}</strong></button>`;
+}
+
 function renderNavigation() {
   document.getElementById("sidebar-label").textContent = "ESPAÇO DO ALUNO";
   document.getElementById("side-nav").innerHTML = navigationItems.map(([screen, label, icon], index) => {
@@ -45,6 +71,8 @@ function render() {
   app.dataset.currentScreen = state.screen;
   app.dataset.focus = state.focusTopic ? "on" : "off";
   renderNavigation();
+  renderBottomNav();
+  renderMobileStats();
   screenRoot.innerHTML = screenRenderers[state.screen]();
   app.dataset.theme = state.theme;
   app.dataset.textSize = state.textSize;
@@ -117,6 +145,13 @@ function answerQuestion(clickedButton) {
 
 // Termina a atividade. Se veio de um galho da árvore, volta para a árvore.
 // A recompensa só vem na primeira vez que o galho é concluído.
+// Sair da atividade sem terminar: volta para a árvore se veio de um galho.
+function leaveLesson() {
+  const lesson = state.currentLesson;
+  setScreen("trail");
+  if (lesson) openTopic(lesson.topicId);
+}
+
 function finishLesson(continueButton) {
   const lesson = state.currentLesson;
   if (continueButton.dataset.correct === "true") {
@@ -159,6 +194,7 @@ document.addEventListener("click", (event) => {
   else if (action === "start-branch") startBranch(data.topic, data.branch);
   else if (action === "answer") answerQuestion(actionButton);
   else if (action === "finish-lesson") finishLesson(actionButton);
+  else if (action === "leave-lesson") leaveLesson();
   // Dicionário
   else if (action === "dictionary-category") chooseDictionaryCategory(data.category);
   else if (action === "select-word") selectWord(data.word);
