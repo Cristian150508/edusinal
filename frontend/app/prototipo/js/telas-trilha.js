@@ -136,6 +136,37 @@ function renderTopicTree() {
 }
 
 
+// Etapa em que o aluno está: a primeira cuja prova final ainda não foi feita.
+function currentTopicId() {
+  const topicIds = Object.keys(learningTopics);
+  return topicIds.find((id) => !isLessonDone(id, "final")) || topicIds[topicIds.length - 1];
+}
+
+// Texto do aviso "você está aqui" no topo da Home.
+function renderHeroProgress() {
+  const topicId = currentTopicId();
+  const topic = learningTopics[topicId];
+  const done = doneBranchCount(topicId);
+  const total = topic.branches.length;
+
+  let summary = `${done} de ${total} exercícios concluídos.`;
+  let buttonLabel = done === 0 ? "Começar a etapa" : "Continuar de onde parou";
+  if (isLessonDone(topicId, "final")) {
+    summary = "Etapa concluída, parabéns!";
+    buttonLabel = "Rever a etapa";
+  } else if (done === total) {
+    summary = "Todos os exercícios feitos. A prova final está liberada!";
+    buttonLabel = "Ir para a prova final";
+  }
+  return `
+          <div class="home-hero-copy">
+            <p class="eyebrow"><span class="status-dot"></span> VOCÊ ESTÁ AQUI · ETAPA ${topic.number}</p>
+            <h2>Oi, ${escapeHtml(state.name)}! <span>${topic.title}</span></h2>
+            <p>${topic.subtitle}. ${summary}</p>
+            <button class="button button-primary" type="button" data-action="open-topic" data-topic="${topicId}">${buttonLabel} <span aria-hidden="true">→</span></button>
+          </div>`;
+}
+
 function renderTrail() {
   if (state.focusTopic) return renderTopicTree();
   refreshLives();
@@ -144,12 +175,7 @@ function renderTrail() {
     <div class="home-dashboard">
       <div class="home-main-column">
         <section class="home-hero">
-          <div class="home-hero-copy">
-            <p class="eyebrow"><span class="status-dot"></span> SUA JORNADA EM LIBRAS</p>
-            <h2>Oi, ${escapeHtml(state.name)}! <span>Pronto para aprender?</span></h2>
-            <p>Um desafio rápido hoje ajuda você a se aproximar de novas conversas.</p>
-            <button class="button button-primary" type="button" data-action="start-lesson" ${state.lives === 0 ? "disabled" : ""}>Iniciar desafio <span aria-hidden="true">→</span></button>
-          </div>
+${renderHeroProgress()}
           <div class="home-hero-art" aria-hidden="true"><span>🤟</span><small>UM SINAL<br />DE CADA VEZ</small></div>
         </section>
 
@@ -170,7 +196,7 @@ function renderTrail() {
       <aside class="home-side-column" aria-label="Resumo e tarefas">
         <section class="home-side-card home-tasks">
           <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Tarefas</h2></div>
-          <button class="home-task" type="button" data-action="start-lesson" ${state.lives === 0 ? "disabled" : ""}><span class="task-check">01</span><span><strong>Faça um desafio</strong><small>Pratique uma saudação</small></span><span aria-hidden="true">→</span></button>
+          <button class="home-task" type="button" data-action="open-topic" data-topic="${currentTopicId()}"><span class="task-check">01</span><span><strong>Continue sua etapa</strong><small>Faça um exercício da árvore</small></span><span aria-hidden="true">→</span></button>
           <button class="home-task" type="button" data-screen="signs"><span class="task-check">02</span><span><strong>Explore o dicionário</strong><small>Descubra novos sinais</small></span><span aria-hidden="true">→</span></button>
           <button class="home-task" type="button" data-screen="missions"><span class="task-check">03</span><span><strong>Veja suas missões</strong><small>Acompanhe seus objetivos</small></span><span aria-hidden="true">→</span></button>
         </section>

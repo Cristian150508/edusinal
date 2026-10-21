@@ -58,7 +58,6 @@ const screenTitles = {
 const navigationItems = [
   ["trail", "Home", "⌂"],
   ["signs", "Dicionário", "◉"],
-  ["lesson", "Desafios", "✳"],
   ["leagues", "Ligas", "⬟"],
   ["missions", "Missões", "▣"],
   ["shop", "Lojinha", "✿"],

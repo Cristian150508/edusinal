@@ -49,7 +49,7 @@ function renderMissions() {
   return `
     <section class="page-intro"><div><p class="eyebrow">OBJETIVOS DA SEMANA</p><h2>Missões</h2><p>Metas pequenas ajudam a criar um ritmo de aprendizagem.</p></div><span class="demo-pill">1 DE 3 CONCLUÍDAS</span></section>
     <section class="mission-list"><article class="mission-row"><span class="mission-mark mission-mark-coral">✳</span><div><h3>Faça uma atividade</h3><p>Pratique um conteúdo da sua trilha.</p><div class="progress-track"><span style="width: 100%"></span></div></div><strong>1 / 1</strong></article><article class="mission-row"><span class="mission-mark mission-mark-yellow">✦</span><div><h3>Ganhe 40 XP</h3><p>Some pontos resolvendo atividades.</p><div class="progress-track"><span style="width: 45%"></span></div></div><strong>20 / 40</strong></article><article class="mission-row"><span class="mission-mark mission-mark-green">◷</span><div><h3>Pratique em 3 dias</h3><p>Volte à trilha ao longo da semana.</p><div class="progress-track"><span style="width: 34%"></span></div></div><strong>1 / 3</strong></article></section>
-    <button class="button button-primary" type="button" data-screen="lesson">Praticar agora <span aria-hidden="true">→</span></button>`;
+    <button class="button button-primary" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Praticar agora <span aria-hidden="true">→</span></button>`;
 }
 
 function renderProfile() {

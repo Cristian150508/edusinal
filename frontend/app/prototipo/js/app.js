@@ -72,7 +72,9 @@ function setScreen(screen) {
 
 // ----- Modo foco (árvore de lições) -----
 
+// Abre a árvore de uma etapa, de qualquer tela (Home, missões...).
 function openTopic(topicId) {
+  setScreen("trail");
   state.focusTopic = topicId;
   render();
   document.getElementById("topic-back").focus({ preventScroll: true });
@@ -143,11 +145,6 @@ function finishLesson(continueButton) {
   if (lesson) openTopic(lesson.topicId);
 }
 
-function startDailyChallenge() {
-  state.currentLesson = null;
-  setScreen("lesson");
-}
-
 function startBranch(topicId, branchId) {
   state.currentLesson = { topicId, branchId };
   setScreen("lesson");
@@ -182,7 +179,6 @@ document.addEventListener("click", (event) => {
 
   if (action === "open-topic") openTopic(actionButton.dataset.topic);
   else if (action === "close-topic") closeTopic();
-  else if (action === "start-lesson") startDailyChallenge();
   else if (action === "start-branch") startBranch(actionButton.dataset.topic, actionButton.dataset.branch);
   else if (action === "answer") answerQuestion(actionButton);
   else if (action === "finish-lesson") finishLesson(actionButton);
