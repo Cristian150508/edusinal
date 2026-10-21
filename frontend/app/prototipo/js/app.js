@@ -7,7 +7,6 @@ const screenRoot = document.getElementById("screen-root");
 const heading = document.getElementById("screen-heading");
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menu-toggle");
-const themeToggle = document.getElementById("theme-toggle");
 
 // Cada tela e a função que desenha o HTML dela.
 const screenRenderers = {
@@ -77,8 +76,6 @@ function render() {
   app.dataset.theme = state.theme;
   app.dataset.textSize = state.textSize;
   app.dataset.motion = state.motion;
-  themeToggle.setAttribute("aria-pressed", String(state.theme === "dark"));
-  document.getElementById("theme-label").textContent = state.theme === "dark" ? "Tema claro" : "Tema escuro";
 }
 
 // Vai para outra tela. Sem vidas, o desafio fica bloqueado (revisar continua livre).
@@ -93,6 +90,7 @@ function setScreen(screen) {
   state.screen = screen;
   state.answered = false;
   state.focusTopic = null;
+  state.editingName = false;
   if (screen !== "lesson") state.currentLesson = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
   sidebar.classList.remove("is-open");
@@ -122,25 +120,38 @@ function closeTopic() {
 // ----- Atividade -----
 // (as ações de cada aba ficam no arquivo da aba: telas-lojinha.js, telas-missoes.js...)
 
-function answerQuestion(clickedButton) {
+// 1º passo: o aluno escolhe uma resposta (pode trocar antes de conferir).
+function selectAnswer(clickedButton) {
   if (state.answered) return;
+  document.querySelectorAll(".answer-option").forEach((option) => {
+    option.classList.toggle("is-selected", option === clickedButton);
+    option.setAttribute("aria-pressed", String(option === clickedButton));
+  });
+  document.getElementById("lesson-continue").disabled = false;
+}
+
+// 2º passo: "Conferir" mostra se acertou. Errar gasta uma vida.
+function checkAnswer() {
+  const chosen = document.querySelector(".answer-option.is-selected");
+  if (state.answered || !chosen) return;
   state.answered = true;
-  const isCorrect = clickedButton.dataset.answer === "correct";
+  const isCorrect = chosen.dataset.answer === "correct";
   if (!isCorrect) loseLife();
 
   document.querySelectorAll(".answer-option").forEach((option) => {
     option.disabled = true;
     if (option.dataset.answer === "correct") option.classList.add("is-correct");
-    else if (option === clickedButton) option.classList.add("is-incorrect");
+    else if (option === chosen) option.classList.add("is-incorrect");
   });
+  document.getElementById("lesson-progress-bar").style.width = "100%";
   document.getElementById("answer-feedback").textContent = isCorrect
     ? "Isso! O contato visual ajuda a acompanhar a conversa em Libras."
     : "Quase. Em Libras, o contato visual ajuda a acompanhar a conversa.";
 
   const continueButton = document.getElementById("lesson-continue");
-  continueButton.disabled = false;
-  continueButton.textContent = isCorrect ? "Concluir atividade" : "Voltar à trilha";
+  continueButton.dataset.action = "finish-lesson";
   continueButton.dataset.correct = String(isCorrect);
+  continueButton.textContent = isCorrect ? "Concluir atividade" : "Continuar";
 }
 
 // Termina a atividade. Se veio de um galho da árvore, volta para a árvore.
@@ -192,7 +203,8 @@ document.addEventListener("click", (event) => {
   if (action === "open-topic") openTopic(data.topic);
   else if (action === "close-topic") closeTopic();
   else if (action === "start-branch") startBranch(data.topic, data.branch);
-  else if (action === "answer") answerQuestion(actionButton);
+  else if (action === "select-answer") selectAnswer(actionButton);
+  else if (action === "check-answer") checkAnswer();
   else if (action === "finish-lesson") finishLesson(actionButton);
   else if (action === "leave-lesson") leaveLesson();
   // Dicionário
@@ -233,10 +245,6 @@ document.addEventListener("submit", (event) => {
   }
 });
 
-themeToggle.addEventListener("click", () => {
-  setTheme(state.theme === "dark" ? "light" : "dark");
-});
-
 menuToggle.addEventListener("click", () => {
   const isOpen = sidebar.classList.toggle("is-open");
   menuToggle.setAttribute("aria-expanded", String(isOpen));
@@ -250,9 +258,10 @@ document.addEventListener("keydown", (event) => {
   menuToggle.setAttribute("aria-expanded", "false");
 });
 
-// Mantém o tempo de recarga das vidas atualizado na Home.
+// Mantém as vidas (e o tempo de recarga) atualizadas na Home e na barra do celular.
 window.setInterval(() => {
   if (state.screen === "trail") updateLifeIndicator();
+  renderMobileStats();
 }, 15000);
 
 // ----- Início -----

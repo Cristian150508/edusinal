@@ -12,6 +12,8 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 - **Abas do aluno:** dicionário com busca e categorias (revisar é livre); ligas semanais com colegas fictícios (os 3 primeiros sobem, os 2 últimos descem); missões do dia e da semana que dão moedas; lojinha com ajudas (recarga de vidas, protetor de ofensiva), acessórios e fundos; perfil com conquistas; e "Mais" com tema, tamanho do texto, animações reduzidas, ajuda e privacidade.
 - **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva.
 - **Segurança para menores:** não há chat nem mensagens entre alunos, e as ligas mostram só apelidos.
+- **Conta demonstrativa:** o cadastro cria um perfil novo, do zero (com 20 moedas de boas-vindas), salvo só neste navegador. Entrar usa o mesmo e-mail do cadastro; sem servidor, a senha não é conferida. Tema claro/escuro, tamanho do texto e animações ficam em "Mais → Preferências".
+- **Atividade:** o aluno escolhe a resposta e depois toca em "Conferir"; só errar ao conferir gasta vida. Refazer um exercício já concluído é revisão, sem XP.
 - **Importante:** o frontend ainda não está conectado à API. Não há autenticação nem verificação real de idade. A loja não usa dinheiro real.
 
 ## Estrutura de pastas

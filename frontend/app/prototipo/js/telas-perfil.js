@@ -21,7 +21,7 @@ const ACHIEVEMENTS = [
   { id: "etapa", icon: "★", title: "Etapa vencida", text: "Passe em uma prova final.", target: 1, progress: finishedTopicsCount },
   { id: "ofensiva", icon: "🔥", title: "Em chamas", text: "Chegue a 7 dias de ofensiva.", target: 7, progress: () => state.streak },
   { id: "explorador", icon: "◉", title: "Explorador", text: "Veja 10 sinais diferentes no dicionário.", target: 10, progress: () => state.signsSeen.length },
-  { id: "colecionador", icon: "✿", title: "Colecionador", text: "Tenha 3 itens da lojinha.", target: 3, progress: () => state.unlockedItems.length },
+  { id: "colecionador", icon: "✿", title: "Colecionador", text: "Tenha 3 itens para o mascote (comprados ou ganhos).", target: 3, progress: () => state.unlockedItems.length },
   { id: "liga", icon: "⬟", title: "Subindo", text: "Chegue à liga Prata.", target: 1, progress: () => state.league },
 ];
 

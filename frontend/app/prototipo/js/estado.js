@@ -76,6 +76,7 @@ const state = {
   lives: savedPrototype.lives ?? MAX_LIVES,
   nextLifeAt: savedPrototype.nextLifeAt || null,
   name: savedPrototype.name || "Marina",
+  email: savedPrototype.email || "",      // e-mail do perfil criado neste navegador (para entrar de novo)
   isRegistered: wasRegistered,
   isMinor: savedPrototype.isMinor || false,
   unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
@@ -147,6 +148,7 @@ function persist() {
     lives: state.lives,
     nextLifeAt: state.nextLifeAt,
     name: state.name,
+    email: state.email,
     isRegistered: state.isRegistered,
     isMinor: state.isMinor,
     unlockedItems: state.unlockedItems,

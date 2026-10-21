@@ -213,7 +213,6 @@ a {
   gap: 10px;
   padding: 13px 10px;
   border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
   color: var(--muted);
   font-size: 11px;
   line-height: 1.45;
@@ -225,25 +224,7 @@ a {
   font-size: 20px;
 }
 
-.theme-toggle {
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 0 11px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  text-align: left;
-  font-size: 12px;
-  font-weight: 600;
-}
 
-.theme-toggle:hover {
-  background: var(--surface-alt);
-}
 
 .theme-icon {
   color: var(--primary);
@@ -1381,7 +1362,7 @@ textarea {
 }
 
 .lesson-progress span {
-  width: 35%;
+  transition: width 400ms ease;
   height: 100%;
   display: block;
   background: var(--primary);
@@ -1435,6 +1416,11 @@ textarea {
 .answer-option:hover:not(:disabled) {
   border-color: var(--primary);
   background: var(--surface-alt);
+}
+
+.answer-option.is-selected {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
 }
 
 .answer-option.is-correct {
@@ -1605,10 +1591,6 @@ textarea {
 
 .app-shell[data-theme="dark"] .button-primary {
   color: #0f1d2b;
-}
-
-.app-shell[data-theme="dark"] .theme-toggle {
-  color: var(--text);
 }
 
 @keyframes screen-in {
@@ -3339,3 +3321,28 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   .stat-chip { padding: 0 8px; font-size: 13px; }
   .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ----- Vistoria de lógica ----- */
+/* Aviso da árvore quando acabam as vidas */
+.tree-warning {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--coral-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tree-warning > span { color: var(--coral); }
+.tree-warning .text-button { min-height: 0; font-size: 13px; text-decoration: underline; }
+
+/* Etapa concluída na trilha */
+.route-step.is-finished .route-node { background: var(--accent-soft); color: var(--accent); font-size: 20px; }
+.route-step.is-finished .path-label { color: var(--accent); }
+
+/* Ícone das missões no card da Home */
+.home-tasks .task-check { font-size: 15px; }

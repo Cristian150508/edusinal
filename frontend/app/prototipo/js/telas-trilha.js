@@ -127,6 +127,7 @@ function renderTopicTree() {
   return `
     <section class="topic-tree" aria-labelledby="topic-title">
       <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar à trilha"><span aria-hidden="true">←</span> <span class="back-label">Voltar à trilha</span></button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
+      ${state.lives === 0 ? `<p class="tree-warning" role="status"><span aria-hidden="true">♥</span> Sem vidas agora (${timeUntilNextLife()}). Enquanto isso, revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na <button class="text-button" type="button" data-screen="shop">lojinha</button>.</p>` : ""}
       <div class="tree-canvas">
         <svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join("")}</svg>
         ${renderFinalNode(topicId)}
@@ -167,6 +168,37 @@ function renderHeroProgress() {
           </div>`;
 }
 
+// Etapas da trilha na Home. Só as que têm "topicId" já têm conteúdo.
+const TRAIL_STEPS = [
+  { topicId: "primeiros-sinais", number: "01", title: "Primeiros sinais", subtitle: "Saudações do dia a dia", color: "coral" },
+  { topicId: null, number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões", color: "yellow" },
+  { topicId: null, number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida", color: "green" },
+  { topicId: null, number: "04", title: "Rotina e lugares", subtitle: "Palavras para o cotidiano", color: "blue" },
+];
+
+// Uma etapa da trilha com o estado real: começar, em andamento, concluída ou em breve.
+function renderRouteStep(step) {
+  if (!step.topicId) {
+    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, em breve">${step.number}</span><span class="path-label">EM BREVE</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+  }
+  const done = doneBranchCount(step.topicId);
+  const total = learningTopics[step.topicId].branches.length;
+  const isFinished = isLessonDone(step.topicId, "final");
+  let label = "COMECE POR AQUI";
+  if (isFinished) label = "CONCLUÍDA ✓";
+  else if (done > 0) label = `EM ANDAMENTO · ${done}/${total}`;
+  return `<article class="route-step route-step-active${isFinished ? " is-finished" : ""}"><button class="route-node node-${step.color}" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}">${isFinished ? "✓" : step.number}</button><span class="path-label">${label}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+}
+
+// Resumo das missões do dia na lateral da Home (o detalhe fica na aba Missões).
+function renderHomeMission(mission) {
+  const value = Math.min(mission.progress(), mission.target);
+  let status = `${value} / ${mission.target}`;
+  if (state.daily.claimed.includes(mission.id)) status = "Resgatada ✓";
+  else if (isMissionComplete(mission)) status = `Pronta! Resgate +${mission.reward} ✦`;
+  return `<button class="home-task" type="button" data-screen="missions"><span class="task-check" aria-hidden="true">${mission.icon}</span><span><strong>${mission.title}</strong><small>${status}</small></span><span aria-hidden="true">→</span></button>`;
+}
+
 function renderTrail() {
   if (state.focusTopic) return renderTopicTree();
   refreshLives();
@@ -182,23 +214,16 @@ ${renderHeroProgress()}
         <section class="home-map" aria-labelledby="path-title">
           <div class="home-map-heading">
             <div><p class="eyebrow">NÍVEL INICIANTE</p><h2 id="path-title">Sua trilha</h2></div>
-            <span class="section-count">UNIDADE 01 <span aria-hidden="true">·</span> 4 etapas</span>
+            <span class="section-count">UNIDADE 01 <span aria-hidden="true">·</span> ${TRAIL_STEPS.length} etapas</span>
           </div>
-          <div class="learning-route">
-            <article class="route-step route-step-active"><button class="route-node node-coral" type="button" data-action="open-topic" data-topic="primeiros-sinais" aria-label="Abrir Primeiros sinais">01</button><span class="path-label">COMECE POR AQUI</span><h3>Primeiros sinais</h3><p>Saudações do dia a dia</p></article>
-            <article class="route-step route-step-locked"><span class="route-node node-yellow" aria-label="Etapa bloqueada">02</span><span class="path-label">PRÓXIMA ETAPA</span><h3>Apresentações</h3><p>Seu nome e novas conexões</p></article>
-            <article class="route-step route-step-locked"><span class="route-node node-green" aria-label="Etapa bloqueada">03</span><span class="path-label">EM SEGUIDA</span><h3>Pessoas e família</h3><p>Quem faz parte da sua vida</p></article>
-            <article class="route-step route-step-locked"><span class="route-node node-blue" aria-label="Etapa bloqueada">04</span><span class="path-label">EM SEGUIDA</span><h3>Rotina e lugares</h3><p>Palavras para o cotidiano</p></article>
-          </div>
+          <div class="learning-route">${TRAIL_STEPS.map(renderRouteStep).join("")}</div>
         </section>
       </div>
 
       <aside class="home-side-column" aria-label="Resumo e tarefas">
         <section class="home-side-card home-tasks">
-          <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Tarefas</h2></div>
-          <button class="home-task" type="button" data-action="open-topic" data-topic="${currentTopicId()}"><span class="task-check">01</span><span><strong>Continue sua etapa</strong><small>Faça um exercício da árvore</small></span><span aria-hidden="true">→</span></button>
-          <button class="home-task" type="button" data-screen="signs"><span class="task-check">02</span><span><strong>Explore o dicionário</strong><small>Descubra novos sinais</small></span><span aria-hidden="true">→</span></button>
-          <button class="home-task" type="button" data-screen="missions"><span class="task-check">03</span><span><strong>Veja suas missões</strong><small>${readyMissionsCount() > 0 ? `${readyMissionsCount()} pronta(s) para resgatar` : "Acompanhe seus objetivos"}</small></span><span aria-hidden="true">→</span></button>
+          <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Missões do dia</h2></div>
+          ${DAILY_MISSIONS.map(renderHomeMission).join("")}
         </section>
 
         <section class="home-side-card home-stats">
@@ -224,22 +249,29 @@ function lessonEyebrow() {
   return `${topic.title.toUpperCase()} <span class="eyebrow-separator">/</span> ${name.toUpperCase()}`;
 }
 
+// Recompensa mostrada no topo da atividade: refazer um exercício já feito não dá XP.
+function lessonRewardLabel() {
+  const lesson = state.currentLesson;
+  if (lesson && isLessonDone(lesson.topicId, lesson.branchId)) return "Revisão · sem XP";
+  return `✳ +${XP_PER_EXERCISE} XP`;
+}
+
 function renderLesson() {
   return `
     <section class="lesson-wrap">
-      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><span aria-hidden="true">←</span> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">✳ +20 XP</span></div>
-      <div class="lesson-progress"><span></span></div>
+      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><span aria-hidden="true">←</span> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">${lessonRewardLabel()}</span></div>
+      <div class="lesson-progress"><span id="lesson-progress-bar" style="width: 0%"></span></div>
       <div class="lesson-content">
         <p class="eyebrow">${lessonEyebrow()}</p>
         <h2>Qual atitude ajuda a manter uma conversa em Libras?</h2>
         <p class="lesson-hint">Escolha a melhor resposta para continuar.</p>
         <div class="answer-list" role="group" aria-label="Opções de resposta">
-          <button class="answer-option" type="button" data-action="answer" data-answer="wrong">Desviar o olhar enquanto a outra pessoa sinaliza</button>
-          <button class="answer-option" type="button" data-action="answer" data-answer="correct">Manter contato visual durante a conversa</button>
-          <button class="answer-option" type="button" data-action="answer" data-answer="wrong">Falar mais alto para facilitar a comunicação</button>
+          <button class="answer-option" type="button" data-action="select-answer" data-answer="wrong">Desviar o olhar enquanto a outra pessoa sinaliza</button>
+          <button class="answer-option" type="button" data-action="select-answer" data-answer="correct">Manter contato visual durante a conversa</button>
+          <button class="answer-option" type="button" data-action="select-answer" data-answer="wrong">Falar mais alto para facilitar a comunicação</button>
         </div>
         <div class="answer-feedback" id="answer-feedback" aria-live="polite"></div>
-        <button class="button button-primary continue-button" id="lesson-continue" type="button" data-action="finish-lesson" disabled>Conferir resposta</button>
+        <button class="button button-primary continue-button" id="lesson-continue" type="button" data-action="check-answer" disabled>Conferir</button>
       </div>
       <p class="demo-disclaimer">Atividade demonstrativa sobre comunicação; não substitui material didático de Libras.</p>
     </section>`;
