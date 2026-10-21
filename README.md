@@ -1,20 +1,28 @@
 # EduSinal
 
-Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiência principal: tem trilha, atividades, vidas, progresso, perfil com mascote personalizável e uma lojinha com moedas fictícias.
+Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiência principal: tem trilha, árvore de lições com prova final, atividades, vidas, progresso, perfil com mascote personalizável e uma lojinha com moedas fictícias. A interface segue a identidade visual do projeto: azul, turquesa e branco, com tema claro e escuro.
 
 ## O que existe hoje
 
-- **Frontend:** HTML, CSS e JavaScript. A Home abre em `/`; o estado demonstrativo fica no `localStorage` do navegador.
+- **Frontend:** HTML, CSS e JavaScript puros, sem bibliotecas. A Home abre em `/`; o estado demonstrativo fica no `localStorage` do navegador.
+- **Trilha e árvore de lições:** clicar em uma etapa da trilha abre o modo foco: o menu lateral recua e a etapa vira o centro de uma árvore com 5 galhos (exercícios). O centro é a **prova final**: ela só abre depois que os 5 galhos forem concluídos; antes disso, tocar nela apenas volta à trilha. O progresso dos galhos fica salvo no navegador e refazer um galho não dá recompensa de novo. No momento todos os galhos usam a mesma atividade de demonstração.
 - **Backend:** Python, FastAPI e MySQL, organizado em controllers, schemas, repositories e services.
 - **Vidas:** 3 vidas; cada resposta errada consome uma e uma vida se recupera a cada 30 minutos. Revisar o dicionário continua livre.
 - **Recompensas demonstrativas:** uma atividade nova correta concede 20 XP. A primeira dá 15 moedas e libera um broche local no protótipo; cada atividade nova seguinte dá 5 moedas. O inventário ainda não está na API.
-- **Importante:** o frontend ainda não está conectado à API. Não há autenticação nem verificação real de idade ou de responsável. A loja não usa dinheiro real.
+- **Importante:** o frontend ainda não está conectado à API. Não há autenticação nem verificação real de idade. A loja não usa dinheiro real.
 
 ## Estrutura de pastas
 
 ```text
 frontend/
-  app/prototipo/       Aplicação principal (HTML, CSS e JavaScript)
+  app/prototipo/
+    index.html         Página do protótipo
+    prototipo.css      Estilos (cores ficam em variáveis no topo)
+    js/estado.js       Dados do aluno, vidas, recompensas e o que é salvo
+    js/telas-trilha.js Apresentação, Home, árvore de lições e atividade
+    js/telas-jogo.js   Lojinha, dicionário, ligas, missões, perfil e "Mais"
+    js/telas-conta.js  Cadastro, login e validação dos dados
+    js/app.js          Troca de telas, cliques e teclado (carrega por último)
   assets/images/       Imagens compartilhadas
   landing/             Página pública de apresentação
 backend/
@@ -37,6 +45,16 @@ python3 -m http.server 5500
 Abra <http://localhost:5500/>. Se a porta 5500 já estiver ocupada, encerre o servidor anterior com `Ctrl+C` ou escolha outra porta, por exemplo `python3 -m http.server 5501`.
 
 A landing de apresentação fica em <http://localhost:5500/frontend/landing/index.html>.
+
+Para abrir o protótipo direto na Home, use `?tela=home`; para o login, `?tela=login`; para o cadastro, `?tela=cadastro`. Depois de mudar o código, recarregue com `Ctrl+Shift+R` para o navegador não usar a versão antiga em cache.
+
+## Como mexer no protótipo
+
+- **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
+- **Etapas e galhos:** a lista `learningTopics` em `js/telas-trilha.js`. Cada etapa tem 5 galhos; basta trocar nomes, ícones e dicas.
+- **Regras do jogo:** vidas, XP e moedas ficam em `js/estado.js`.
+- **Nova tela:** crie a função `render...` em um dos arquivos de telas e registre-a em `screenRenderers` e `screenTitles`.
+- Os arquivos de `js/` são scripts comuns carregados em ordem pelo `index.html`; `app.js` precisa ser o último.
 
 ## Preparar a API e o MySQL
 
