@@ -115,7 +115,7 @@ function renderProfile() {
     <section class="page-intro"><div><p class="eyebrow">SEU ESPAÇO</p><h2>Meu perfil</h2><p>Seu mascote, seus números e as conquistas da jornada.</p></div><span class="demo-pill">${state.isMinor ? "ALUNO MENOR DE IDADE" : "ALUNO"}</span></section>
     <section class="account-panel profile-avatar-panel">
       ${renderMascot()}
-      <div class="profile-identity">${renderNameArea()}<p>Liga ${LEAGUES[state.league].name} · trilha iniciante</p><button class="button button-outline" type="button" data-screen="shop">Personalizar mascote <span aria-hidden="true">→</span></button></div>
+      <div class="profile-identity">${renderNameArea()}<p>Liga ${LEAGUES[state.league].name} · trilha iniciante</p><button class="button button-outline" type="button" data-screen="mascot">Personalizar mascote <span aria-hidden="true">→</span></button></div>
       <div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ✦</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens</span></div></div>
     </section>
     <section class="profile-stats" aria-label="Números da jornada">${stats.map(([icon, value, label]) => `<div class="profile-stat"><span aria-hidden="true">${icon}</span><strong>${value}</strong><small>${label}</small></div>`).join("")}</section>

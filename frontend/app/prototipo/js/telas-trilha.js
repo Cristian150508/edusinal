@@ -176,7 +176,7 @@ function renderTrail() {
       <div class="home-main-column">
         <section class="home-hero">
 ${renderHeroProgress()}
-          <div class="home-hero-art" aria-hidden="true"><span>🤟</span><small>UM SINAL<br />DE CADA VEZ</small></div>
+          <button class="home-hero-art ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar seu mascote">${mascotSvg(state.mascot, "full", "")}<small>UM SINAL<br />DE CADA VEZ</small></button>
         </section>
 
         <section class="home-map" aria-labelledby="path-title">

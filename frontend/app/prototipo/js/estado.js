@@ -53,6 +53,7 @@ const screensByUrlName = {
   lojinha: "shop",
   perfil: "profile",
   mais: "more",
+  mascote: "mascot",
 };
 
 // Tela em que o protótipo abre: pela URL ou conforme o cadastro.
@@ -78,8 +79,15 @@ const state = {
   isRegistered: wasRegistered,
   isMinor: savedPrototype.isMinor || false,
   unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
-  equippedItem: savedPrototype.equippedItem || "",
-  equippedBackground: savedPrototype.equippedBackground || "",
+  // Roupa e acessórios do mascote. Quem jogou antes tinha só "equippedItem"
+  // (broche) e "equippedBackground"; eles viram o broche e o fundo.
+  mascot: savedPrototype.mascot || {
+    shirt: "camiseta-branca",
+    head: "",
+    face: "",
+    chest: savedPrototype.equippedItem || "",
+    background: savedPrototype.equippedBackground || "",
+  },
   hasFirstActivityReward: Boolean(savedPrototype.hasFirstActivityReward),
   completedLessons: Array.isArray(savedPrototype.completedLessons) ? savedPrototype.completedLessons : [], // ex.: "primeiros-sinais:alfabeto"
   signsSeen: Array.isArray(savedPrototype.signsSeen) ? savedPrototype.signsSeen : [], // sinais já vistos no dicionário
@@ -95,6 +103,7 @@ const state = {
   dictionaryCategory: "alfabeto",
   dictionaryQuery: "",
   editingName: false,      // perfil: mostrando o campo para trocar o nome?
+  mascotTab: "shirt",      // aba aberta no editor do mascote
 };
 
 const screenTitles = {
@@ -108,6 +117,7 @@ const screenTitles = {
   missions: "Missões",
   profile: "Meu perfil",
   more: "Mais opções",
+  mascot: "Personalizar mascote",
   signup: "Criar conta",
 };
 
@@ -140,8 +150,7 @@ function persist() {
     isRegistered: state.isRegistered,
     isMinor: state.isMinor,
     unlockedItems: state.unlockedItems,
-    equippedItem: state.equippedItem,
-    equippedBackground: state.equippedBackground,
+    mascot: state.mascot,
     hasFirstActivityReward: state.hasFirstActivityReward,
     completedLessons: state.completedLessons,
     signsSeen: state.signsSeen,
@@ -261,7 +270,7 @@ function giveActivityReward() {
   if (!state.hasFirstActivityReward) {
     state.coins += 15;
     state.unlockedItems.push("broche-sinal");
-    state.equippedItem = "broche-sinal";
+    state.mascot.chest = "broche-sinal";
     state.hasFirstActivityReward = true;
     showToast("Desafio concluído: +20 XP, +15 moedas e broche para o mascote!");
   } else {

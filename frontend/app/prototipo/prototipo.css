@@ -503,26 +503,7 @@ a {
   background: var(--surface-soft);
 }
 
-.mascot-avatar img {
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
-}
 
-.mascot-accessory {
-  position: absolute;
-  top: 5px;
-  right: 3px;
-  min-width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  padding: 0 4px;
-  border: 2px solid var(--surface);
-  border-radius: 50%;
-  background: var(--yellow-soft);
-  font-size: 17px;
-}
 
 .profile-identity h3 {
   margin: 0 0 4px;
@@ -2060,12 +2041,6 @@ textarea {
   
   }
 
-  .mascot-accessory {
-    min-width: 26px;
-    height: 26px;
-    font-size: 13px;
-  
-  }
 
   .profile-identity h3 {
     font-size: 17px;
@@ -2793,16 +2768,9 @@ button.tree-leaf:disabled {
 .dictionary-empty { padding: 30px 0; color: var(--muted); text-align: center; }
 
 /* ----- Lojinha ----- */
-.shop-preview { display: flex; align-items: center; gap: 12px; }
 .mascot-avatar.mascot-small { width: 76px; height: 76px; }
-.mascot-small .mascot-accessory { min-width: 26px; height: 26px; font-size: 13px; }
 .shop-art-power { background: var(--coral-soft); }
 
-/* Fundos do mascote (comprados na lojinha) */
-.bg-fundo-ceu { background: var(--primary-soft); }
-.bg-fundo-mar { background: var(--accent-soft); }
-.bg-fundo-por-do-sol { background: var(--coral-soft); }
-.bg-fundo-sol { background: var(--yellow-soft); }
 
 /* ----- Perfil ----- */
 .profile-identity h3 { display: flex; align-items: baseline; gap: 10px; }
@@ -2938,5 +2906,120 @@ button.tree-leaf:disabled {
 
   .profile-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .setting-row { flex-direction: column; align-items: flex-start; }
-  .shop-preview { align-self: flex-start; }
 }
+
+/* ===================================================================
+   MASCOTE PERSONALIZÁVEL (desenho em SVG + editor)
+   =================================================================== */
+.mascot-svg { display: block; width: 100%; height: 100%; }
+.mascot-avatar .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
+.mascot-avatar.mascot-large { width: min(260px, 100%); height: auto; aspect-ratio: 1; }
+
+/* Arte do topo da Home: o mascote do aluno dentro da bolha amarela */
+button.home-hero-art { padding: 0; border: 0; cursor: pointer; font: inherit; }
+.home-hero-art .mascot-svg { clip-path: inset(0 round 34% 66% 61% 39%); }
+.home-hero-art .mascot-svg { width: 100%; height: 100%; transform: rotate(-4deg) translateY(4%); }
+button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%) scale(1.04); }
+.home-hero-art .mascot-svg { transition: transform 160ms ease; }
+
+/* Banner do guarda-roupa na lojinha */
+.shop-mascot-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.shop-mascot-banner h3 { margin: 0 0 4px; font-family: "Manrope", sans-serif; font-size: 16px; }
+.shop-mascot-banner p { margin: 0; color: var(--muted); font-size: 12px; }
+
+/* Editor */
+.mascot-editor {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.mascot-stage {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.mascot-stage > strong { margin-top: 8px; font-family: "Manrope", sans-serif; font-size: 18px; }
+.mascot-stage > small { color: var(--muted); font-size: 12px; }
+.mascot-stage .text-button { margin-top: 6px; }
+
+.mascot-wardrobe { display: grid; gap: 14px; }
+
+.mascot-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 10px;
+}
+
+.mascot-option {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 10px 8px 12px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}
+
+.mascot-option:hover { border-color: var(--primary); }
+.mascot-option.is-equipped { border-color: var(--primary); background: var(--primary-soft); }
+.mascot-option strong { font-size: 13px; }
+.mascot-option small { color: var(--muted); font-size: 11px; font-weight: 700; }
+.mascot-option.is-equipped small { color: var(--primary-strong); }
+.mascot-option.is-locked .mascot-option-art { opacity: 0.5; filter: saturate(0.6); }
+
+.mascot-option-art {
+  width: 92px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+
+
+@media (max-width: 760px) {
+  .mascot-editor { grid-template-columns: minmax(0, 1fr); }
+  .mascot-stage { position: static; }
+  .mascot-avatar.mascot-large { width: 180px; }
+  .shop-mascot-banner { grid-template-columns: auto minmax(0, 1fr); }
+  .shop-mascot-banner .button { grid-column: 1 / -1; }
+  .mascot-options { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+  .mascot-option-art { width: 72px; height: 72px; }
+}
+
+/* Fundo atrás do mascote: o azul da logo é o padrão; os outros vêm da lojinha.
+   São cores fortes porque o personagem é branco, como na logo. */
+.mascot-avatar { border: 0; box-shadow: 0 10px 24px rgba(21, 90, 200, 0.22); }
+.mascot-backdrop { background: linear-gradient(160deg, #3a8dff 0%, #1767e6 100%); }
+.mascot-backdrop.bg-fundo-ceu { background: linear-gradient(160deg, #8ccaff 0%, #3f9cf0 100%); }
+.mascot-backdrop.bg-fundo-mar { background: linear-gradient(160deg, #35cdc2 0%, #12908a 100%); }
+.mascot-backdrop.bg-fundo-por-do-sol { background: linear-gradient(160deg, #ffad6e 0%, #ef5f78 100%); }
+.mascot-backdrop.bg-fundo-sol { background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); }
+.mascot-option-art.is-head .mascot-svg { margin-top: 0; }
+.mascot-option-art .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }

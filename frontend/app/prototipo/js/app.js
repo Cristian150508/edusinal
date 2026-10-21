@@ -22,6 +22,7 @@ const screenRenderers = {
   shop: renderShop,
   profile: renderProfile,
   more: renderMore,
+  mascot: renderMascotEditor,
 };
 
 // ----- Desenho da página -----
@@ -147,12 +148,6 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const shopButton = event.target.closest("[data-shop-item]");
-  if (shopButton) {
-    buyOrEquipItem(shopButton.dataset.shopItem);
-    return;
-  }
-
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
@@ -170,6 +165,10 @@ document.addEventListener("click", (event) => {
   // Missões e lojinha
   else if (action === "claim-mission") claimMission(data.scope, data.mission);
   else if (action === "buy-power") buyPowerUp(data.power);
+  // Mascote
+  else if (action === "mascot-item") chooseMascotItem(data.slot, data.item);
+  else if (action === "mascot-tab") chooseMascotTab(data.slot);
+  else if (action === "mascot-reset") resetMascotLook();
   // Perfil e "Mais"
   else if (action === "edit-name") setEditingName(true);
   else if (action === "cancel-name") setEditingName(false);
