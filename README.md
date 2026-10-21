@@ -9,6 +9,9 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 - **Backend:** Python, FastAPI e MySQL, organizado em controllers, schemas, repositories e services.
 - **Vidas:** 3 vidas; cada resposta errada consome uma e uma vida se recupera a cada 30 minutos. Revisar o dicionário continua livre.
 - **Recompensas demonstrativas:** uma atividade nova correta concede 20 XP. A primeira dá 15 moedas e libera um broche local no protótipo; cada atividade nova seguinte dá 5 moedas. O inventário ainda não está na API.
+- **Abas do aluno:** dicionário com busca e categorias (revisar é livre); ligas semanais com colegas fictícios (os 3 primeiros sobem, os 2 últimos descem); missões do dia e da semana que dão moedas; lojinha com ajudas (recarga de vidas, protetor de ofensiva), acessórios e fundos; perfil com conquistas; e "Mais" com tema, tamanho do texto, animações reduzidas, ajuda e privacidade.
+- **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva.
+- **Segurança para menores:** não há chat nem mensagens entre alunos, e as ligas mostram só apelidos.
 - **Importante:** o frontend ainda não está conectado à API. Não há autenticação nem verificação real de idade. A loja não usa dinheiro real.
 
 ## Estrutura de pastas
@@ -20,7 +23,11 @@ frontend/
     prototipo.css      Estilos (cores ficam em variáveis no topo)
     js/estado.js       Dados do aluno, vidas, recompensas e o que é salvo
     js/telas-trilha.js Apresentação, Home, árvore de lições e atividade
-    js/telas-jogo.js   Lojinha, dicionário, ligas, missões, perfil e "Mais"
+    js/telas-dicionario.js  Dicionário: busca, categorias e alfabeto
+    js/telas-ligas.js       Ligas: ranking semanal, sobe e desce de liga
+    js/telas-missoes.js     Missões do dia e da semana, com resgate de moedas
+    js/telas-lojinha.js     Lojinha: ajudas, acessórios e fundos do mascote
+    js/telas-perfil.js      Perfil (conquistas, nome) e "Mais opções"
     js/telas-conta.js  Cadastro, login e validação dos dados
     js/app.js          Troca de telas, cliques e teclado (carrega por último)
   assets/images/       Imagens compartilhadas
@@ -46,13 +53,14 @@ Abra <http://localhost:5500/>. Se a porta 5500 já estiver ocupada, encerre o se
 
 A landing de apresentação fica em <http://localhost:5500/frontend/landing/index.html>.
 
-Para abrir o protótipo direto na Home, use `?tela=home`; para o login, `?tela=login`; para o cadastro, `?tela=cadastro`. Depois de mudar o código, recarregue com `Ctrl+Shift+R` para o navegador não usar a versão antiga em cache.
+Para abrir uma tela direto, use `?tela=` no endereço: `home`, `login`, `cadastro`, `dicionario`, `ligas`, `missoes`, `lojinha`, `perfil` ou `mais`. Exemplo: <http://localhost:5500/frontend/app/prototipo/index.html?tela=ligas>. Depois de mudar o código, recarregue com `Ctrl+Shift+R` para o navegador não usar a versão antiga em cache.
 
 ## Como mexer no protótipo
 
 - **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
 - **Etapas e galhos:** a lista `learningTopics` em `js/telas-trilha.js`. Cada etapa tem 5 galhos; basta trocar nomes, ícones e dicas.
-- **Regras do jogo:** vidas, XP e moedas ficam em `js/estado.js`.
+- **Regras do jogo:** vidas, XP, moedas, ofensiva e a virada do dia e da semana ficam em `js/estado.js`.
+- **Conteúdo das abas:** cada arquivo de aba começa com os seus dados em listas fáceis de editar: `DICTIONARY_WORDS` (palavras), `LEAGUE_RIVALS` (colegas fictícios da liga), `DAILY_MISSIONS` e `WEEKLY_MISSIONS`, `shopItems` e `POWER_UPS` (lojinha) e `ACHIEVEMENTS` (conquistas).
 - **Nova tela:** crie a função `render...` em um dos arquivos de telas e registre-a em `screenRenderers` e `screenTitles`.
 - Os arquivos de `js/` são scripts comuns carregados em ordem pelo `index.html`; `app.js` precisa ser o último.
 

@@ -39,12 +39,15 @@ function renderNavigation() {
 
 // Desenha de novo a tela atual com os dados do momento.
 function render() {
+  refreshCalendar();
   heading.textContent = screenTitles[state.screen] || "EduSinal";
   app.dataset.currentScreen = state.screen;
   app.dataset.focus = state.focusTopic ? "on" : "off";
   renderNavigation();
   screenRoot.innerHTML = screenRenderers[state.screen]();
   app.dataset.theme = state.theme;
+  app.dataset.textSize = state.textSize;
+  app.dataset.motion = state.motion;
   themeToggle.setAttribute("aria-pressed", String(state.theme === "dark"));
   document.getElementById("theme-label").textContent = state.theme === "dark" ? "Tema claro" : "Tema escuro";
 }
@@ -87,30 +90,8 @@ function closeTopic() {
   screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
 }
 
-// ----- Ações dos botões -----
-
-function buyOrEquipItem(itemId) {
-  const item = avatarItems.find((entry) => entry.id === itemId);
-  if (!item) return;
-  const isOwned = state.unlockedItems.includes(item.id);
-
-  if (!isOwned && item.reward) {
-    showToast("Complete a primeira atividade para receber este item.");
-    return;
-  }
-  if (!isOwned && state.coins < item.cost) {
-    showToast("Você ainda não tem moedas suficientes.");
-    return;
-  }
-  if (!isOwned) {
-    state.coins -= item.cost;
-    state.unlockedItems.push(item.id);
-  }
-  state.equippedItem = item.id;
-  persist();
-  render();
-  showToast(`${item.name} equipado no mascote.`);
-}
+// ----- Atividade -----
+// (as ações de cada aba ficam no arquivo da aba: telas-lojinha.js, telas-missoes.js...)
 
 function answerQuestion(clickedButton) {
   if (state.answered) return;
@@ -155,8 +136,7 @@ function startBranch(topicId, branchId) {
 document.addEventListener("click", (event) => {
   const letterButton = event.target.closest("[data-alphabet-letter]");
   if (letterButton && !letterButton.disabled) {
-    state.selectedLetter = letterButton.dataset.alphabetLetter;
-    render();
+    selectLetter(letterButton.dataset.alphabetLetter);
     return;
   }
 
@@ -176,12 +156,33 @@ document.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
+  const data = actionButton.dataset;
 
-  if (action === "open-topic") openTopic(actionButton.dataset.topic);
+  // Trilha e atividade
+  if (action === "open-topic") openTopic(data.topic);
   else if (action === "close-topic") closeTopic();
-  else if (action === "start-branch") startBranch(actionButton.dataset.topic, actionButton.dataset.branch);
+  else if (action === "start-branch") startBranch(data.topic, data.branch);
   else if (action === "answer") answerQuestion(actionButton);
   else if (action === "finish-lesson") finishLesson(actionButton);
+  // Dicionário
+  else if (action === "dictionary-category") chooseDictionaryCategory(data.category);
+  else if (action === "select-word") selectWord(data.word);
+  // Missões e lojinha
+  else if (action === "claim-mission") claimMission(data.scope, data.mission);
+  else if (action === "buy-power") buyPowerUp(data.power);
+  // Perfil e "Mais"
+  else if (action === "edit-name") setEditingName(true);
+  else if (action === "cancel-name") setEditingName(false);
+  else if (action === "set-theme") setTheme(data.value);
+  else if (action === "set-text-size") setTextSize(data.value);
+  else if (action === "set-motion") setMotion(data.value);
+  else if (action === "reset-demo") resetDemo();
+  else if (action === "logout") logout();
+});
+
+// Busca do dicionário: atualiza a lista a cada letra digitada.
+document.addEventListener("input", (event) => {
+  if (event.target.id === "dictionary-search") searchDictionary(event.target.value);
 });
 
 document.addEventListener("submit", (event) => {
@@ -191,13 +192,14 @@ document.addEventListener("submit", (event) => {
   } else if (event.target.id === "signup-form") {
     event.preventDefault();
     handleSignupSubmit(event.target);
+  } else if (event.target.id === "profile-name-form") {
+    event.preventDefault();
+    saveName(event.target);
   }
 });
 
 themeToggle.addEventListener("click", () => {
-  state.theme = state.theme === "dark" ? "light" : "dark";
-  persist();
-  render();
+  setTheme(state.theme === "dark" ? "light" : "dark");
 });
 
 menuToggle.addEventListener("click", () => {

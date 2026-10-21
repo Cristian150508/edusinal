@@ -8,7 +8,7 @@ function renderIntro() {
       <div class="intro-copy">
         <p class="eyebrow"><span class="status-dot"></span> APRENDIZAGEM VISUAL EM LIBRAS</p>
         <h2 id="intro-title">Aprender Libras é abrir espaço para novas conexões.</h2>
-        <p>O EduSinal reúne uma trilha de aprendizagem, atividades para praticar e acompanhamento para alunos e responsáveis.</p>
+        <p>O EduSinal reúne uma trilha de aprendizagem, exercícios para praticar e um dicionário para consultar quando quiser.</p>
         <div class="intro-actions">
           <button class="button button-primary" type="button" data-screen="signup">Criar minha conta <span aria-hidden="true">→</span></button>
           <button class="text-button" type="button" data-screen="login">Já tenho cadastro <span aria-hidden="true">→</span></button>
@@ -20,7 +20,7 @@ function renderIntro() {
     <section class="intro-points" aria-label="Sobre o EduSinal">
       <div><strong>Aprenda no seu ritmo</strong><span>Uma trilha visual com etapas para praticar.</span></div>
       <div><strong>Acompanhe seu caminho</strong><span>Veja atividades e progresso em um só lugar.</span></div>
-      <div><strong>Conecte diferentes perfis</strong><span>Espaços pensados para alunos e responsáveis.</span></div>
+      <div><strong>Seguro para todas as idades</strong><span>Sem chat entre alunos e sem compras com dinheiro real.</span></div>
     </section>`;
 }
 
@@ -198,16 +198,16 @@ ${renderHeroProgress()}
           <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Tarefas</h2></div>
           <button class="home-task" type="button" data-action="open-topic" data-topic="${currentTopicId()}"><span class="task-check">01</span><span><strong>Continue sua etapa</strong><small>Faça um exercício da árvore</small></span><span aria-hidden="true">→</span></button>
           <button class="home-task" type="button" data-screen="signs"><span class="task-check">02</span><span><strong>Explore o dicionário</strong><small>Descubra novos sinais</small></span><span aria-hidden="true">→</span></button>
-          <button class="home-task" type="button" data-screen="missions"><span class="task-check">03</span><span><strong>Veja suas missões</strong><small>Acompanhe seus objetivos</small></span><span aria-hidden="true">→</span></button>
+          <button class="home-task" type="button" data-screen="missions"><span class="task-check">03</span><span><strong>Veja suas missões</strong><small>${readyMissionsCount() > 0 ? `${readyMissionsCount()} pronta(s) para resgatar` : "Acompanhe seus objetivos"}</small></span><span aria-hidden="true">→</span></button>
         </section>
 
         <section class="home-side-card home-stats">
           <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">◷</span><h2>Seu ritmo</h2></div>
           <div class="home-stat home-lives"><span>Vidas</span><div class="lives-summary"><div class="lives-hearts" aria-label="${state.lives} de ${MAX_LIVES} vidas">${hearts}</div><strong>${state.lives} / ${MAX_LIVES}</strong><small>${timeUntilNextLife()}</small></div></div>
-          <div class="home-stat"><span>Ofensiva</span><strong>${state.streak} dias</strong></div>
+          <div class="home-stat"><span>Ofensiva</span><strong>${state.streak} ${state.streak === 1 ? "dia" : "dias"}</strong></div>
           <div class="home-stat"><span>Experiência</span><strong>${state.xp} XP</strong></div>
-          <div class="home-stat"><span>Meta de hoje</span><strong>1 / 3 atividades</strong></div>
-          <div class="progress-track" role="progressbar" aria-label="Progresso da meta diária" aria-valuenow="1" aria-valuemin="0" aria-valuemax="3"><span style="width: 34%"></span></div>
+          <div class="home-stat"><span>Meta de hoje</span><strong>${Math.min(state.daily.exercises, DAILY_GOAL)} / ${DAILY_GOAL} exercícios</strong></div>
+          ${progressBarHtml(state.daily.exercises, DAILY_GOAL, "Progresso da meta diária")}
           <button class="text-button" type="button" data-screen="shop">Abrir a lojinha <span aria-hidden="true">→</span></button>
         </section>
       </aside>
