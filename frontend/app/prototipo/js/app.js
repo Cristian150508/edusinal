@@ -80,6 +80,7 @@ function render() {
 
 // Vai para outra tela. Sem vidas, o desafio fica bloqueado (revisar continua livre).
 function setScreen(screen) {
+  if (screen === "lesson" && !state.currentLesson) screen = "trail"; // atividade só começa por um galho
   if (screen === "lesson") {
     refreshLives();
     if (state.lives === 0) {
@@ -104,6 +105,10 @@ function setScreen(screen) {
 
 // Abre a árvore de uma etapa, de qualquer tela (Home, missões...).
 function openTopic(topicId) {
+  if (!isTopicUnlocked(topicId)) {
+    showToast("Conclua a etapa anterior para liberar esta.");
+    return;
+  }
   setScreen("trail");
   state.focusTopic = topicId;
   render();
@@ -117,66 +122,7 @@ function closeTopic() {
   screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
 }
 
-// ----- Atividade -----
-// (as ações de cada aba ficam no arquivo da aba: telas-lojinha.js, telas-missoes.js...)
-
-// 1º passo: o aluno escolhe uma resposta (pode trocar antes de conferir).
-function selectAnswer(clickedButton) {
-  if (state.answered) return;
-  document.querySelectorAll(".answer-option").forEach((option) => {
-    option.classList.toggle("is-selected", option === clickedButton);
-    option.setAttribute("aria-pressed", String(option === clickedButton));
-  });
-  document.getElementById("lesson-continue").disabled = false;
-}
-
-// 2º passo: "Conferir" mostra se acertou. Errar gasta uma vida.
-function checkAnswer() {
-  const chosen = document.querySelector(".answer-option.is-selected");
-  if (state.answered || !chosen) return;
-  state.answered = true;
-  const isCorrect = chosen.dataset.answer === "correct";
-  if (!isCorrect) loseLife();
-
-  document.querySelectorAll(".answer-option").forEach((option) => {
-    option.disabled = true;
-    if (option.dataset.answer === "correct") option.classList.add("is-correct");
-    else if (option === chosen) option.classList.add("is-incorrect");
-  });
-  document.getElementById("lesson-progress-bar").style.width = "100%";
-  document.getElementById("answer-feedback").textContent = isCorrect
-    ? "Isso! O contato visual ajuda a acompanhar a conversa em Libras."
-    : "Quase. Em Libras, o contato visual ajuda a acompanhar a conversa.";
-
-  const continueButton = document.getElementById("lesson-continue");
-  continueButton.dataset.action = "finish-lesson";
-  continueButton.dataset.correct = String(isCorrect);
-  continueButton.textContent = isCorrect ? "Concluir atividade" : "Continuar";
-}
-
-// Termina a atividade. Se veio de um galho da árvore, volta para a árvore.
-// A recompensa só vem na primeira vez que o galho é concluído.
-// Sair da atividade sem terminar: volta para a árvore se veio de um galho.
-function leaveLesson() {
-  const lesson = state.currentLesson;
-  setScreen("trail");
-  if (lesson) openTopic(lesson.topicId);
-}
-
-function finishLesson(continueButton) {
-  const lesson = state.currentLesson;
-  if (continueButton.dataset.correct === "true") {
-    const isFirstTime = lesson ? markLessonDone(lesson.topicId, lesson.branchId) : true;
-    if (isFirstTime) giveActivityReward();
-  }
-  setScreen("trail");
-  if (lesson) openTopic(lesson.topicId);
-}
-
-function startBranch(topicId, branchId) {
-  state.currentLesson = { topicId, branchId };
-  setScreen("lesson");
-}
+// (a atividade fica em licao.js; as ações de cada aba, no arquivo da aba)
 
 // ----- Eventos -----
 
@@ -205,7 +151,8 @@ document.addEventListener("click", (event) => {
   else if (action === "start-branch") startBranch(data.topic, data.branch);
   else if (action === "select-answer") selectAnswer(actionButton);
   else if (action === "check-answer") checkAnswer();
-  else if (action === "finish-lesson") finishLesson(actionButton);
+  else if (action === "next-question") nextQuestion();
+  else if (action === "finish-lesson") finishLesson();
   else if (action === "leave-lesson") leaveLesson();
   // Dicionário
   else if (action === "dictionary-category") chooseDictionaryCategory(data.category);

@@ -1,5 +1,6 @@
 // TELAS DA TRILHA
-// Apresentação, Home (trilha), modo foco (árvore de lições) e atividade.
+// Apresentação, Home (trilha) e modo foco (árvore de lições).
+// O conteúdo das etapas fica em conteudo.js e a atividade em licao.js.
 // Cada função "render..." devolve o HTML de uma tela.
 
 function renderIntro() {
@@ -22,52 +23,6 @@ function renderIntro() {
       <div><strong>Acompanhe seu caminho</strong><span>Veja atividades e progresso em um só lugar.</span></div>
       <div><strong>Seguro para todas as idades</strong><span>Sem chat entre alunos e sem compras com dinheiro real.</span></div>
     </section>`;
-}
-
-// ----- Etapas do modo foco -----
-// Cada etapa tem 5 galhos (exercícios) e uma prova final no centro.
-// Por enquanto todos os galhos usam a mesma atividade de demonstração.
-const learningTopics = {
-  "primeiros-sinais": {
-    number: "01",
-    title: "Primeiros sinais",
-    subtitle: "Saudações do dia a dia",
-    branches: [
-      { id: "alfabeto", icon: "A", label: "Alfabeto", hint: "Letras em Libras" },
-      { id: "oi-tchau", icon: "👋", label: "Oi e tchau", hint: "Cumprimentos" },
-      { id: "bom-dia", icon: "☀", label: "Bom dia", hint: "Saudações do dia" },
-      { id: "por-favor", icon: "✋", label: "Por favor", hint: "Gentileza" },
-      { id: "obrigado", icon: "♥", label: "Obrigado(a)", hint: "Agradecer" },
-    ],
-  },
-};
-
-// ----- Progresso das lições (salvo no navegador) -----
-
-function lessonKey(topicId, branchId) {
-  return `${topicId}:${branchId}`;
-}
-
-function isLessonDone(topicId, branchId) {
-  return state.completedLessons.includes(lessonKey(topicId, branchId));
-}
-
-// Quantos dos 5 galhos desta etapa já foram concluídos.
-function doneBranchCount(topicId) {
-  return learningTopics[topicId].branches.filter((branch) => isLessonDone(topicId, branch.id)).length;
-}
-
-// A prova final só abre quando todos os galhos estão concluídos.
-function isFinalUnlocked(topicId) {
-  return doneBranchCount(topicId) === learningTopics[topicId].branches.length;
-}
-
-// Marca a lição como concluída. Devolve true se foi a primeira vez.
-function markLessonDone(topicId, branchId) {
-  if (isLessonDone(topicId, branchId)) return false;
-  state.completedLessons.push(lessonKey(topicId, branchId));
-  persist();
-  return true;
 }
 
 // ----- Árvore -----
@@ -108,7 +63,7 @@ function renderFinalNode(topicId) {
     hint = "Etapa concluída · toque para voltar";
   } else if (isOpen) {
     icon = "★";
-    hint = "Liberada! Toque para começar";
+    hint = `Liberada! Pode errar no máximo ${FINAL_MAX_MISTAKES}`;
   }
   const attrs = isOpen ? `data-action="start-branch" data-topic="${topicId}" data-branch="final"` : 'data-action="close-topic"';
   const disabled = isOpen && state.lives === 0 ? "disabled" : "";
@@ -136,12 +91,6 @@ function renderTopicTree() {
     </section>`;
 }
 
-
-// Etapa em que o aluno está: a primeira cuja prova final ainda não foi feita.
-function currentTopicId() {
-  const topicIds = Object.keys(learningTopics);
-  return topicIds.find((id) => !isLessonDone(id, "final")) || topicIds[topicIds.length - 1];
-}
 
 // Texto do aviso "você está aqui" no topo da Home.
 function renderHeroProgress() {
@@ -171,8 +120,8 @@ function renderHeroProgress() {
 // Etapas da trilha na Home. Só as que têm "topicId" já têm conteúdo.
 const TRAIL_STEPS = [
   { topicId: "primeiros-sinais", number: "01", title: "Primeiros sinais", subtitle: "Saudações do dia a dia", color: "coral" },
-  { topicId: null, number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões", color: "yellow" },
-  { topicId: null, number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida", color: "green" },
+  { topicId: "apresentacoes", number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões", color: "yellow" },
+  { topicId: "pessoas-familia", number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida", color: "green" },
   { topicId: null, number: "04", title: "Rotina e lugares", subtitle: "Palavras para o cotidiano", color: "blue" },
 ];
 
@@ -180,6 +129,10 @@ const TRAIL_STEPS = [
 function renderRouteStep(step) {
   if (!step.topicId) {
     return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, em breve">${step.number}</span><span class="path-label">EM BREVE</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+  }
+  if (!isTopicUnlocked(step.topicId)) {
+    const previous = TRAIL_STEPS[TRAIL_STEPS.indexOf(step) - 1];
+    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, bloqueada">🔒</span><span class="path-label">CONCLUA A ETAPA ${previous.number}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
   }
   const done = doneBranchCount(step.topicId);
   const total = learningTopics[step.topicId].branches.length;
@@ -240,39 +193,3 @@ ${renderHeroProgress()}
     <p class="demo-disclaimer">Pontos, sequência e conteúdo exibidos são dados demonstrativos deste protótipo.</p>`;
 }
 
-// Título pequeno da atividade: etapa / exercício (ou prova final).
-function lessonEyebrow() {
-  const lesson = state.currentLesson;
-  if (!lesson) return "PRIMEIROS SINAIS";
-  const topic = learningTopics[lesson.topicId];
-  const name = lesson.branchId === "final" ? "Prova final" : topic.branches.find((branch) => branch.id === lesson.branchId).label;
-  return `${topic.title.toUpperCase()} <span class="eyebrow-separator">/</span> ${name.toUpperCase()}`;
-}
-
-// Recompensa mostrada no topo da atividade: refazer um exercício já feito não dá XP.
-function lessonRewardLabel() {
-  const lesson = state.currentLesson;
-  if (lesson && isLessonDone(lesson.topicId, lesson.branchId)) return "Revisão · sem XP";
-  return `✳ +${XP_PER_EXERCISE} XP`;
-}
-
-function renderLesson() {
-  return `
-    <section class="lesson-wrap">
-      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><span aria-hidden="true">←</span> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">${lessonRewardLabel()}</span></div>
-      <div class="lesson-progress"><span id="lesson-progress-bar" style="width: 0%"></span></div>
-      <div class="lesson-content">
-        <p class="eyebrow">${lessonEyebrow()}</p>
-        <h2>Qual atitude ajuda a manter uma conversa em Libras?</h2>
-        <p class="lesson-hint">Escolha a melhor resposta para continuar.</p>
-        <div class="answer-list" role="group" aria-label="Opções de resposta">
-          <button class="answer-option" type="button" data-action="select-answer" data-answer="wrong">Desviar o olhar enquanto a outra pessoa sinaliza</button>
-          <button class="answer-option" type="button" data-action="select-answer" data-answer="correct">Manter contato visual durante a conversa</button>
-          <button class="answer-option" type="button" data-action="select-answer" data-answer="wrong">Falar mais alto para facilitar a comunicação</button>
-        </div>
-        <div class="answer-feedback" id="answer-feedback" aria-live="polite"></div>
-        <button class="button button-primary continue-button" id="lesson-continue" type="button" data-action="check-answer" disabled>Conferir</button>
-      </div>
-      <p class="demo-disclaimer">Atividade demonstrativa sobre comunicação; não substitui material didático de Libras.</p>
-    </section>`;
-}

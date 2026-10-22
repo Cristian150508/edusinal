@@ -67,7 +67,7 @@ const state = {
   theme: savedPrototype.theme || "light",
   textSize: savedPrototype.textSize || "normal",   // "normal" ou "large"
   motion: savedPrototype.motion || "normal",       // "normal" ou "reduced"
-  xp: savedPrototype.xp || 120,
+  xp: savedPrototype.xp ?? 120, // "??" e não "||": 0 XP é um valor válido
   coins: savedPrototype.coins ?? 40,
   streak: savedPrototype.streak ?? 4,
   lastActiveDate: savedPrototype.lastActiveDate || null, // último dia com exercício feito

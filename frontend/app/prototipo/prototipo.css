@@ -3346,3 +3346,23 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
 
 /* Ícone das missões no card da Home */
 .home-tasks .task-check { font-size: 15px; }
+
+/* Atividade com várias perguntas: resposta comentada depois de conferir */
+.answer-feedback:empty { min-height: 0; }
+.answer-feedback.is-correct,
+.answer-feedback.is-incorrect {
+  margin: 14px 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.answer-feedback.is-correct { background: var(--accent-soft); color: var(--text); }
+.answer-feedback.is-incorrect { background: var(--coral-soft); color: var(--text); }
+.lesson-count { color: var(--muted); }
+.answer-option { font-size: 14px; }
+
+/* Depois de conferir: certa em verde-turquesa, errada em coral (sem o contorno de "escolhida") */
+.answer-option.is-correct { border-color: var(--accent); background: var(--accent-soft); box-shadow: none; }
+.answer-option.is-incorrect { border-color: var(--coral); background: var(--coral-soft); box-shadow: none; }

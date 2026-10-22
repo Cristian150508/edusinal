@@ -13,7 +13,8 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 - **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva.
 - **Segurança para menores:** não há chat nem mensagens entre alunos, e as ligas mostram só apelidos.
 - **Conta demonstrativa:** o cadastro cria um perfil novo, do zero (com 20 moedas de boas-vindas), salvo só neste navegador. Entrar usa o mesmo e-mail do cadastro; sem servidor, a senha não é conferida. Tema claro/escuro, tamanho do texto e animações ficam em "Mais → Preferências".
-- **Atividade:** o aluno escolhe a resposta e depois toca em "Conferir"; só errar ao conferir gasta vida. Refazer um exercício já concluído é revisão, sem XP.
+- **Etapas com conteúdo:** 01 Primeiros sinais, 02 Apresentações e 03 Pessoas e família, cada uma com 5 exercícios de 2 perguntas e uma prova final. Uma etapa só abre depois da prova da anterior; a 04 ainda está "em breve". As perguntas tratam de situações, cultura surda e uso da língua (sem descrever sinais) e devem ser revisadas por pessoas surdas fluentes antes de publicar.
+- **Atividade:** o aluno escolhe a resposta e depois toca em "Conferir"; errar gasta uma vida e mostra a resposta certa com uma explicação. O exercício é concluído ao chegar ao fim com vidas; na prova final, pode errar no máximo 1. Refazer algo já concluído é revisão, sem XP.
 - **Importante:** o frontend ainda não está conectado à API. Não há autenticação nem verificação real de idade. A loja não usa dinheiro real.
 
 ## Estrutura de pastas
@@ -24,7 +25,9 @@ frontend/
     index.html         Página do protótipo
     prototipo.css      Estilos (cores ficam em variáveis no topo)
     js/estado.js       Dados do aluno, vidas, recompensas e o que é salvo
-    js/telas-trilha.js Apresentação, Home, árvore de lições e atividade
+    js/conteudo.js     Etapas, exercícios e perguntas (edite aqui o conteúdo)
+    js/telas-trilha.js Apresentação, Home e árvore de lições
+    js/licao.js        Atividade: escolher, conferir, próxima pergunta, passar ou não
     js/telas-dicionario.js  Dicionário: busca, categorias e alfabeto
     js/telas-ligas.js       Ligas: ranking semanal, sobe e desce de liga
     js/telas-missoes.js     Missões do dia e da semana, com resgate de moedas
@@ -77,7 +80,7 @@ Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.
 ## Como mexer no protótipo
 
 - **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
-- **Etapas e galhos:** a lista `learningTopics` em `js/telas-trilha.js`. Cada etapa tem 5 galhos; basta trocar nomes, ícones e dicas.
+- **Etapas, galhos e perguntas:** a lista `learningTopics` em `js/conteudo.js`. Cada etapa tem 5 galhos com perguntas de múltipla escolha (`q`, `options`, `answer` = posição da certa, começando em 0, e `explain`). A prova final usa a primeira pergunta de cada galho. Para mostrar uma etapa nova na Home, adicione-a também em `TRAIL_STEPS` (`js/telas-trilha.js`).
 - **Regras do jogo:** vidas, XP, moedas, ofensiva e a virada do dia e da semana ficam em `js/estado.js`.
 - **Conteúdo das abas:** cada arquivo de aba começa com os seus dados em listas fáceis de editar: `DICTIONARY_WORDS` (palavras), `LEAGUE_RIVALS` (colegas fictícios da liga), `DAILY_MISSIONS` e `WEEKLY_MISSIONS`, `shopItems` e `POWER_UPS` (lojinha) e `ACHIEVEMENTS` (conquistas).
 - **Nova tela:** crie a função `render...` em um dos arquivos de telas e registre-a em `screenRenderers` e `screenTitles`.
