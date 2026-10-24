@@ -1764,9 +1764,10 @@ textarea {
   
   }
 
+  /* No celular, vidas, ofensiva e moedas já ficam na barra de cima
+     e as missões têm a aba própria: a Home mostra só a trilha. */
   .home-side-column {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  
+    display: none;
   }
 
   .home-map {
@@ -2038,11 +2039,6 @@ textarea {
 
   .home-hero-art small {
     display: none;
-  
-  }
-
-  .home-side-column {
-    grid-template-columns: minmax(0, 1fr);
   
   }
 
@@ -2364,6 +2360,12 @@ button.tree-leaf:disabled {
 .tree-leaf small {
   color: var(--muted);
   font-size: 11px;
+}
+
+/* Redesenho da mesma árvore (ex.: tocar num galho): sem repetir a entrada */
+.app-shell[data-redraw="on"] .topic-tree,
+.app-shell[data-redraw="on"] .tree-leaf {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -68,7 +68,7 @@ Para abrir uma tela direto, use `?tela=` no endereço: `home`, `login`, `cadastr
 
 ## Testar no celular
 
-O protótipo tem um layout próprio para celular (até 760 px de largura), no estilo do Duolingo: barra de cima com ofensiva, moedas (tocar abre a lojinha), vidas e a engrenagem das Configurações; barra de baixo com Home, Dicionário, Ligas, Missões e Perfil; atividade e árvore de lições em tela cheia.
+O protótipo tem um layout próprio para celular (até 760 px de largura), no estilo do Duolingo: barra de cima com ofensiva, moedas (tocar abre a lojinha), vidas e a engrenagem das Configurações; barra de baixo com Home, Dicionário, Ligas, Missões, Lojinha e Perfil; atividade e árvore de lições em tela cheia. A Home do celular mostra só o destaque e a trilha (as missões e o resumo de vidas/ofensiva ficam nas abas e na barra de cima).
 
 1. Deixe o computador e o celular na mesma rede Wi-Fi.
 2. Na raiz do projeto, rode `python3 -m http.server 5500`.

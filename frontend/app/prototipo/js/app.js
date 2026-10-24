@@ -62,9 +62,15 @@ function renderNavigation() {
   document.getElementById("side-nav").innerHTML = items;
 }
 
+// Última tela desenhada. Se for a mesma, as animações de entrada não se repetem.
+let lastDrawnView = "";
+
 // Desenha de novo a tela atual com os dados do momento.
 function render() {
   refreshCalendar();
+  const view = `${state.screen}|${state.focusTopic}`;
+  app.dataset.redraw = view === lastDrawnView ? "on" : "off";
+  lastDrawnView = view;
   heading.textContent = screenTitles[state.screen] || "EduSinal";
   app.dataset.currentScreen = state.screen;
   app.dataset.focus = state.focusTopic ? "on" : "off";
