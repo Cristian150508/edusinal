@@ -24,9 +24,9 @@ const screenRenderers = {
 
 // ----- Desenho da página -----
 
-// Celular: abas da barra de baixo. Configurações abre pela engrenagem,
-// na barra de cima (e as moedas de lá também levam à lojinha).
-const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "shop", "profile"];
+// Celular: abas da barra de baixo. Perfil abre pelo mascote e Configurações
+// pela engrenagem, os dois na barra de cima.
+const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "shop"];
 
 // Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
 const PARENT_TAB = { lesson: "trail", mascot: "profile" };
@@ -49,6 +49,15 @@ function renderMobileStats() {
     <button class="stat-chip stat-streak" type="button" data-screen="profile" aria-label="Ofensiva: ${state.streak} dias">${icon("fire")}<strong>${state.streak}</strong></button>
     <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha">${icon("coin")}<strong>${state.coins}</strong></button>
     <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></button>`;
+}
+
+// Celular: o mascote do aluno no canto de cima leva ao Perfil.
+function renderMobileAvatar() {
+  const avatar = document.getElementById("mobile-avatar");
+  const isActive = state.screen === "profile" || state.screen === "mascot";
+  avatar.className = `mobile-avatar ${backdropClass()}${isActive ? " is-active" : ""}`;
+  avatar.toggleAttribute("aria-current", isActive);
+  avatar.innerHTML = mascotSvg(state.mascot, "head", "");
 }
 
 function renderNavigation() {
@@ -77,6 +86,7 @@ function render() {
   renderNavigation();
   renderBottomNav();
   renderMobileStats();
+  renderMobileAvatar();
   const settings = document.getElementById("settings-button");
   settings.classList.toggle("is-active", state.screen === "more");
   settings.toggleAttribute("aria-current", state.screen === "more");
