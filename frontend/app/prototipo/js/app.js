@@ -46,7 +46,7 @@ function renderBottomNav() {
 function renderMobileStats() {
   refreshLives();
   document.getElementById("mobile-stats").innerHTML = `
-    <button class="stat-chip stat-streak" type="button" data-screen="profile" aria-label="Ofensiva: ${state.streak} dias">${icon("fire")}<strong>${state.streak}</strong></button>
+    <button class="stat-chip stat-streak" type="button" data-action="open-streak" aria-label="Ofensiva: ${state.streak} dias. Abrir calendário">${icon("fire")}<strong>${state.streak}</strong></button>
     <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha">${icon("coin")}<strong>${state.coins}</strong></button>
     <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></button>`;
 }
@@ -193,6 +193,9 @@ document.addEventListener("click", (event) => {
   else if (action === "set-motion") setMotion(data.value);
   else if (action === "reset-demo") resetDemo();
   else if (action === "logout") logout();
+  // Calendário da ofensiva
+  else if (action === "open-streak") openStreakCalendar();
+  else if (action === "calendar-month") changeCalendarMonth(Number(data.step));
 });
 
 // Busca do dicionário: atualiza a lista a cada letra digitada.

@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="../../assets/vendor/bootstrap/bootstrap.min.css" />
   <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css" />
   <!-- O nosso CSS vem depois, para as cores e o visual do EduSinal valerem -->
-  <link rel="stylesheet" href="prototipo.css?v=44" />
+  <link rel="stylesheet" href="prototipo.css?v=45" />
 </head>
 <body>
   <a class="skip-link" href="#screen-root">Pular para o conteúdo</a>
@@ -66,6 +66,18 @@
   </div>
 
   <!-- Janela de confirmação (Modal do Bootstrap), usada antes de apagar progresso -->
+  <div class="modal fade" id="streak-modal" tabindex="-1" aria-labelledby="streak-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="streak-title">Sua ofensiva</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body" id="streak-body"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirm-title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -83,18 +95,19 @@
   </div>
 
   <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js" defer></script>
-  <script src="js/estado.js?v=44" defer></script>
-  <script src="js/mascote-desenho.js?v=44" defer></script>
-  <script src="js/conteudo.js?v=44" defer></script>
-  <script src="js/telas-trilha.js?v=44" defer></script>
-  <script src="js/licao.js?v=44" defer></script>
-  <script src="js/telas-dicionario.js?v=44" defer></script>
-  <script src="js/telas-ligas.js?v=44" defer></script>
-  <script src="js/telas-missoes.js?v=44" defer></script>
-  <script src="js/telas-lojinha.js?v=44" defer></script>
-  <script src="js/telas-perfil.js?v=44" defer></script>
-  <script src="js/telas-mascote.js?v=44" defer></script>
-  <script src="js/telas-conta.js?v=44" defer></script>
-  <script src="js/app.js?v=44" defer></script>
+  <script src="js/estado.js?v=45" defer></script>
+  <script src="js/mascote-desenho.js?v=45" defer></script>
+  <script src="js/conteudo.js?v=45" defer></script>
+  <script src="js/telas-trilha.js?v=45" defer></script>
+  <script src="js/licao.js?v=45" defer></script>
+  <script src="js/telas-dicionario.js?v=45" defer></script>
+  <script src="js/telas-ligas.js?v=45" defer></script>
+  <script src="js/telas-missoes.js?v=45" defer></script>
+  <script src="js/telas-lojinha.js?v=45" defer></script>
+  <script src="js/telas-perfil.js?v=45" defer></script>
+  <script src="js/telas-mascote.js?v=45" defer></script>
+  <script src="js/telas-conta.js?v=45" defer></script>
+  <script src="js/calendario.js?v=45" defer></script>
+  <script src="js/app.js?v=45" defer></script>
 </body>
 </html>

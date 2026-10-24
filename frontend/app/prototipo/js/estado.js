@@ -39,6 +39,20 @@ function emptyDay() {
 
 // ----- Estado -----
 
+// Dias em que o aluno praticou (para o calendário da ofensiva). Quem jogou
+// antes desta lista existir ganha os dias da ofensiva atual, contando para trás.
+function savedPracticeDays() {
+  if (Array.isArray(savedPrototype.practiceDays)) return savedPrototype.practiceDays;
+  const streak = savedPrototype.streak ?? 4;
+  const lastDay = savedPrototype.lastActiveDate || (streak > 0 ? dateKey() : null);
+  if (!lastDay) return [];
+  return Array.from({ length: streak }, (_, back) => {
+    const day = new Date(`${lastDay}T12:00:00`);
+    day.setDate(day.getDate() - back);
+    return dateKey(day);
+  });
+}
+
 // Quem já tinha se cadastrado antes guardava "role"; continuamos aceitando isso.
 const wasRegistered = Boolean(savedPrototype.isRegistered ?? savedPrototype.role);
 
@@ -72,6 +86,8 @@ const state = {
   streak: savedPrototype.streak ?? 4,
   lastActiveDate: savedPrototype.lastActiveDate || null, // último dia com exercício feito
   streakFreezes: savedPrototype.streakFreezes || 0,      // protetores de ofensiva comprados
+  practiceDays: savedPracticeDays(),                     // ex.: ["2026-10-23", "2026-10-24"]
+  frozenDays: Array.isArray(savedPrototype.frozenDays) ? savedPrototype.frozenDays : [], // dias salvos pelo protetor
   league: savedPrototype.league || 0,                    // posição na lista LEAGUES (0 = Bronze)
   lives: savedPrototype.lives ?? MAX_LIVES,
   nextLifeAt: savedPrototype.nextLifeAt || null,
@@ -145,6 +161,8 @@ function persist() {
     streak: state.streak,
     lastActiveDate: state.lastActiveDate,
     streakFreezes: state.streakFreezes,
+    practiceDays: state.practiceDays,
+    frozenDays: state.frozenDays,
     league: state.league,
     lives: state.lives,
     nextLifeAt: state.nextLifeAt,
@@ -188,6 +206,12 @@ function checkStreak() {
 
   if (state.streakFreezes >= missedDays) {
     state.streakFreezes -= missedDays;
+    // guarda os dias salvos, para aparecerem com escudo no calendário
+    for (let day = 1; day <= missedDays; day += 1) {
+      const saved = new Date(`${state.lastActiveDate}T12:00:00`);
+      saved.setDate(saved.getDate() + day);
+      state.frozenDays.push(dateKey(saved));
+    }
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     state.lastActiveDate = dateKey(yesterday);
@@ -207,6 +231,7 @@ function registerExercise(xpGained) {
     state.streak += 1;
     state.lastActiveDate = dateKey();
   }
+  if (!state.practiceDays.includes(dateKey())) state.practiceDays.push(dateKey());
 }
 
 // ----- Vidas -----

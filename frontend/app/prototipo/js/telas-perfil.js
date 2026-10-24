@@ -123,7 +123,12 @@ function renderProfile() {
       <div class="profile-identity">${renderNameArea()}<p>Liga ${LEAGUES[state.league].name} · trilha iniciante</p><button class="button button-outline" type="button" data-screen="mascot">Personalizar mascote <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
       <div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ${icon("coin")}</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens</span></div></div>
     </section>
-    <section class="profile-stats" aria-label="Números da jornada">${stats.map(([iconName, value, label]) => `<div class="profile-stat">${icon(iconName)}<strong>${value}</strong><small>${label}</small></div>`).join("")}</section>
+    <section class="profile-stats" aria-label="Números da jornada">${stats.map(([iconName, value, label]) => {
+      const content = `${icon(iconName)}<strong>${value}</strong><small>${label}</small>`;
+      // a ofensiva abre o calendário dos dias praticados
+      if (label === "Ofensiva") return `<button class="profile-stat is-button" type="button" data-action="open-streak" aria-label="Ofensiva: ${value}. Abrir calendário">${content}</button>`;
+      return `<div class="profile-stat">${content}</div>`;
+    }).join("")}</section>
     <section aria-labelledby="achievements-title">
       <div class="section-heading"><div><p class="eyebrow">${doneCount} DE ${ACHIEVEMENTS.length}</p><h2 id="achievements-title">Conquistas</h2></div></div>
       <div class="achievement-grid">${ACHIEVEMENTS.map(renderAchievement).join("")}</div>

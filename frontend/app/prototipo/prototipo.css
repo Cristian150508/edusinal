@@ -3293,6 +3293,35 @@ h3 { font-size: 1.17em; }
 .modal-footer { gap: 8px; }
 .modal-footer > .button { margin: 0; }
 
+/* Calendário da ofensiva (janela do foguinho) */
+.profile-stat.is-button { font: inherit; color: inherit; cursor: pointer; }
+.profile-stat.is-button:hover { border-color: var(--coral); }
+
+.streak-summary { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.streak-summary strong { font-family: "Manrope", sans-serif; font-size: 18px; }
+.streak-summary p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.streak-flame { display: grid; place-items: center; width: 52px; height: 52px; flex: none; border-radius: 16px; background: var(--surface-soft); color: var(--muted); font-size: 28px; }
+.streak-flame.is-lit { background: var(--coral-soft); color: var(--coral); }
+
+.calendar-month { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.calendar-month strong { font-family: "Manrope", sans-serif; font-size: 16px; }
+.calendar-nav { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); cursor: pointer; }
+.calendar-nav:disabled { opacity: 0.35; cursor: default; }
+
+.calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.calendar-weekday { color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
+.calendar-day { display: grid; place-items: center; aspect-ratio: 1; border-radius: 50%; color: var(--text); font-size: 14px; }
+.calendar-day.is-empty { visibility: hidden; }
+.calendar-day.is-future { color: var(--muted); opacity: 0.5; }
+.calendar-day.is-today { box-shadow: inset 0 0 0 2px var(--primary); font-weight: 700; }
+.calendar-day.is-practiced { background: var(--coral-soft); color: var(--coral); font-size: 16px; }
+.calendar-day.is-frozen { background: var(--accent-soft); color: var(--accent); font-size: 15px; }
+
+.calendar-count { margin: 12px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+.calendar-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.calendar-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.calendar-legend .calendar-day { width: 24px; font-size: 12px; }
+
 @media (max-width: 760px) {
   .sidebar { display: none; } /* no celular: barra de baixo + engrenagem */
   .app-toast-area { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; }

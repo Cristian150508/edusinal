@@ -10,7 +10,7 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 - **Vidas:** 3 vidas; cada resposta errada consome uma e uma vida se recupera a cada 30 minutos. Revisar o dicionário continua livre.
 - **Recompensas demonstrativas:** uma atividade nova correta concede 20 XP. A primeira dá 15 moedas e libera um broche local no protótipo; cada atividade nova seguinte dá 5 moedas. O inventário ainda não está na API.
 - **Abas do aluno:** dicionário com busca e categorias (revisar é livre); ligas semanais com colegas fictícios (os 3 primeiros sobem, os 2 últimos descem); missões do dia e da semana que dão moedas; lojinha com ajudas (recarga de vidas, protetor de ofensiva), acessórios e fundos; perfil com conquistas; e Configurações (engrenagem) com tema, tamanho do texto, animações reduzidas, ajuda, privacidade e conta.
-- **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva.
+- **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva. Tocar no foguinho (barra de cima do celular ou cartão Ofensiva do Perfil) abre o calendário do mês, com os dias praticados e os salvos pelo protetor.
 - **Segurança para menores:** não há chat nem mensagens entre alunos, e as ligas mostram só apelidos.
 - **Conta demonstrativa:** o cadastro cria um perfil novo, do zero (com 20 moedas de boas-vindas), salvo só neste navegador. Entrar usa o mesmo e-mail do cadastro; sem servidor, a senha não é conferida. Tema claro/escuro, tamanho do texto e animações ficam em "Configurações → Preferências".
 - **Árvore de exercícios:** os 5 exercícios de cada etapa seguem uma ordem (o 2 abre depois do 1, e assim por diante) e a prova final vem por último. No computador eles ficam em espiral, com a prova no centro; no celular, num caminho ondulado só com os ícones: tocar num ícone mostra o título e o botão para começar.
@@ -39,6 +39,7 @@ frontend/
     manifest.webmanifest    Permite instalar o protótipo na tela inicial do celular
     icones/                 Ícones do app (gerados a partir do mascote)
     js/telas-conta.js  Cadastro, login e validação dos dados
+    js/calendario.js   Calendário da ofensiva (janela do foguinho)
     js/app.js          Troca de telas, cliques e teclado (carrega por último)
   assets/images/       Imagens compartilhadas
   assets/vendor/       Bootstrap e Bootstrap Icons (cópias locais, com as licenças)
@@ -68,7 +69,7 @@ Para abrir uma tela direto, use `?tela=` no endereço: `home`, `login`, `cadastr
 
 ## Testar no celular
 
-O protótipo tem um layout próprio para celular (até 760 px de largura), no estilo do Duolingo: barra de cima com o mascote do aluno (tocar abre o Perfil), ofensiva, moedas (tocar abre a lojinha), vidas e a engrenagem das Configurações; barra de baixo com Home, Dicionário, Ligas, Missões e Lojinha; atividade e árvore de lições em tela cheia. A Home do celular mostra só o destaque e a trilha (as missões e o resumo de vidas/ofensiva ficam nas abas e na barra de cima).
+O protótipo tem um layout próprio para celular (até 760 px de largura), no estilo do Duolingo: barra de cima com o mascote do aluno (tocar abre o Perfil), ofensiva (tocar abre o calendário), moedas (tocar abre a lojinha), vidas e a engrenagem das Configurações; barra de baixo com Home, Dicionário, Ligas, Missões e Lojinha; atividade e árvore de lições em tela cheia. A Home do celular mostra só o destaque e a trilha (as missões e o resumo de vidas/ofensiva ficam nas abas e na barra de cima).
 
 1. Deixe o computador e o celular na mesma rede Wi-Fi.
 2. Na raiz do projeto, rode `python3 -m http.server 5500`.

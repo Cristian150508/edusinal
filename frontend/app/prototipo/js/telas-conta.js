@@ -73,6 +73,8 @@ function startNewProfile(name, email, isMinor) {
     streak: 0,
     lastActiveDate: null,
     streakFreezes: 0,
+    practiceDays: [],
+    frozenDays: [],
     league: 0,
     lives: MAX_LIVES,
     nextLifeAt: null,
