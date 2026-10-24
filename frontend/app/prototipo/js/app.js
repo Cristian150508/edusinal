@@ -24,9 +24,9 @@ const screenRenderers = {
 
 // ----- Desenho da página -----
 
-// Celular: abas da barra de baixo. Lojinha abre pelas moedas e
-// Configurações pela engrenagem, na barra de cima.
-const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "profile"];
+// Celular: abas da barra de baixo. Configurações abre pela engrenagem,
+// na barra de cima (e as moedas de lá também levam à lojinha).
+const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "shop", "profile"];
 
 // Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
 const PARENT_TAB = { lesson: "trail", mascot: "profile" };

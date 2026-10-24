@@ -2991,8 +2991,8 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
     left: 0;
     z-index: 14;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding: 6px 2px calc(6px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--line);
     background: var(--surface);
     box-shadow: 0 -8px 24px rgba(10, 30, 70, 0.06);
@@ -3219,6 +3219,8 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   /* Menu lateral (☰) desliza por cima, com a altura certa no iPhone */}
 
 @media (max-width: 360px) {
+  .bottom-tab { font-size: 10px; letter-spacing: -0.01em; }
+  .bottom-tab-icon { width: 34px; }
   .mobile-brand span { display: none; }
   .stat-chip { padding: 0 8px; font-size: 13px; }
   .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
