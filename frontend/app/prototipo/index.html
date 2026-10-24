@@ -17,7 +17,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="prototipo.css?v=32" />
+  <!-- Bootstrap e Bootstrap Icons ficam dentro do projeto: funcionam sem internet -->
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css" />
+  <!-- O nosso CSS vem depois, para as cores e o visual do EduSinal valerem -->
+  <link rel="stylesheet" href="prototipo.css?v=35" />
 </head>
 <body>
   <a class="skip-link" href="#screen-root">Pular para o conteúdo</a>
@@ -30,7 +34,7 @@
       <p class="sidebar-label" id="sidebar-label">ESPAÇO DO ALUNO</p>
       <nav class="side-nav" id="side-nav" aria-label="Navegação principal"></nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-note"><span class="sidebar-note-mark" aria-hidden="true">✳</span><span>Um sinal por dia já faz diferença.</span></div>
+        <div class="sidebar-note"><i class="bi bi-stars sidebar-note-mark" aria-hidden="true"></i><span>Um sinal por dia já faz diferença.</span></div>
       </div>
     </aside>
 
@@ -40,28 +44,68 @@
       <header class="mobile-topbar">
         <button class="mobile-brand" type="button" data-screen="trail" aria-label="EduSinal, ir para a Home"><img src="icones/icone-192.png" alt="" /><span>Edu<span class="brand-accent">Sinal</span></span></button>
         <div class="mobile-stats" id="mobile-stats"></div>
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span></button>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" data-bs-toggle="offcanvas" data-bs-target="#mobile-menu" aria-controls="mobile-menu"><i class="bi bi-list" aria-hidden="true"></i></button>
       </header>
       <main class="screen-root" id="screen-root" tabindex="-1"></main>
-      <footer class="app-footer"><span>EduSinal <span class="footer-dot">•</span> Ambiente demonstrativo</span><a href="../../landing/index.html">Página inicial <span aria-hidden="true">↗</span></a></footer>
+      <footer class="app-footer"><span>EduSinal <span class="footer-dot">•</span> Ambiente demonstrativo</span><a href="../../landing/index.html">Página inicial <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a></footer>
     </div>
 
     <!-- Barra de baixo, só no celular: as abas principais -->
     <nav class="bottom-nav" id="bottom-nav" aria-label="Abas principais"></nav>
   </div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="js/estado.js?v=32" defer></script>
-  <script src="js/mascote-desenho.js?v=32" defer></script>
-  <script src="js/conteudo.js?v=32" defer></script>
-  <script src="js/telas-trilha.js?v=32" defer></script>
-  <script src="js/licao.js?v=32" defer></script>
-  <script src="js/telas-dicionario.js?v=32" defer></script>
-  <script src="js/telas-ligas.js?v=32" defer></script>
-  <script src="js/telas-missoes.js?v=32" defer></script>
-  <script src="js/telas-lojinha.js?v=32" defer></script>
-  <script src="js/telas-perfil.js?v=32" defer></script>
-  <script src="js/telas-mascote.js?v=32" defer></script>
-  <script src="js/telas-conta.js?v=32" defer></script>
-  <script src="js/app.js?v=32" defer></script>
+
+  <!-- Menu completo do celular (Offcanvas do Bootstrap): desliza da esquerda -->
+  <div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobile-menu" aria-labelledby="mobile-menu-title">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title" id="mobile-menu-title"><img src="icones/icone-192.png" alt="" /><span>Edu<span class="brand-accent">Sinal</span></span></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+    </div>
+    <div class="offcanvas-body">
+      <p class="sidebar-label">ESPAÇO DO ALUNO</p>
+      <nav class="side-nav" id="mobile-menu-nav" aria-label="Menu completo"></nav>
+    </div>
+  </div>
+
+  <!-- Avisos rápidos (Toast do Bootstrap) -->
+  <div class="toast-container app-toast-area">
+    <div class="toast app-toast" id="toast" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="3200">
+      <div class="d-flex align-items-center">
+        <div class="toast-body" id="toast-text"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar aviso"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Janela de confirmação (Modal do Bootstrap), usada antes de apagar progresso -->
+  <div class="modal fade" id="confirm-modal" tabindex="-1" aria-labelledby="confirm-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="confirm-title">Tem certeza?</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body" id="confirm-text"></div>
+        <div class="modal-footer">
+          <button type="button" class="button button-outline" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="button button-danger" id="confirm-ok">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js" defer></script>
+  <script src="js/estado.js?v=35" defer></script>
+  <script src="js/mascote-desenho.js?v=35" defer></script>
+  <script src="js/conteudo.js?v=35" defer></script>
+  <script src="js/telas-trilha.js?v=35" defer></script>
+  <script src="js/licao.js?v=35" defer></script>
+  <script src="js/telas-dicionario.js?v=35" defer></script>
+  <script src="js/telas-ligas.js?v=35" defer></script>
+  <script src="js/telas-missoes.js?v=35" defer></script>
+  <script src="js/telas-lojinha.js?v=35" defer></script>
+  <script src="js/telas-perfil.js?v=35" defer></script>
+  <script src="js/telas-mascote.js?v=35" defer></script>
+  <script src="js/telas-conta.js?v=35" defer></script>
+  <script src="js/app.js?v=35" defer></script>
 </body>
 </html>

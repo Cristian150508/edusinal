@@ -40,7 +40,7 @@ function lessonEyebrow() {
 function lessonRewardLabel() {
   const lesson = state.currentLesson;
   if (isLessonDone(lesson.topicId, lesson.branchId)) return "Revisão · sem XP";
-  return `✳ +${XP_PER_EXERCISE} XP`;
+  return `${icon("lightning-charge-fill")} +${XP_PER_EXERCISE} XP`;
 }
 
 function renderLesson() {
@@ -57,7 +57,7 @@ function renderLesson() {
 
   return `
     <section class="lesson-wrap">
-      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><span aria-hidden="true">←</span> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">${lessonRewardLabel()}</span></div>
+      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">${lessonRewardLabel()}</span></div>
       <div class="lesson-progress" role="progressbar" aria-label="Progresso da atividade" aria-valuenow="${lesson.index}" aria-valuemin="0" aria-valuemax="${total}"><span id="lesson-progress-bar" style="width: ${progress}%"></span></div>
       <div class="lesson-content">
         <p class="eyebrow">${lessonEyebrow()} <span class="lesson-count">· ${lesson.index + 1} de ${total}</span></p>

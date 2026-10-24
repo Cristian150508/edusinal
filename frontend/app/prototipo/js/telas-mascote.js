@@ -78,7 +78,7 @@ function isMascotItemOwned(item) {
 // Texto curto que explica como liberar o item.
 function unlockLabel(item) {
   const unlock = item.unlock;
-  if (unlock.type === "coins") return `${unlock.cost} ✦`;
+  if (unlock.type === "coins") return `${unlock.cost} ${icon("coin")}`;
   if (unlock.type === "reward") return "1ª atividade";
   if (unlock.type === "achievement") return `Conquista: ${ACHIEVEMENTS.find((entry) => entry.id === unlock.id).title}`;
   return "Grátis";
@@ -150,7 +150,7 @@ function renderMascotOption(item, slotInfo) {
 
   let status = isOwned ? "Usar" : unlockLabel(item);
   if (isEquipped) status = "Em uso";
-  if (!isOwned && item.unlock.type === "achievement") status = `🔒 ${unlockLabel(item)}`;
+  if (!isOwned && item.unlock.type === "achievement") status = `${icon("lock-fill")} ${unlockLabel(item)}`;
 
   // Miniatura: o mascote atual vestindo este item, sobre o fundo escolhido.
   const look = lookWith(item.slot, item.id);
@@ -175,7 +175,7 @@ function renderMascotEditor() {
   return `
     <section class="page-intro">
       <div><p class="eyebrow">SEU PERSONAGEM</p><h2>Personalizar mascote</h2><p>Escolha roupa e acessórios. Itens com preço são comprados com moedas; os com cadeado vêm de conquistas.</p></div>
-      <span class="shop-balance"><span aria-hidden="true">✦</span> ${state.coins} moedas</span>
+      <span class="shop-balance"><i class="bi bi-coin" aria-hidden="true"></i> ${state.coins} moedas</span>
     </section>
     <div class="mascot-editor">
       <aside class="mascot-stage">

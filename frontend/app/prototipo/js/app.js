@@ -5,8 +5,6 @@
 const app = document.querySelector(".app-shell");
 const screenRoot = document.getElementById("screen-root");
 const heading = document.getElementById("screen-heading");
-const sidebar = document.getElementById("sidebar");
-const menuToggle = document.getElementById("menu-toggle");
 
 // Cada tela e a função que desenha o HTML dela.
 const screenRenderers = {
@@ -26,7 +24,7 @@ const screenRenderers = {
 
 // ----- Desenho da página -----
 
-// Celular: abas da barra de baixo (o resto fica no menu ☰).
+// Celular: abas da barra de baixo (o resto fica no menu completo).
 const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "profile"];
 
 // Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
@@ -36,10 +34,10 @@ function renderBottomNav() {
   const activeTab = PARENT_TAB[state.screen] || state.screen;
   const ready = readyMissionsCount();
   document.getElementById("bottom-nav").innerHTML = MOBILE_TABS.map((screen) => {
-    const [, label, icon] = navigationItems.find(([id]) => id === screen);
+    const [, label, iconName] = navigationItems.find(([id]) => id === screen);
     const isActive = activeTab === screen;
     const badge = screen === "missions" && ready > 0 ? `<span class="bottom-badge" aria-label="${ready} para resgatar">${ready}</span>` : "";
-    return `<button class="bottom-tab${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}><span class="bottom-tab-icon" aria-hidden="true">${icon}</span><span>${label}</span>${badge}</button>`;
+    return `<button class="bottom-tab${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}><span class="bottom-tab-icon">${icon(iconName)}</span><span>${label}</span>${badge}</button>`;
   }).join("");
 }
 
@@ -47,20 +45,27 @@ function renderBottomNav() {
 function renderMobileStats() {
   refreshLives();
   document.getElementById("mobile-stats").innerHTML = `
-    <button class="stat-chip stat-streak" type="button" data-screen="profile" aria-label="Ofensiva: ${state.streak} dias"><span aria-hidden="true">🔥</span><strong>${state.streak}</strong></button>
-    <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha"><span aria-hidden="true">✦</span><strong>${state.coins}</strong></button>
-    <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span aria-hidden="true">♥</span><strong>${state.lives}</strong></button>`;
+    <button class="stat-chip stat-streak" type="button" data-screen="profile" aria-label="Ofensiva: ${state.streak} dias">${icon("fire")}<strong>${state.streak}</strong></button>
+    <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha">${icon("coin")}<strong>${state.coins}</strong></button>
+    <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></button>`;
 }
 
 function renderNavigation() {
-  document.getElementById("sidebar-label").textContent = "ESPAÇO DO ALUNO";
-  document.getElementById("side-nav").innerHTML = navigationItems.map(([screen, label, icon], index) => {
+  const items = navigationItems.map(([screen, label, iconName], index) => {
     const isActive = state.screen === screen;
     return `
     <button class="nav-item${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}>
-      <span class="nav-icon nav-icon-${index + 1}" aria-hidden="true">${icon}</span><span>${label}</span>
+      <span class="nav-icon nav-icon-${index + 1}">${icon(iconName)}</span><span>${label}</span>
     </button>`;
   }).join("");
+  document.getElementById("side-nav").innerHTML = items;        // computador
+  document.getElementById("mobile-menu-nav").innerHTML = items; // menu do celular
+}
+
+// Fecha o menu do celular (Offcanvas do Bootstrap), se estiver aberto.
+function closeMobileMenu() {
+  const menu = document.getElementById("mobile-menu");
+  if (window.bootstrap) bootstrap.Offcanvas.getInstance(menu)?.hide();
 }
 
 // Desenha de novo a tela atual com os dados do momento.
@@ -74,6 +79,8 @@ function render() {
   renderMobileStats();
   screenRoot.innerHTML = screenRenderers[state.screen]();
   app.dataset.theme = state.theme;
+  document.documentElement.dataset.theme = state.theme;          // janelas do Bootstrap ficam fora do app
+  document.documentElement.setAttribute("data-bs-theme", state.theme); // tema dos componentes do Bootstrap
   app.dataset.textSize = state.textSize;
   app.dataset.motion = state.motion;
 }
@@ -94,8 +101,7 @@ function setScreen(screen) {
   state.editingName = false;
   if (screen !== "lesson") state.currentLesson = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
-  sidebar.classList.remove("is-open");
-  menuToggle.setAttribute("aria-expanded", "false");
+  closeMobileMenu();
   render();
   screenRoot.focus({ preventScroll: true });
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -192,17 +198,11 @@ document.addEventListener("submit", (event) => {
   }
 });
 
-menuToggle.addEventListener("click", () => {
-  const isOpen = sidebar.classList.toggle("is-open");
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
 // Esc fecha o modo foco e o menu do celular.
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   if (state.focusTopic) closeTopic();
-  sidebar.classList.remove("is-open");
-  menuToggle.setAttribute("aria-expanded", "false");
+  closeMobileMenu();
 });
 
 // Mantém as vidas (e o tempo de recarga) atualizadas na Home e na barra do celular.

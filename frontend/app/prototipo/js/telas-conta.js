@@ -15,7 +15,7 @@ function hasStrongPassword(password) {
 
 function renderSignup() {
   return `
-    <section class="signup-layout" aria-labelledby="signup-title"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Crie seu perfil de aluno e comece uma jornada de aprendizagem no seu ritmo.</p><div class="signup-aside"><span aria-hidden="true">✳</span><span>Cadastro demonstrativo: o perfil fica salvo só neste navegador e nada é enviado.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3 id="signup-title">Dados do aluno</h3></div><form id="signup-form" novalidate><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-age">Idade<input id="signup-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1" placeholder="Idade em anos" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label><label class="field-label" for="signup-password">Senha<input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required /></label><label class="field-label signup-field-full" for="signup-confirm-password">Confirme a senha<input id="signup-confirm-password" name="passwordConfirmation" type="password" autocomplete="new-password" placeholder="Digite a senha novamente" required /></label></div><p class="field-hint">Use ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" id="form-error" role="alert" aria-live="polite"></p><button class="button button-primary button-full" type="submit">Criar perfil <span aria-hidden="true">→</span></button><p class="form-legal">A idade não é verificada e a senha não é salva nem enviada.</p><div class="login-register"><span>Já tem uma conta?</span><button class="text-button" type="button" data-screen="login">Entrar <span aria-hidden="true">→</span></button></div></form></div></section>`;
+    <section class="signup-layout" aria-labelledby="signup-title"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Crie seu perfil de aluno e comece uma jornada de aprendizagem no seu ritmo.</p><div class="signup-aside"><i class="bi bi-info-circle-fill" aria-hidden="true"></i><span>Cadastro demonstrativo: o perfil fica salvo só neste navegador e nada é enviado.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3 id="signup-title">Dados do aluno</h3></div><form id="signup-form" novalidate><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-age">Idade<input id="signup-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1" placeholder="Idade em anos" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label><label class="field-label" for="signup-password">Senha<input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required /></label><label class="field-label signup-field-full" for="signup-confirm-password">Confirme a senha<input id="signup-confirm-password" name="passwordConfirmation" type="password" autocomplete="new-password" placeholder="Digite a senha novamente" required /></label></div><p class="field-hint">Use ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" id="form-error" role="alert" aria-live="polite"></p><button class="button button-primary button-full" type="submit">Criar perfil <i class="bi bi-arrow-right" aria-hidden="true"></i></button><p class="form-legal">A idade não é verificada e a senha não é salva nem enviada.</p><div class="login-register"><span>Já tem uma conta?</span><button class="text-button" type="button" data-screen="login">Entrar <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div></form></div></section>`;
 }
 
 function renderLogin() {
@@ -25,7 +25,7 @@ function renderLogin() {
         <p class="eyebrow">BEM-VINDE DE VOLTA</p>
         <h2 id="login-title">Continue sua jornada no EduSinal.</h2>
         <p>Entre com o e-mail do perfil que você criou neste navegador.</p>
-        <button class="text-button" type="button" data-screen="intro"><span aria-hidden="true">←</span> Voltar ao início</button>
+        <button class="text-button" type="button" data-screen="intro"><i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar ao início</button>
       </div>
       <div class="signup-form-panel login-panel">
         <div class="signup-title"><span class="eyebrow">ACESSO</span><h3>Entrar na sua conta</h3></div>
@@ -33,10 +33,10 @@ function renderLogin() {
           <label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" autocomplete="username" placeholder="voce@email.com" required /></label>
           <label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required /></label>
           <p class="form-error" id="login-message" role="status" aria-live="polite"></p>
-          <button class="button button-primary button-full" type="submit">Entrar <span aria-hidden="true">→</span></button>
+          <button class="button button-primary button-full" type="submit">Entrar <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
         </form>
         <p class="form-legal">Demonstração: sem servidor, a senha não é conferida. Só o e-mail precisa ser o do perfil salvo aqui.</p>
-        <div class="login-register"><span>Ainda não tem conta?</span><button class="text-button" type="button" data-screen="signup">Criar cadastro <span aria-hidden="true">→</span></button></div>
+        <div class="login-register"><span>Ainda não tem conta?</span><button class="text-button" type="button" data-screen="signup">Criar cadastro <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
       </div>
     </section>`;
 }
@@ -113,10 +113,22 @@ function handleSignupSubmit(form) {
   errorBox.textContent = error;
   if (error) return;
 
-  if (hasSavedProfile() && !window.confirm(`Já existe o perfil de ${state.name} neste navegador. Criar um novo apaga esse progresso. Continuar?`)) return;
-
   const name = form.elements.name.value.trim().split(" ")[0];
-  startNewProfile(name, form.elements.email.value.trim().toLowerCase(), Number(form.elements.age.value) < 18);
-  setScreen("trail");
-  showToast(`Perfil criado! Você ganhou ${WELCOME_COINS} moedas de boas-vindas.`);
+  const email = form.elements.email.value.trim().toLowerCase();
+  const isMinor = Number(form.elements.age.value) < 18;
+  const create = () => {
+    startNewProfile(name, email, isMinor);
+    setScreen("trail");
+    showToast(`Perfil criado! Você ganhou ${WELCOME_COINS} moedas de boas-vindas.`);
+  };
+
+  if (!hasSavedProfile()) {
+    create();
+    return;
+  }
+  askConfirm({
+    title: "Criar um novo perfil?",
+    text: `Já existe o perfil de ${state.name} neste navegador. Criar um novo apaga esse progresso.`,
+    confirmLabel: "Criar novo perfil",
+  }, create);
 }

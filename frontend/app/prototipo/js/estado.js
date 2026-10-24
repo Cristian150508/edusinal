@@ -122,15 +122,15 @@ const screenTitles = {
   signup: "Criar conta",
 };
 
-// Itens do menu lateral: [tela, nome, ícone]
+// Itens do menu lateral: [tela, nome, ícone do Bootstrap Icons]
 const navigationItems = [
-  ["trail", "Home", "⌂"],
-  ["signs", "Dicionário", "◉"],
-  ["leagues", "Ligas", "⬟"],
-  ["missions", "Missões", "▣"],
-  ["shop", "Lojinha", "✿"],
-  ["profile", "Perfil", "●"],
-  ["more", "Mais", "•••"],
+  ["trail", "Home", "house-door-fill"],
+  ["signs", "Dicionário", "book-half"],
+  ["leagues", "Ligas", "trophy-fill"],
+  ["missions", "Missões", "bullseye"],
+  ["shop", "Lojinha", "shop"],
+  ["profile", "Perfil", "person-fill"],
+  ["more", "Mais", "three-dots"],
 ];
 
 // Salva no navegador só o que precisa continuar na próxima visita.
@@ -290,18 +290,42 @@ function escapeHtml(value) {
   })[character]);
 }
 
+// Ícone do Bootstrap Icons (https://icons.getbootstrap.com). Ex.: icon("heart-fill").
+function icon(name, extraClass = "") {
+  return `<i class="bi bi-${name}${extraClass ? ` ${extraClass}` : ""}" aria-hidden="true"></i>`;
+}
+
+// Aviso rápido no canto da tela (Toast do Bootstrap).
 function showToast(message) {
   const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.clearTimeout(showToast.timeout);
-  showToast.timeout = window.setTimeout(() => toast.classList.remove("is-visible"), 2800);
+  document.getElementById("toast-text").textContent = message;
+  if (window.bootstrap) bootstrap.Toast.getOrCreateInstance(toast).show();
+  else toast.classList.add("show"); // se o Bootstrap não carregar, o aviso aparece mesmo assim
+}
+
+// Janela de confirmação (Modal do Bootstrap). onConfirm só roda se a pessoa confirmar.
+function askConfirm({ title, text, confirmLabel = "Confirmar" }, onConfirm) {
+  if (!window.bootstrap) {
+    if (window.confirm(text)) onConfirm();
+    return;
+  }
+  const modalElement = document.getElementById("confirm-modal");
+  document.getElementById("confirm-title").textContent = title;
+  document.getElementById("confirm-text").textContent = text;
+  const confirmButton = document.getElementById("confirm-ok");
+  confirmButton.textContent = confirmLabel;
+  const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+  confirmButton.onclick = () => {
+    modal.hide();
+    onConfirm();
+  };
+  modal.show();
 }
 
 // Corações cheios e vazios, usados na Home e no placar do modo foco.
 function livesHeartsHtml() {
   return Array.from({ length: MAX_LIVES }, (_, index) =>
-    `<span class="life-heart${index < state.lives ? " is-full" : ""}" aria-hidden="true">♥</span>`,
+    index < state.lives ? icon("heart-fill", "life-heart is-full") : icon("heart", "life-heart"),
   ).join("");
 }
 

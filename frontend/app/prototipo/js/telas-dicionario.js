@@ -86,21 +86,21 @@ function renderAlphabet() {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => {
     const isUnlocked = UNLOCKED_LETTERS.includes(letter);
     const isSelected = state.selectedLetter === letter;
-    return `<button class="alphabet-letter${isUnlocked ? " is-unlocked" : " is-locked"}${isSelected ? " is-selected" : ""}" type="button" data-alphabet-letter="${letter}" aria-label="${isUnlocked ? `Letra ${letter}` : `Letra ${letter}, bloqueada`}" ${isUnlocked ? `aria-pressed="${isSelected}"` : "disabled"}>${isUnlocked ? "" : '<span class="alphabet-lock" aria-hidden="true">&#128274;</span>'}<span>${letter}</span></button>`;
+    return `<button class="alphabet-letter${isUnlocked ? " is-unlocked" : " is-locked"}${isSelected ? " is-selected" : ""}" type="button" data-alphabet-letter="${letter}" aria-label="${isUnlocked ? `Letra ${letter}` : `Letra ${letter}, bloqueada`}" ${isUnlocked ? `aria-pressed="${isSelected}"` : "disabled"}>${isUnlocked ? "" : icon("lock-fill", "alphabet-lock")}<span>${letter}</span></button>`;
   }).join("");
 
   return `
-    <section class="alphabet-section" aria-labelledby="alphabet-title"><div class="section-heading"><div><p class="eyebrow">ALFABETO MANUAL · ${UNLOCKED_LETTERS.length} DE 26 LETRAS</p><h2 id="alphabet-title">Escolha uma letra</h2></div><span class="alphabet-legend"><span aria-hidden="true">&#128274;</span> Em breve</span></div><div class="alphabet-grid" aria-label="Alfabeto manual, letras A a Z">${letters}</div></section>
-    <section class="alphabet-detail" aria-live="polite" aria-labelledby="selected-letter-title"><div class="alphabet-detail-letter" aria-hidden="true">${state.selectedLetter}</div><div class="alphabet-detail-copy"><p class="eyebrow">LETRA LIBERADA</p><h2 id="selected-letter-title">Letra ${state.selectedLetter}</h2><p>O material visual desta letra está sendo preparado para revisão por pessoas fluentes em Libras. Consulte um professor ou intérprete para aprender a configuração correta da mão.</p></div><span class="alphabet-detail-mark" aria-hidden="true">✳</span></section>`;
+    <section class="alphabet-section" aria-labelledby="alphabet-title"><div class="section-heading"><div><p class="eyebrow">ALFABETO MANUAL · ${UNLOCKED_LETTERS.length} DE 26 LETRAS</p><h2 id="alphabet-title">Escolha uma letra</h2></div><span class="alphabet-legend"><i class="bi bi-lock-fill" aria-hidden="true"></i> Em breve</span></div><div class="alphabet-grid" aria-label="Alfabeto manual, letras A a Z">${letters}</div></section>
+    <section class="alphabet-detail" aria-live="polite" aria-labelledby="selected-letter-title"><div class="alphabet-detail-letter" aria-hidden="true">${state.selectedLetter}</div><div class="alphabet-detail-copy"><p class="eyebrow">LETRA LIBERADA</p><h2 id="selected-letter-title">Letra ${state.selectedLetter}</h2><p>O material visual desta letra está sendo preparado para revisão por pessoas fluentes em Libras. Consulte um professor ou intérprete para aprender a configuração correta da mão.</p></div><i class="bi bi-stars alphabet-detail-mark" aria-hidden="true"></i></section>`;
 }
 
 function renderWordDetail(word) {
   if (!word) {
-    return '<aside class="word-detail word-detail-empty"><span aria-hidden="true">◉</span><p>Escolha uma palavra para ver o sinal.</p></aside>';
+    return '<aside class="word-detail word-detail-empty"><i class="bi bi-hand-index-thumb" aria-hidden="true"></i><p>Escolha uma palavra para ver o sinal.</p></aside>';
   }
   return `
     <aside class="word-detail" aria-live="polite">
-      <div class="word-video" aria-hidden="true"><span>▶</span><small>Vídeo em produção</small></div>
+      <div class="word-video" aria-hidden="true"><i class="bi bi-play-circle-fill" aria-hidden="true"></i><small>Vídeo em produção</small></div>
       <p class="eyebrow">${categoryLabel(word.category).toUpperCase()}</p>
       <h2>${word.word}</h2>
       <p>Exemplo de uso: “${word.example}”</p>
@@ -123,7 +123,7 @@ function renderDictionaryResults() {
 
   const cards = words.map((word) => {
     const isSelected = state.selectedWord === word.id;
-    const seen = state.signsSeen.includes(word.id) ? '<small class="word-seen">visto ✓</small>' : "";
+    const seen = state.signsSeen.includes(word.id) ? `<small class="word-seen">visto ${icon("check-lg")}</small>` : "";
     return `<button class="word-card${isSelected ? " is-selected" : ""}" type="button" data-action="select-word" data-word="${word.id}" aria-pressed="${isSelected}"><strong>${word.word}</strong><small>${categoryLabel(word.category)}</small>${seen}</button>`;
   }).join("");
 

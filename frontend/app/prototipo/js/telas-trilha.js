@@ -11,9 +11,9 @@ function renderIntro() {
         <h2 id="intro-title">Aprender Libras é abrir espaço para novas conexões.</h2>
         <p>O EduSinal reúne uma trilha de aprendizagem, exercícios para praticar e um dicionário para consultar quando quiser.</p>
         <div class="intro-actions">
-          <button class="button button-primary" type="button" data-screen="signup">Criar minha conta <span aria-hidden="true">→</span></button>
-          <button class="text-button" type="button" data-screen="login">Já tenho cadastro <span aria-hidden="true">→</span></button>
-          <a class="quiet-link" href="../../landing/index.html">Conhecer o projeto <span aria-hidden="true">↗</span></a>
+          <button class="button button-primary" type="button" data-screen="signup">Criar minha conta <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+          <button class="text-button" type="button" data-screen="login">Já tenho cadastro <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+          <a class="quiet-link" href="../../landing/index.html">Conhecer o projeto <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="intro-art"><img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="Mascote do EduSinal" /></div>
@@ -43,9 +43,9 @@ function branchPosition(index) {
 function renderBranch(topicId, branch, index) {
   const { x, y } = branchPosition(index);
   const isDone = isLessonDone(topicId, branch.id);
-  const icon = isDone ? "✓" : branch.icon;
+  const symbol = isDone ? icon("check-lg") : icon(branch.icon);
   const hint = isDone ? "Concluído · refazer" : `${branch.hint} · +20 XP`;
-  return `<button class="tree-leaf${isDone ? " is-done" : ""}" type="button" style="--x:${x}%;--y:${y}%;--i:${index}" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}><span class="tree-icon" aria-hidden="true">${icon}</span><strong>${branch.label}</strong><small>${hint}</small></button>`;
+  return `<button class="tree-leaf${isDone ? " is-done" : ""}" type="button" style="--x:${x}%;--y:${y}%;--i:${index}" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}><span class="tree-icon">${symbol}</span><strong>${branch.label}</strong><small>${hint}</small></button>`;
 }
 
 // O centro é a prova final. Trancada ou concluída, ele só leva de volta à trilha.
@@ -56,18 +56,18 @@ function renderFinalNode(topicId) {
   const isFinalDone = isLessonDone(topicId, "final");
   const isOpen = isFinalUnlocked(topicId) && !isFinalDone;
 
-  let icon = "🔒";
+  let symbol = icon("lock-fill");
   let hint = `Conclua os galhos (${done} / ${total}) · toque para voltar`;
   if (isFinalDone) {
-    icon = "✓";
+    symbol = icon("check-lg");
     hint = "Etapa concluída · toque para voltar";
   } else if (isOpen) {
-    icon = "★";
+    symbol = icon("star-fill");
     hint = `Liberada! Pode errar no máximo ${FINAL_MAX_MISTAKES}`;
   }
   const attrs = isOpen ? `data-action="start-branch" data-topic="${topicId}" data-branch="final"` : 'data-action="close-topic"';
   const disabled = isOpen && state.lives === 0 ? "disabled" : "";
-  return `<button class="tree-center${isOpen ? " is-open" : ""}${isFinalDone ? " is-done" : ""}" type="button" ${attrs} ${disabled}><span class="route-node node-coral" aria-hidden="true">${icon}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${hint}</small></button>`;
+  return `<button class="tree-center${isOpen ? " is-open" : ""}${isFinalDone ? " is-done" : ""}" type="button" ${attrs} ${disabled}><span class="route-node node-coral">${symbol}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${hint}</small></button>`;
 }
 
 function renderTopicTree() {
@@ -81,8 +81,8 @@ function renderTopicTree() {
   });
   return `
     <section class="topic-tree" aria-labelledby="topic-title">
-      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar à trilha"><span aria-hidden="true">←</span> <span class="back-label">Voltar à trilha</span></button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item"><strong>${state.xp}</strong> XP</span><span class="hud-item"><strong>${state.coins}</strong> ✦</span><span class="hud-item"><strong>${state.streak}</strong> dias</span></div></div>
-      ${state.lives === 0 ? `<p class="tree-warning" role="status"><span aria-hidden="true">♥</span> Sem vidas agora (${timeUntilNextLife()}). Enquanto isso, revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na <button class="text-button" type="button" data-screen="shop">lojinha</button>.</p>` : ""}
+      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar à trilha"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span class="back-label">Voltar à trilha</span></button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item hud-xp">${icon("lightning-charge-fill")}<strong>${state.xp}</strong> XP</span><span class="hud-item hud-coins">${icon("coin")}<strong>${state.coins}</strong></span><span class="hud-item hud-streak">${icon("fire")}<strong>${state.streak}</strong> dias</span></div></div>
+      ${state.lives === 0 ? `<p class="tree-warning" role="status"><i class="bi bi-heart-fill" aria-hidden="true"></i> Sem vidas agora (${timeUntilNextLife()}). Enquanto isso, revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na <button class="text-button" type="button" data-screen="shop">lojinha</button>.</p>` : ""}
       <div class="tree-canvas">
         <svg class="tree-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join("")}</svg>
         ${renderFinalNode(topicId)}
@@ -113,7 +113,7 @@ function renderHeroProgress() {
             <p class="eyebrow"><span class="status-dot"></span> VOCÊ ESTÁ AQUI · ETAPA ${topic.number}</p>
             <h2>Oi, ${escapeHtml(state.name)}! <span>${topic.title}</span></h2>
             <p>${topic.subtitle}. ${summary}</p>
-            <button class="button button-primary" type="button" data-action="open-topic" data-topic="${topicId}">${buttonLabel} <span aria-hidden="true">→</span></button>
+            <button class="button button-primary" type="button" data-action="open-topic" data-topic="${topicId}">${buttonLabel} <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
           </div>`;
 }
 
@@ -132,24 +132,24 @@ function renderRouteStep(step) {
   }
   if (!isTopicUnlocked(step.topicId)) {
     const previous = TRAIL_STEPS[TRAIL_STEPS.indexOf(step) - 1];
-    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, bloqueada">🔒</span><span class="path-label">CONCLUA A ETAPA ${previous.number}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, bloqueada"><i class="bi bi-lock-fill" aria-hidden="true"></i></span><span class="path-label">CONCLUA A ETAPA ${previous.number}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
   }
   const done = doneBranchCount(step.topicId);
   const total = learningTopics[step.topicId].branches.length;
   const isFinished = isLessonDone(step.topicId, "final");
   let label = "COMECE POR AQUI";
-  if (isFinished) label = "CONCLUÍDA ✓";
+  if (isFinished) label = "CONCLUÍDA";
   else if (done > 0) label = `EM ANDAMENTO · ${done}/${total}`;
-  return `<article class="route-step route-step-active${isFinished ? " is-finished" : ""}"><button class="route-node node-${step.color}" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}">${isFinished ? "✓" : step.number}</button><span class="path-label">${label}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+  return `<article class="route-step route-step-active${isFinished ? " is-finished" : ""}"><button class="route-node node-${step.color}" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}">${isFinished ? icon("check-lg") : step.number}</button><span class="path-label">${label}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
 }
 
 // Resumo das missões do dia na lateral da Home (o detalhe fica na aba Missões).
 function renderHomeMission(mission) {
   const value = Math.min(mission.progress(), mission.target);
   let status = `${value} / ${mission.target}`;
-  if (state.daily.claimed.includes(mission.id)) status = "Resgatada ✓";
-  else if (isMissionComplete(mission)) status = `Pronta! Resgate +${mission.reward} ✦`;
-  return `<button class="home-task" type="button" data-screen="missions"><span class="task-check" aria-hidden="true">${mission.icon}</span><span><strong>${mission.title}</strong><small>${status}</small></span><span aria-hidden="true">→</span></button>`;
+  if (state.daily.claimed.includes(mission.id)) status = `Resgatada ${icon("check-lg")}`;
+  else if (isMissionComplete(mission)) status = `Pronta! Resgate +${mission.reward} ${icon("coin")}`;
+  return `<button class="home-task" type="button" data-screen="missions"><span class="task-check">${icon(mission.icon)}</span><span><strong>${mission.title}</strong><small>${status}</small></span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>`;
 }
 
 function renderTrail() {
@@ -175,18 +175,18 @@ ${renderHeroProgress()}
 
       <aside class="home-side-column" aria-label="Resumo e tarefas">
         <section class="home-side-card home-tasks">
-          <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">✦</span><h2>Missões do dia</h2></div>
+          <div class="home-side-heading"><span class="panel-icon"><i class="bi bi-bullseye" aria-hidden="true"></i></span><h2>Missões do dia</h2></div>
           ${DAILY_MISSIONS.map(renderHomeMission).join("")}
         </section>
 
         <section class="home-side-card home-stats">
-          <div class="home-side-heading"><span class="panel-icon" aria-hidden="true">◷</span><h2>Seu ritmo</h2></div>
+          <div class="home-side-heading"><span class="panel-icon"><i class="bi bi-activity" aria-hidden="true"></i></span><h2>Seu ritmo</h2></div>
           <div class="home-stat home-lives"><span>Vidas</span><div class="lives-summary"><div class="lives-hearts" aria-label="${state.lives} de ${MAX_LIVES} vidas">${hearts}</div><strong>${state.lives} / ${MAX_LIVES}</strong><small>${timeUntilNextLife()}</small></div></div>
           <div class="home-stat"><span>Ofensiva</span><strong>${state.streak} ${state.streak === 1 ? "dia" : "dias"}</strong></div>
           <div class="home-stat"><span>Experiência</span><strong>${state.xp} XP</strong></div>
           <div class="home-stat"><span>Meta de hoje</span><strong>${Math.min(state.daily.exercises, DAILY_GOAL)} / ${DAILY_GOAL} exercícios</strong></div>
           ${progressBarHtml(state.daily.exercises, DAILY_GOAL, "Progresso da meta diária")}
-          <button class="text-button" type="button" data-screen="shop">Abrir a lojinha <span aria-hidden="true">→</span></button>
+          <button class="text-button" type="button" data-screen="shop">Abrir a lojinha <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
         </section>
       </aside>
     </div>

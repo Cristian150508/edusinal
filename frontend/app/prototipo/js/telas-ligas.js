@@ -91,7 +91,7 @@ function renderLeagueStatus(ranking) {
     <section class="league-status zone-${zone}">
       <div class="league-status-place"><strong>${position}º</strong><span>lugar</span></div>
       <div><p>${message}</p><small>${me.xp} XP nesta semana · cada exercício novo vale ${XP_PER_EXERCISE} XP</small></div>
-      <button class="button button-primary" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Ganhar XP <span aria-hidden="true">→</span></button>
+      <button class="button button-primary" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Ganhar XP <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     </section>`;
 }
 
@@ -107,7 +107,7 @@ function renderLeagues() {
 
   const ladder = LEAGUES.map((item, index) => {
     const status = index === state.league ? " is-current" : index > state.league ? " is-locked" : "";
-    return `<li class="league-step ${item.className}${status}"><span class="league-badge" aria-hidden="true">⬟</span><small>${item.name}</small></li>`;
+    return `<li class="league-step ${item.className}${status}"><span class="league-badge"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span><small>${item.name}</small></li>`;
   }).join("");
 
   // Linhas da tabela, com um aviso entre as zonas.
@@ -115,18 +115,18 @@ function renderLeagues() {
   ranking.forEach((player, index) => {
     const position = index + 1;
     if (position === ranking.length - DEMOTION_SPOTS + 1) {
-      rows.push('<li class="ranking-divider zone-demotion" aria-hidden="true">↓ Zona de rebaixamento</li>');
+      rows.push('<li class="ranking-divider zone-demotion" aria-hidden="true"><i class="bi bi-arrow-down" aria-hidden="true"></i> Zona de rebaixamento</li>');
     }
     rows.push(renderRankingRow(player, position, ranking.length));
     if (position === PROMOTION_SPOTS) {
-      rows.push('<li class="ranking-divider zone-promotion" aria-hidden="true">↑ Zona de promoção</li>');
+      rows.push('<li class="ranking-divider zone-promotion" aria-hidden="true"><i class="bi bi-arrow-up" aria-hidden="true"></i> Zona de promoção</li>');
     }
   });
 
   return `
     <section class="page-intro">
       <div><p class="eyebrow">LIGA DA SEMANA</p><h2>Liga ${league.name}</h2><p>Os ${PROMOTION_SPOTS} primeiros sobem de liga e os ${DEMOTION_SPOTS} últimos descem. A semana termina em <strong>${leagueTimeLeft()}</strong>.</p></div>
-      <span class="league-badge league-badge-large ${league.className}" aria-hidden="true">⬟</span>
+      <span class="league-badge league-badge-large ${league.className}"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
     </section>
     <ol class="league-ladder" aria-label="Ligas, da primeira à última">${ladder}</ol>
     ${renderLeagueStatus(ranking)}
@@ -134,6 +134,6 @@ function renderLeagues() {
       <div class="section-heading"><div><p class="eyebrow">CLASSIFICAÇÃO</p><h2 id="ranking-title">Ranking da semana</h2></div></div>
       <ol class="ranking-list">${rows.join("")}</ol>
     </section>
-    <p class="safety-note"><span aria-hidden="true">🛡</span> Nas ligas aparecem só apelidos e avatares. Não há chat, mensagens nem perfil aberto de outros alunos.</p>
+    <p class="safety-note"><i class="bi bi-shield-check" aria-hidden="true"></i> Nas ligas aparecem só apelidos e avatares. Não há chat, mensagens nem perfil aberto de outros alunos.</p>
     <p class="demo-disclaimer">Colegas e pontuações fictícios, apenas para demonstração.</p>`;
 }

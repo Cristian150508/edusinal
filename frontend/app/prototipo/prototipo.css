@@ -38,6 +38,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: "DM Sans", sans-serif;
+  line-height: normal;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -1542,28 +1543,7 @@ textarea {
   text-align: center;
 }
 
-.toast {
-  position: fixed;
-  z-index: 30;
-  right: 22px;
-  bottom: 22px;
-  max-width: min(390px, calc(100% - 32px));
-  padding: 12px 16px;
-  transform: translateY(15px);
-  border-radius: 5px;
-  background: var(--text);
-  color: var(--surface);
-  font-size: 11px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease, transform 180ms ease;
-}
-
-.toast.is-visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-
+:root[data-theme="dark"],
 .app-shell[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0f1d2b;
@@ -1651,23 +1631,6 @@ textarea {
     transform: translateX(-105%);
     box-shadow: var(--shadow);
     transition: transform 200ms ease;
-  
-  }
-
-  .sidebar.is-open {
-    transform: translateX(0);
-  
-  }
-
-  .sidebar.is-open::after {
-    position: fixed;
-    z-index: -1;
-    top: 0;
-    left: 100%;
-    width: 100vw;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.38);
-    content: "";
   
   }
 
@@ -3115,8 +3078,6 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
 
   /* espaço para o conteúdo não ficar atrás da barra de baixo */
   .workspace { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-  .toast { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; max-width: none; text-align: center; }
-
   /* Sem barras na apresentação, no login, no cadastro, na atividade e no modo foco */
   .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) :is(.mobile-topbar, .bottom-nav, .app-footer) { display: none; }
   .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) .workspace { padding-bottom: env(safe-area-inset-bottom); }
@@ -3312,9 +3273,7 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   .signup-intro > p:not(.eyebrow) { font-size: 14px; }
   .login-register { font-size: 14px; }
 
-  /* Menu lateral (☰) desliza por cima, com a altura certa no iPhone */
-  .sidebar { padding-top: calc(24px + env(safe-area-inset-top)); padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
-}
+  /* Menu lateral (☰) desliza por cima, com a altura certa no iPhone */}
 
 @media (max-width: 360px) {
   .mobile-brand span { display: none; }
@@ -3366,3 +3325,142 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
 /* Depois de conferir: certa em verde-turquesa, errada em coral (sem o contorno de "escolhida") */
 .answer-option.is-correct { border-color: var(--accent); background: var(--accent-soft); box-shadow: none; }
 .answer-option.is-incorrect { border-color: var(--coral); background: var(--coral-soft); box-shadow: none; }
+
+
+/* ===================================================================
+   BOOTSTRAP + BOOTSTRAP ICONS
+   O Bootstrap é carregado antes deste arquivo. Aqui (1) ligamos as cores
+   do Bootstrap às do EduSinal e (2) desfazemos estilos globais dele que
+   mudariam o visual que já tínhamos. Componentes usados: Offcanvas (menu
+   do celular), Toast (avisos), Modal (confirmações) e os ícones.
+   =================================================================== */
+:root,
+:root[data-bs-theme] {
+  --bs-body-font-family: "DM Sans", sans-serif;
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--text);
+  --bs-emphasis-color: var(--text);
+  --bs-secondary-color: var(--muted);
+  --bs-border-color: var(--line);
+  --bs-primary: #1f6fb8;
+  --bs-primary-rgb: 31, 111, 184;
+  --bs-link-color-rgb: 20, 84, 142;
+  --bs-link-hover-color-rgb: 31, 111, 184;
+  --bs-heading-color: inherit;
+  --bs-border-radius: 12px;
+  --bs-border-radius-lg: 16px;
+  --bs-focus-ring-color: rgba(31, 111, 184, 0.3);
+}
+
+:root[data-bs-theme="dark"] {
+  --bs-link-color-rgb: 166, 211, 247;
+  --bs-link-hover-color-rgb: 111, 180, 238;
+}
+
+/* Títulos voltam ao peso e tamanho padrão do navegador (o Bootstrap afina e aumenta) */
+h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; }
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+
+/* Ícones: alinhados ao texto */
+.bi { display: inline-block; line-height: 1; vertical-align: -0.125em; }
+.button .bi,
+.text-button .bi,
+.back-button .bi { font-size: 1.1em; }
+.stat-chip .bi,
+.hud-item .bi { font-size: 0.95em; }
+.stat-streak .bi,
+.hud-streak .bi { color: #f0743a; }
+.stat-coins .bi,
+.hud-coins .bi,
+.shop-balance .bi,
+.mission-reward .bi,
+.profile-currency .bi { color: #d9a20f; }
+.hud-xp .bi { color: var(--primary); }
+.life-heart.is-full,
+.stat-lives .bi,
+.tree-warning .bi { color: var(--coral); }
+.mission-claimed .bi,
+.achievement-done .bi,
+.word-seen .bi { color: var(--accent); }
+.profile-stat > .bi { font-size: 20px; color: var(--primary); }
+.achievement-icon .bi { font-size: 26px; color: var(--primary); }
+.achievement.is-done .achievement-icon .bi { color: var(--accent); }
+.word-video .bi { font-size: 34px; }
+.word-detail-empty > .bi { font-size: 30px; }
+.alphabet-lock { font-size: 11px; color: var(--muted); }
+.route-step-locked .route-node .bi { font-size: 18px; color: var(--muted); }
+
+/* Botão vermelho da janela de confirmação */
+.button-danger { background: var(--coral); color: #fff; }
+.button-danger:hover { filter: brightness(0.95); }
+:root[data-theme="dark"] .button-danger { color: #2a120d; } /* no escuro o coral é claro: texto escuro para ler bem */
+
+/* ----- Toast: avisos no canto (em cima da barra de baixo no celular) ----- */
+.app-toast-area {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1090;
+}
+
+.app-toast {
+  --bs-toast-bg: var(--text);
+  --bs-toast-color: var(--surface);
+  --bs-toast-border-width: 0;
+  --bs-toast-border-radius: 14px;
+  --bs-toast-max-width: 390px;
+  --bs-toast-font-size: 14px;
+  box-shadow: var(--shadow);
+}
+
+.app-toast .toast-body { padding: 12px 14px; line-height: 1.45; }
+:root[data-theme="dark"] .app-toast .btn-close-white { filter: none; } /* no escuro o aviso é claro: X escuro */
+
+/* ----- Modal: janela de confirmação ----- */
+.modal-content {
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.modal-header,
+.modal-footer { border-color: var(--line); }
+.modal-title { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; }
+.modal-body { font-size: 15px; line-height: 1.55; }
+.modal-footer { gap: 8px; }
+.modal-footer > .button { margin: 0; }
+
+/* ----- Offcanvas: menu completo do celular ----- */
+.mobile-menu {
+  --bs-offcanvas-width: min(300px, 85vw);
+  --bs-offcanvas-bg: var(--surface);
+  --bs-offcanvas-color: var(--text);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-menu .offcanvas-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.mobile-menu .offcanvas-title img { width: 34px; height: 34px; border-radius: 10px; }
+.mobile-menu .nav-item { min-height: 50px; font-size: 15px; }
+.mobile-menu .offcanvas-body { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+:root[data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
+@media (max-width: 760px) {
+  .sidebar { display: none; } /* no celular o menu é o Offcanvas */
+  .app-toast-area { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; }
+  .app-toast { --bs-toast-max-width: none; width: 100%; }
+  .app-shell:is([data-current-screen="lesson"], [data-focus="on"]) ~ .app-toast-area { bottom: calc(16px + env(safe-area-inset-bottom)); }
+}

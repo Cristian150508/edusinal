@@ -4,7 +4,7 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 
 ## O que existe hoje
 
-- **Frontend:** HTML, CSS e JavaScript puros, sem bibliotecas. A Home abre em `/`; o estado demonstrativo fica no `localStorage` do navegador.
+- **Frontend:** HTML, CSS e JavaScript, com [Bootstrap 5.3](https://getbootstrap.com) (menu do celular, avisos e janelas de confirmação) e [Bootstrap Icons](https://icons.getbootstrap.com). Os dois ficam dentro do projeto, em `frontend/assets/vendor/`, então o protótipo funciona sem internet (só as fontes do Google precisam de conexão). A Home abre em `/`; o estado demonstrativo fica no `localStorage` do navegador.
 - **Trilha e árvore de lições:** clicar em uma etapa da trilha abre o modo foco: o menu lateral recua e a etapa vira o centro de uma árvore com 5 galhos (exercícios). O centro é a **prova final**: ela só abre depois que os 5 galhos forem concluídos; antes disso, tocar nela apenas volta à trilha. O progresso dos galhos fica salvo no navegador e refazer um galho não dá recompensa de novo. No momento todos os galhos usam a mesma atividade de demonstração.
 - **Backend:** Python, FastAPI e MySQL, organizado em controllers, schemas, repositories e services.
 - **Vidas:** 3 vidas; cada resposta errada consome uma e uma vida se recupera a cada 30 minutos. Revisar o dicionário continua livre.
@@ -40,6 +40,7 @@ frontend/
     js/telas-conta.js  Cadastro, login e validação dos dados
     js/app.js          Troca de telas, cliques e teclado (carrega por último)
   assets/images/       Imagens compartilhadas
+  assets/vendor/       Bootstrap e Bootstrap Icons (cópias locais, com as licenças)
   landing/             Página pública de apresentação
 backend/
   api/edusinal-api/
@@ -79,6 +80,8 @@ Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.
 
 ## Como mexer no protótipo
 
+- **Ícones:** use `icon("nome")` no JavaScript ou `<i class="bi bi-nome" aria-hidden="true"></i>` no HTML, com o nome de [icons.getbootstrap.com](https://icons.getbootstrap.com) (ex.: `icon("heart-fill")`). Nas listas de dados (galhos, missões, conquistas), o campo `icon` guarda só o nome.
+- **Bootstrap:** o CSS dele carrega antes do `prototipo.css`, que liga as cores do Bootstrap às do EduSinal. Componentes em uso: Offcanvas (menu do celular), Toast (`showToast`) e Modal (`askConfirm`).
 - **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
 - **Etapas, galhos e perguntas:** a lista `learningTopics` em `js/conteudo.js`. Cada etapa tem 5 galhos com perguntas de múltipla escolha (`q`, `options`, `answer` = posição da certa, começando em 0, e `explain`). A prova final usa a primeira pergunta de cada galho. Para mostrar uma etapa nova na Home, adicione-a também em `TRAIL_STEPS` (`js/telas-trilha.js`).
 - **Regras do jogo:** vidas, XP, moedas, ofensiva e a virada do dia e da semana ficam em `js/estado.js`.
