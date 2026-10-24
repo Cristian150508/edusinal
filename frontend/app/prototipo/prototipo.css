@@ -250,7 +250,7 @@ a {
 }
 
 
-.menu-toggle {
+.settings-button {
   display: none;
   width: 38px;
   height: 38px;
@@ -286,9 +286,9 @@ a {
   display: none;
 }
 
-.app-shell[data-current-screen="intro"] .menu-toggle,
-.app-shell[data-current-screen="login"] .menu-toggle,
-.app-shell[data-current-screen="signup"] .menu-toggle {
+.app-shell[data-current-screen="intro"] .settings-button,
+.app-shell[data-current-screen="login"] .settings-button,
+.app-shell[data-current-screen="signup"] .settings-button {
   display: none;
 }
 
@@ -1640,7 +1640,7 @@ textarea {
   }
 
 
-  .menu-toggle {
+  .settings-button {
     flex: 0 0 auto;
     display: inline-flex;
   
@@ -1902,7 +1902,7 @@ textarea {
   
   }
 
-  .menu-toggle {
+  .settings-button {
     width: 34px;
     height: 34px;
   
@@ -2980,7 +2980,8 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   .stat-chip strong { font-family: "Manrope", sans-serif; }
   .stat-coins > span { color: #d9a20f; }
   .stat-lives > span { color: var(--coral); }
-  .menu-toggle { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; color: var(--text); }
+  .settings-button { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; color: var(--text); }
+  .settings-button.is-active { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
 
   /* ----- Barra de baixo ----- */
   .bottom-nav {
@@ -3376,32 +3377,8 @@ h3 { font-size: 1.17em; }
 .modal-footer { gap: 8px; }
 .modal-footer > .button { margin: 0; }
 
-/* ----- Offcanvas: menu completo do celular ----- */
-.mobile-menu {
-  --bs-offcanvas-width: min(300px, 85vw);
-  --bs-offcanvas-bg: var(--surface);
-  --bs-offcanvas-color: var(--text);
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.mobile-menu .offcanvas-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  font-family: "Manrope", sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.mobile-menu .offcanvas-title img { width: 34px; height: 34px; border-radius: 10px; }
-.mobile-menu .nav-item { min-height: 50px; font-size: 15px; }
-.mobile-menu .offcanvas-body { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
-:root[data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
-
 @media (max-width: 760px) {
-  .sidebar { display: none; } /* no celular o menu é o Offcanvas */
+  .sidebar { display: none; } /* no celular: barra de baixo + engrenagem */
   .app-toast-area { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; }
   .app-toast { --bs-toast-max-width: none; width: 100%; }
   .app-shell:is([data-current-screen="lesson"], [data-focus="on"]) ~ .app-toast-area { bottom: calc(16px + env(safe-area-inset-bottom)); }

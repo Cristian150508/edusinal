@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="../../assets/vendor/bootstrap/bootstrap.min.css" />
   <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons/bootstrap-icons.min.css" />
   <!-- O nosso CSS vem depois, para as cores e o visual do EduSinal valerem -->
-  <link rel="stylesheet" href="prototipo.css?v=37" />
+  <link rel="stylesheet" href="prototipo.css?v=38" />
 </head>
 <body>
   <a class="skip-link" href="#screen-root">Pular para o conteúdo</a>
@@ -40,11 +40,11 @@
 
     <div class="workspace">
       <h1 class="screen-title-sr" id="screen-heading">Minha trilha</h1>
-      <!-- Barra de cima, só no celular: ofensiva, moedas, vidas e o menu completo -->
+      <!-- Barra de cima, só no celular: ofensiva, moedas (abre a lojinha), vidas e configurações -->
       <header class="mobile-topbar">
         <button class="mobile-brand" type="button" data-screen="trail" aria-label="EduSinal, ir para a Home"><img src="icones/icone-192.png" alt="" /><span>Edu<span class="brand-accent">Sinal</span></span></button>
         <div class="mobile-stats" id="mobile-stats"></div>
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" data-bs-toggle="offcanvas" data-bs-target="#mobile-menu" aria-controls="mobile-menu"><i class="bi bi-list" aria-hidden="true"></i></button>
+        <button class="settings-button" id="settings-button" type="button" data-screen="more" aria-label="Configurações"><i class="bi bi-gear-fill" aria-hidden="true"></i></button>
       </header>
       <main class="screen-root" id="screen-root" tabindex="-1"></main>
       <footer class="app-footer"><span>EduSinal <span class="footer-dot">•</span> Ambiente demonstrativo</span><a href="../../landing/index.html">Página inicial <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a></footer>
@@ -52,18 +52,6 @@
 
     <!-- Barra de baixo, só no celular: as abas principais -->
     <nav class="bottom-nav" id="bottom-nav" aria-label="Abas principais"></nav>
-  </div>
-
-  <!-- Menu completo do celular (Offcanvas do Bootstrap): desliza da esquerda -->
-  <div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobile-menu" aria-labelledby="mobile-menu-title">
-    <div class="offcanvas-header">
-      <h2 class="offcanvas-title" id="mobile-menu-title"><img src="icones/icone-192.png" alt="" /><span>Edu<span class="brand-accent">Sinal</span></span></h2>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
-    </div>
-    <div class="offcanvas-body">
-      <p class="sidebar-label">ESPAÇO DO ALUNO</p>
-      <nav class="side-nav" id="mobile-menu-nav" aria-label="Menu completo"></nav>
-    </div>
   </div>
 
   <!-- Avisos rápidos (Toast do Bootstrap) -->
@@ -94,18 +82,18 @@
   </div>
 
   <script src="../../assets/vendor/bootstrap/bootstrap.bundle.min.js" defer></script>
-  <script src="js/estado.js?v=37" defer></script>
-  <script src="js/mascote-desenho.js?v=37" defer></script>
-  <script src="js/conteudo.js?v=37" defer></script>
-  <script src="js/telas-trilha.js?v=37" defer></script>
-  <script src="js/licao.js?v=37" defer></script>
-  <script src="js/telas-dicionario.js?v=37" defer></script>
-  <script src="js/telas-ligas.js?v=37" defer></script>
-  <script src="js/telas-missoes.js?v=37" defer></script>
-  <script src="js/telas-lojinha.js?v=37" defer></script>
-  <script src="js/telas-perfil.js?v=37" defer></script>
-  <script src="js/telas-mascote.js?v=37" defer></script>
-  <script src="js/telas-conta.js?v=37" defer></script>
-  <script src="js/app.js?v=37" defer></script>
+  <script src="js/estado.js?v=38" defer></script>
+  <script src="js/mascote-desenho.js?v=38" defer></script>
+  <script src="js/conteudo.js?v=38" defer></script>
+  <script src="js/telas-trilha.js?v=38" defer></script>
+  <script src="js/licao.js?v=38" defer></script>
+  <script src="js/telas-dicionario.js?v=38" defer></script>
+  <script src="js/telas-ligas.js?v=38" defer></script>
+  <script src="js/telas-missoes.js?v=38" defer></script>
+  <script src="js/telas-lojinha.js?v=38" defer></script>
+  <script src="js/telas-perfil.js?v=38" defer></script>
+  <script src="js/telas-mascote.js?v=38" defer></script>
+  <script src="js/telas-conta.js?v=38" defer></script>
+  <script src="js/app.js?v=38" defer></script>
 </body>
 </html>

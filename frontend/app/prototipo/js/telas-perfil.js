@@ -1,6 +1,6 @@
-// PERFIL E "MAIS OPÇÕES"
+// PERFIL E CONFIGURAÇÕES
 // Perfil: mascote, nome, números da jornada e conquistas.
-// Mais: preferências (tema, texto, animações), segurança, ajuda e conta.
+// Configurações: preferências (tema, texto, animações), segurança, ajuda e conta.
 
 // ----- Números da jornada -----
 
@@ -46,7 +46,7 @@ function setEditingName(isEditing) {
   if (isEditing) document.getElementById("profile-name-input").focus();
 }
 
-// ----- Ações de "Mais opções" -----
+// ----- Ações de Configurações -----
 
 function setTheme(theme) {
   state.theme = theme;
@@ -138,7 +138,7 @@ function renderChoice(action, current, options) {
 
 function renderMore() {
   return `
-    <section class="page-intro"><div><p class="eyebrow">EDUSINAL</p><h2>Mais opções</h2><p>Preferências, ajuda e informações sobre a plataforma.</p></div></section>
+    <section class="page-intro"><div><p class="eyebrow">EDUSINAL</p><h2>Configurações</h2><p>Preferências, privacidade, ajuda e conta.</p></div></section>
     <div class="more-sections">
       <details class="more-section" open>
         <summary><span class="more-icon"><i class="bi bi-sliders" aria-hidden="true"></i></span>Preferências</summary>

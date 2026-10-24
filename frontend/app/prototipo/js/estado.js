@@ -118,7 +118,7 @@ const screenTitles = {
   leagues: "Ligas",
   missions: "Missões",
   profile: "Meu perfil",
-  more: "Mais opções",
+  more: "Configurações",
   mascot: "Personalizar mascote",
   signup: "Criar conta",
 };
@@ -131,7 +131,7 @@ const navigationItems = [
   ["missions", "Missões", "bullseye"],
   ["shop", "Lojinha", "shop"],
   ["profile", "Perfil", "person-fill"],
-  ["more", "Mais", "three-dots"],
+  ["more", "Configurações", "gear-fill"],
 ];
 
 // Salva no navegador só o que precisa continuar na próxima visita.

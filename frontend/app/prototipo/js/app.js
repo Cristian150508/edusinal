@@ -24,7 +24,8 @@ const screenRenderers = {
 
 // ----- Desenho da página -----
 
-// Celular: abas da barra de baixo (o resto fica no menu completo).
+// Celular: abas da barra de baixo. Lojinha abre pelas moedas e
+// Configurações pela engrenagem, na barra de cima.
 const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "profile"];
 
 // Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
@@ -58,14 +59,7 @@ function renderNavigation() {
       <span class="nav-icon nav-icon-${index + 1}">${icon(iconName)}</span><span>${label}</span>
     </button>`;
   }).join("");
-  document.getElementById("side-nav").innerHTML = items;        // computador
-  document.getElementById("mobile-menu-nav").innerHTML = items; // menu do celular
-}
-
-// Fecha o menu do celular (Offcanvas do Bootstrap), se estiver aberto.
-function closeMobileMenu() {
-  const menu = document.getElementById("mobile-menu");
-  if (window.bootstrap) bootstrap.Offcanvas.getInstance(menu)?.hide();
+  document.getElementById("side-nav").innerHTML = items;
 }
 
 // Desenha de novo a tela atual com os dados do momento.
@@ -77,6 +71,9 @@ function render() {
   renderNavigation();
   renderBottomNav();
   renderMobileStats();
+  const settings = document.getElementById("settings-button");
+  settings.classList.toggle("is-active", state.screen === "more");
+  settings.toggleAttribute("aria-current", state.screen === "more");
   screenRoot.innerHTML = screenRenderers[state.screen]();
   app.dataset.theme = state.theme;
   document.documentElement.dataset.theme = state.theme;          // janelas do Bootstrap ficam fora do app
@@ -102,7 +99,6 @@ function setScreen(screen) {
   state.editingName = false;
   if (screen !== "lesson") state.currentLesson = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
-  closeMobileMenu();
   render();
   screenRoot.focus({ preventScroll: true });
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -173,7 +169,7 @@ document.addEventListener("click", (event) => {
   else if (action === "mascot-item") chooseMascotItem(data.slot, data.item);
   else if (action === "mascot-tab") chooseMascotTab(data.slot);
   else if (action === "mascot-reset") resetMascotLook();
-  // Perfil e "Mais"
+  // Perfil e Configurações
   else if (action === "edit-name") setEditingName(true);
   else if (action === "cancel-name") setEditingName(false);
   else if (action === "set-theme") setTheme(data.value);
@@ -201,11 +197,10 @@ document.addEventListener("submit", (event) => {
   }
 });
 
-// Esc fecha o modo foco e o menu do celular.
+// Esc fecha o modo foco.
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   if (state.focusTopic) closeTopic();
-  closeMobileMenu();
 });
 
 // Mantém as vidas (e o tempo de recarga) atualizadas na Home e na barra do celular.
