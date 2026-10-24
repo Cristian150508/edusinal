@@ -77,7 +77,11 @@ O protótipo tem um layout próprio para celular (até 760 px de largura), no es
 
 No computador, dá para simular o celular com `F12` → ícone de celular (modo responsivo).
 
-Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.webmanifest` e os ícones de `icones/`. Abrindo pelo IP local, o navegador cria um atalho; o modo app completo, sem a barra do navegador, precisa de HTTPS, por exemplo quando o projeto for publicado no GitHub Pages.
+Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.webmanifest` e os ícones de `icones/`. Abrindo pelo IP local, o navegador cria um atalho; o modo app completo, sem a barra do navegador, precisa de HTTPS, que a Vercel já oferece (veja abaixo). No iPhone, abra no Safari → compartilhar → "Adicionar à Tela de Início".
+
+## Publicar na Vercel
+
+O site publicado é só o frontend (HTML, CSS e JS, sem build). Na Vercel: **Add New → Project** → importar o repositório → **Framework Preset:** `Other` → **Root Directory:** `frontend` → **Deploy**. O `frontend/index.html` redireciona para o protótipo. Cada `git push` na `main` atualiza o site sozinho. A API e o MySQL não vão para a Vercel.
 
 ## Como mexer no protótipo
 
@@ -86,7 +90,7 @@ Para instalar como app ("Adicionar à tela inicial"), o celular usa o `manifest.
 - **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
 - **Etapas, galhos e perguntas:** a lista `learningTopics` em `js/conteudo.js`. Cada etapa tem 5 galhos com perguntas de múltipla escolha (`q`, `options`, `answer` = posição da certa, começando em 0, e `explain`). A prova final usa a primeira pergunta de cada galho. Para mostrar uma etapa nova na Home, adicione-a também em `TRAIL_STEPS` (`js/telas-trilha.js`).
 - **Regras do jogo:** vidas, XP, moedas, ofensiva e a virada do dia e da semana ficam em `js/estado.js`.
-- **Conteúdo das abas:** cada arquivo de aba começa com os seus dados em listas fáceis de editar: `DICTIONARY_WORDS` (palavras), `LEAGUE_RIVALS` (colegas fictícios da liga), `DAILY_MISSIONS` e `WEEKLY_MISSIONS`, `shopItems` e `POWER_UPS` (lojinha) e `ACHIEVEMENTS` (conquistas).
+- **Conteúdo das abas:** cada arquivo de aba começa com os seus dados em listas fáceis de editar: `DICTIONARY_WORDS` (palavras), `LEAGUE_RIVALS` (colegas fictícios da liga), `DAILY_MISSIONS` e `WEEKLY_MISSIONS`, `POWER_UPS` (lojinha), `MASCOT_ITEMS` (roupas e acessórios do mascote, em `js/telas-mascote.js`) e `ACHIEVEMENTS` (conquistas).
 - **Nova tela:** crie a função `render...` em um dos arquivos de telas e registre-a em `screenRenderers` e `screenTitles`.
 - Os arquivos de `js/` são scripts comuns carregados em ordem pelo `index.html`; `app.js` precisa ser o último.
 
@@ -171,4 +175,4 @@ Os testes cobrem recuperação de vidas, consumo por erro, recompensa única e b
 
 O frontend continua usando dados locais e ainda não faz `fetch` para a API. As rotas da API também não têm autenticação/autorização; o ID do aluno na URL não protege dados entre contas. Use apenas em desenvolvimento e não publique a API até implementar sessão, autorização por perfil e proteção dos dados de menores.
 
-A tela de responsável ainda é demonstrativa; os campos do cadastro não verificam identidade, idade ou responsabilidade legal. A leitura de mãos é apenas uma ideia futura: deve ser um módulo isolado, com consentimento e avaliação de privacidade, sem armazenar imagens por padrão. Nenhum modelo de visão computacional foi instalado ou conectado.
+Os campos do cadastro não verificam identidade nem idade. A leitura de mãos é apenas uma ideia futura: deve ser um módulo isolado, com consentimento e avaliação de privacidade, sem armazenar imagens por padrão. Nenhum modelo de visão computacional foi instalado ou conectado.

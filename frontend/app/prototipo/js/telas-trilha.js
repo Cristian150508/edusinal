@@ -120,7 +120,7 @@ function renderFinalNode(topicId) {
   const spiral = SPIRAL_POINTS[SPIRAL_POINTS.length - 1];
   const wave = WAVE_POINTS[WAVE_POINTS.length - 1];
   const isSelected = state.selectedBranch === "final";
-  return `<button class="tree-center is-${info.status}${info.status === "open" ? " is-open" : ""}${info.status === "done" ? " is-done" : ""}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}px" data-action="tap-branch" data-topic="${topicId}" data-branch="final" aria-label="Prova final: ${info.hint}" aria-expanded="${isSelected}"><span class="route-node node-coral">${info.symbol}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${info.hint}</small></button>`;
+  return `<button class="tree-center is-${info.status}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}px" data-action="tap-branch" data-topic="${topicId}" data-branch="final" aria-label="Prova final: ${info.hint}" aria-expanded="${isSelected}"><span class="route-node node-coral">${info.symbol}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${info.hint}</small></button>`;
 }
 
 // Balão do celular: aparece embaixo do ícone tocado, com título e botão.

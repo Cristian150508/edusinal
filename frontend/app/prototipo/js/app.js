@@ -57,7 +57,7 @@ function renderMobileAvatar() {
   const isActive = state.screen === "profile" || state.screen === "mascot";
   avatar.className = `mobile-avatar ${backdropClass()}${isActive ? " is-active" : ""}`;
   avatar.toggleAttribute("aria-current", isActive);
-  avatar.innerHTML = mascotSvg(state.mascot, "head", "");
+  avatar.innerHTML = mascotSvg(state.mascot, "avatar", "");
 }
 
 function renderNavigation() {

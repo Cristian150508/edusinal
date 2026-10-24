@@ -23,6 +23,7 @@ const SHADOW_OFFSET = "translate(-4 5)";
 const MASCOT_VIEWBOX = {
   full: "-14 -30 204 204", // corpo inteiro (com espaço para chapéus)
   head: "34 -20 124 112", // só a cabeça (miniaturas de chapéu e óculos)
+  avatar: "34 -12 124 124", // cabeça e ombros no centro (foto de perfil redonda)
 };
 
 // Cada SVG precisa de ids únicos (por causa da camiseta listrada).
@@ -190,7 +191,7 @@ function drawChestItem(id) {
 // ----- Montagem -----
 
 // look = { shirt, head, face, chest } com os ids dos itens escolhidos.
-// crop = "full" (corpo inteiro) ou "head" (só a cabeça).
+// crop = "full" (corpo inteiro), "head" (só a cabeça) ou "avatar" (foto de perfil).
 function mascotSvg(look, crop = "full", label = "Mascote do EduSinal") {
   mascotDrawCount += 1;
   const shirt = MASCOT_ITEMS.find((item) => item.id === look.shirt) || MASCOT_ITEMS.find((item) => item.id === DEFAULT_LOOK.shirt);

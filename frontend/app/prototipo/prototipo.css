@@ -225,13 +225,6 @@ a {
   font-size: 20px;
 }
 
-
-
-.theme-icon {
-  color: var(--primary);
-  font-size: 17px;
-}
-
 .workspace {
   min-width: 0;
   display: flex;
@@ -248,7 +241,6 @@ a {
   white-space: nowrap;
   clip-path: inset(50%);
 }
-
 
 .settings-button {
   display: none;
@@ -479,8 +471,6 @@ a {
   background: var(--surface-soft);
 }
 
-
-
 .profile-identity h3 {
   margin: 0 0 4px;
   font-family: "Manrope", sans-serif;
@@ -567,10 +557,6 @@ a {
   color: #ad3d33;
   font-size: 12px;
   line-height: 1.5;
-}
-
-.login-panel .form-error.is-success {
-  color: var(--primary-strong);
 }
 
 .login-panel .field-hint {
@@ -1587,37 +1573,31 @@ textarea {
 @media (max-width: 1040px) {
   .app-shell {
     grid-template-columns: 218px minmax(0, 1fr);
-  
   }
 
   .home-dashboard {
     grid-template-columns: minmax(0, 1fr) 230px;
     gap: 13px;
-  
   }
 
   .home-hero {
     padding-right: 19px;
     padding-left: 21px;
-  
   }
 
   .home-hero-art {
     width: 88px;
     height: 88px;
-  
   }
 
   .home-hero-art > span {
     font-size: 42px;
-  
   }
 }
 
 @media (max-width: 760px) {
   .app-shell {
     display: block;
-  
   }
 
   .sidebar {
@@ -1631,42 +1611,34 @@ textarea {
     transform: translateX(-105%);
     box-shadow: var(--shadow);
     transition: transform 200ms ease;
-  
   }
 
   .sidebar-label {
     margin-top: 34px;
-  
   }
-
 
   .settings-button {
     flex: 0 0 auto;
     display: inline-flex;
-  
   }
 
   .screen-root {
     padding: 22px 17px 25px;
-  
   }
 
   .shop-grid {
     grid-template-columns: minmax(0, 1fr);
-  
   }
 
   .profile-avatar-panel {
     grid-template-columns: 104px minmax(0, 1fr);
     gap: 16px;
     padding: 18px;
-  
   }
 
   .mascot-avatar {
     width: 100px;
     height: 100px;
-  
   }
 
   .profile-currency {
@@ -1676,7 +1648,6 @@ textarea {
     padding: 14px 0 0;
     border-top: 1px solid var(--line);
     border-left: 0;
-  
   }
 
   .intro-screen {
@@ -1684,84 +1655,69 @@ textarea {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
     padding: 32px 20px;
-  
   }
 
   .intro-copy h2 {
     font-size: 34px;
-  
   }
 
   .intro-art {
     min-height: 0;
-  
   }
 
   .intro-art img {
     width: min(100%, 220px);
     max-height: 220px;
-  
   }
 
   .intro-points {
     grid-template-columns: minmax(0, 1fr);
-  
   }
 
   .intro-points > div {
     padding: 16px 18px;
-  
   }
 
   .intro-points > div + div {
     border-top: 1px solid var(--line);
     border-left: 0;
-  
   }
 
   .login-layout {
     min-height: 0;
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
-  
   }
 
   .login-intro h2 {
     max-width: 500px;
     font-size: 27px;
-  
   }
 
   .login-intro > p:not(.eyebrow) {
     font-size: 12px;
-  
   }
 
   .login-panel {
     max-width: none;
     padding: 20px;
-  
   }
 
   .home-dashboard {
     grid-template-columns: minmax(0, 1fr);
-  
   }
 
   .home-hero {
     min-height: 176px;
     padding: 22px;
-  
   }
 
   .home-hero-copy h2 {
     font-size: 26px;
-  
   }
 
   .home-hero-copy > p:not(.eyebrow) {
     font-size: 12px;
-  
   }
 
   /* No celular, vidas, ofensiva e moedas já ficam na barra de cima
@@ -1772,35 +1728,29 @@ textarea {
 
   .home-map {
     min-height: 0;
-  
   }
 
   .home-map-heading h2 {
     font-size: 21px;
-  
   }
 
   .learning-route {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 22px;
     margin-top: 24px;
-  
   }
 
   .learning-route::before {
     display: none;
-  
   }
 
   .route-step h3 {
     min-height: 0;
     font-size: 12px;
-  
   }
 
   .route-step p {
     font-size: 10px;
-  
   }
 
   .page-intro {
@@ -1809,51 +1759,42 @@ textarea {
     flex-direction: column;
     gap: 10px;
     padding: 8px 0 13px;
-  
   }
 
   .page-intro h2 {
     font-size: 25px;
-  
   }
 
   .signup-layout {
     min-height: 0;
     grid-template-columns: 1fr;
     gap: 17px;
-  
   }
 
   .signup-intro {
     position: static;
     padding: 0;
-  
   }
 
   .signup-intro h2 {
     max-width: 500px;
     font-size: 25px;
-  
   }
 
   .signup-intro > p:not(.eyebrow) {
     margin-bottom: 0;
-  
   }
 
   .signup-aside {
     margin-top: 12px;
-  
   }
 
   .signup-form-panel {
     padding: 17px;
-  
   }
 
   .app-footer {
     margin: 0 17px;
-  
   }
 }
 
@@ -1861,247 +1802,203 @@ textarea {
   .alphabet-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 7px;
-  
   }
 
   .alphabet-letter {
     font-size: 21px;
-  
   }
 
   .alphabet-lock {
     top: 4px;
     right: 4px;
     font-size: 9px;
-  
   }
 
   .alphabet-detail {
     grid-template-columns: 76px minmax(0, 1fr);
     gap: 13px;
     padding: 15px;
-  
   }
 
   .alphabet-detail-letter {
     font-size: 44px;
-  
   }
 
   .alphabet-detail-copy h2 {
     font-size: 17px;
-  
   }
 
   .alphabet-detail-copy p:last-child {
     font-size: 10px;
-  
   }
 
   .alphabet-detail-mark {
     display: none;
-  
   }
 
   .settings-button {
     width: 34px;
     height: 34px;
-  
   }
 
   .screen-root {
     padding-right: 13px;
     padding-left: 13px;
-  
   }
 
   .shop-item {
     grid-template-columns: 58px minmax(0, 1fr);
     gap: 9px;
     padding: 12px;
-  
   }
 
   .shop-item-art {
     width: 54px;
     height: 54px;
     border-radius: 14px;
-  
   }
 
   .mascot-item-icon {
     font-size: 25px;
-  
   }
 
   .shop-item-copy h3 {
     font-size: 13px;
-  
   }
 
   .shop-item-copy p {
     font-size: 10px;
-  
   }
 
   .shop-item > .button {
     min-height: 35px;
     font-size: 9px;
-  
   }
 
   .shop-intro {
     gap: 10px;
-  
   }
 
   .shop-balance {
     padding: 8px 9px;
     font-size: 10px;
-  
   }
 
   .profile-avatar-panel {
     grid-template-columns: 72px minmax(0, 1fr);
     gap: 12px;
     padding: 14px;
-  
   }
 
   .mascot-avatar {
     width: 70px;
     height: 70px;
-  
   }
-
 
   .profile-identity h3 {
     font-size: 17px;
-  
   }
 
   .profile-identity > p {
     font-size: 10px;
-  
   }
 
   .profile-identity .button {
     min-height: 36px;
     padding: 0 9px;
     font-size: 9px;
-  
   }
 
   .profile-currency strong {
     font-size: 12px;
-  
   }
 
   .profile-currency span {
     font-size: 8px;
-  
   }
 
   .home-hero {
     min-height: 0;
     gap: 8px;
     padding: 20px 14px;
-  
   }
 
   .home-hero-copy h2 {
     font-size: 22px;
-  
   }
 
   .home-hero-copy > p:not(.eyebrow) {
     font-size: 10px;
-  
   }
 
   .home-hero-copy .button {
     min-height: 36px;
     padding: 0 10px;
     font-size: 10px;
-  
   }
 
   .home-hero-art {
     width: 65px;
     height: 65px;
-  
   }
 
   .home-hero-art > span {
     font-size: 32px;
-  
   }
 
   .home-hero-art small {
     display: none;
-  
   }
 
   .home-map {
     padding: 16px 11px;
-  
   }
 
   .home-map-heading h2 {
     font-size: 19px;
-  
   }
 
   .home-map-heading .section-count {
     font-size: 8px;
-  
   }
 
   .route-node {
     width: 48px;
     height: 48px;
     border-radius: 15px;
-  
   }
 
   .route-step .path-label {
     font-size: 7px;
-  
   }
 
   .route-step h3 {
     font-size: 11px;
-  
   }
 
   .route-step p {
     font-size: 10px;
-  
   }
 
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 6px;
-  
   }
 
   .section-heading h2 {
     font-size: 19px;
-  
   }
 
   .form-grid {
     grid-template-columns: 1fr;
     gap: 11px;
-  
   }
 
   .app-footer {
     min-height: 45px;
     margin: 0 13px;
     font-size: 8px;
-  
   }
 }
 
@@ -2113,7 +2010,6 @@ textarea {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  
   }
 }
 
@@ -2122,12 +2018,10 @@ textarea {
 @media (min-width: 761px) {
   .app-shell {
     transition: grid-template-columns 380ms cubic-bezier(0.4, 0, 0.2, 1);
-  
   }
 
   .app-shell[data-focus="on"] {
     grid-template-columns: 0 minmax(0, 1fr);
-  
   }
 
   .app-shell[data-focus="on"] .sidebar {
@@ -2137,12 +2031,10 @@ textarea {
     border-right-color: transparent;
     opacity: 0;
     pointer-events: none;
-  
   }
 
   .sidebar {
     transition: opacity 220ms ease, padding 380ms ease;
-  
   }
 }
 
@@ -2188,11 +2080,12 @@ textarea {
 }
 
 .hud-item strong {
- font-family: "Manrope", sans-serif; 
+  font-family: "Manrope", sans-serif;
 }
 
 .hud-item small {
- color: var(--muted); font-size: 10px; 
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .tree-canvas {
@@ -2251,22 +2144,24 @@ textarea {
 }
 
 .tree-center:disabled {
- opacity: 0.5; cursor: not-allowed; 
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Prova final trancada: apagada, só serve para voltar à trilha. */
 
 .tree-center:not(.is-open):not(.is-done) .route-node {
- background: var(--surface-soft); opacity: 0.75; 
+  background: var(--surface-soft);
+  opacity: 0.75;
 }
 
 .tree-center.is-open .route-node,
 .tree-center.is-done .route-node {
- background: var(--yellow-soft); 
+  background: var(--yellow-soft);
 }
 
 .tree-center.is-open .route-node {
- animation: final-pulse 1.8s ease-in-out infinite; 
+  animation: final-pulse 1.8s ease-in-out infinite;
 }
 
 @keyframes final-pulse {
@@ -2318,7 +2213,7 @@ textarea {
 }
 
 button.tree-leaf {
- cursor: pointer; 
+  cursor: pointer;
 }
 
 button.tree-leaf:hover .tree-icon,
@@ -2328,7 +2223,8 @@ button.tree-leaf:focus-visible .tree-icon {
 }
 
 button.tree-leaf:disabled {
- opacity: 0.5; cursor: not-allowed; 
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tree-icon {
@@ -2345,11 +2241,12 @@ button.tree-leaf:disabled {
 }
 
 .tree-leaf .tree-icon {
- background: var(--coral-soft); 
+  background: var(--coral-soft);
 }
 
 .tree-leaf.is-done .tree-icon {
- background: var(--primary-soft); color: var(--primary-strong); 
+  background: var(--primary-soft);
+  color: var(--primary-strong);
 }
 
 .tree-leaf strong {
@@ -2372,7 +2269,7 @@ button.tree-leaf:disabled {
   .topic-tree,
   .tree-leaf,
   .tree-center.is-open .route-node {
- animation: none; 
+    animation: none;
   }
 }
 
@@ -2670,7 +2567,6 @@ button.tree-leaf:disabled {
 .mascot-avatar.mascot-small { width: 76px; height: 76px; }
 .shop-art-power { background: var(--coral-soft); }
 
-
 /* ----- Perfil ----- */
 .profile-identity h3 { display: flex; align-items: baseline; gap: 10px; }
 .name-edit { font-size: 11px; }
@@ -2901,7 +2797,6 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   background: var(--surface-soft);
 }
 
-
 @media (max-width: 760px) {
   .mascot-editor { grid-template-columns: minmax(0, 1fr); }
   .mascot-stage { position: static; }
@@ -2944,6 +2839,7 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
     padding: calc(8px + env(safe-area-inset-top)) 16px 8px;
     border-bottom: 1px solid var(--line);
     background: color-mix(in srgb, var(--bg) 90%, transparent);
+    -webkit-backdrop-filter: blur(12px); /* Safari mais antigo (iPhone) */
     backdrop-filter: blur(12px);
   }
 
@@ -3227,13 +3123,15 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   /* Cadastro e login: campos grandes e fáceis de tocar */
   .field-label { font-size: 14px; }
   .field-label input { min-height: 50px; font-size: 16px; }
+  /* Abaixo de 16px o iPhone dá zoom sozinho ao tocar no campo */
+  .dictionary-search { font-size: 16px; }
   .field-hint,
   .form-legal,
   .signup-aside { font-size: 12px; }
   .signup-intro > p:not(.eyebrow) { font-size: 14px; }
   .login-register { font-size: 14px; }
 
-  /* Menu lateral (☰) desliza por cima, com a altura certa no iPhone */}
+}
 
 @media (max-width: 360px) {
   .bottom-tab { font-size: 10px; letter-spacing: -0.01em; }
@@ -3288,13 +3186,12 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
 .answer-option.is-correct { border-color: var(--accent); background: var(--accent-soft); box-shadow: none; }
 .answer-option.is-incorrect { border-color: var(--coral); background: var(--coral-soft); box-shadow: none; }
 
-
 /* ===================================================================
    BOOTSTRAP + BOOTSTRAP ICONS
    O Bootstrap é carregado antes deste arquivo. Aqui (1) ligamos as cores
    do Bootstrap às do EduSinal e (2) desfazemos estilos globais dele que
-   mudariam o visual que já tínhamos. Componentes usados: Offcanvas (menu
-   do celular), Toast (avisos), Modal (confirmações) e os ícones.
+   mudariam o visual que já tínhamos. Componentes usados: Toast (avisos),
+   Modal (confirmações) e os ícones.
    =================================================================== */
 :root,
 :root[data-bs-theme] {
@@ -3402,7 +3299,6 @@ h3 { font-size: 1.17em; }
   .app-toast { --bs-toast-max-width: none; width: 100%; }
   .app-shell:is([data-current-screen="lesson"], [data-focus="on"]) ~ .app-toast-area { bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
-
 
 /* ===================================================================
    ÁRVORE EM ORDEM: espiral no computador, caminho ondulado no celular

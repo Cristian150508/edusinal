@@ -556,7 +556,7 @@ main {
 }
 
 .resource-dictionary .resource-mark,
-.resource-teachers .resource-mark {
+.resource-motivation .resource-mark {
   background: var(--coral-light);
   color: #a95140;
 }
