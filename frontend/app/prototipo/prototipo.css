@@ -2230,8 +2230,8 @@ textarea {
 
 .tree-center {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: var(--y);
+  left: var(--x);
   z-index: 1;
   display: grid;
   justify-items: center;
@@ -2364,40 +2364,6 @@ button.tree-leaf:disabled {
 .tree-leaf small {
   color: var(--muted);
   font-size: 11px;
-}
-
-@media (max-width: 760px) {
-  .tree-canvas {
-    display: grid;
-    gap: 6px;
-    padding: 40px 14px;
-  
-  }
-
-  .tree-lines {
- display: none; 
-  }
-
-  .tree-center,
-  .tree-leaf {
-    position: static;
-    width: auto;
-    transform: none;
-    animation-name: none;
-  
-  }
-
-  .tree-center {
- order: 1; width: auto; margin-top: 6px; 
-  }
-
-  .tree-leaf {
- grid-template-columns: 58px 1fr; justify-items: start; text-align: left; column-gap: 12px; 
-  }
-
-  .tree-leaf .tree-icon {
- grid-row: span 2; 
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3170,30 +3136,6 @@ button.home-hero-art:hover .mascot-svg { transform: rotate(-4deg) translateY(1%)
   .topic-hud { flex-wrap: nowrap; gap: 6px; }
   .hud-item { padding: 7px 10px; font-size: 13px; }
   .hud-item small { display: none; }
-  .tree-canvas { padding: 18px 14px 16px; }
-  .tree-canvas::before {
-    position: absolute;
-    top: 46px;
-    bottom: 160px;
-    left: 50px;
-    border-left: 3px dashed var(--line);
-    content: "";
-  }
-
-  .tree-leaf { position: relative; top: auto; left: auto; z-index: 1; padding: 10px 6px; }
-  .tree-leaf strong { font-size: 15px; }
-  .tree-leaf small { font-size: 12px; }
-  .tree-center {
-    margin-top: 10px;
-    padding: 18px 14px;
-    border: 2px solid var(--line);
-    border-radius: 20px;
-  }
-
-  .tree-center.is-open { border-color: var(--yellow); background: var(--yellow-soft); }
-  .tree-center h2 { font-size: 20px; }
-  .tree-center small { max-width: none; font-size: 12px; }
-
   /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
   .app-shell[data-current-screen="lesson"] .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
   .lesson-topline { gap: 12px; margin-bottom: 12px; }
@@ -3463,4 +3405,146 @@ h3 { font-size: 1.17em; }
   .app-toast-area { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; }
   .app-toast { --bs-toast-max-width: none; width: 100%; }
   .app-shell:is([data-current-screen="lesson"], [data-focus="on"]) ~ .app-toast-area { bottom: calc(16px + env(safe-area-inset-bottom)); }
+}
+
+
+/* ===================================================================
+   ÁRVORE EM ORDEM: espiral no computador, caminho ondulado no celular
+   =================================================================== */
+.topic-heading { margin: 4px 0 2px; }
+.topic-heading .eyebrow { margin-bottom: 2px; }
+.topic-heading h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 24px; }
+
+.tree-canvas { min-height: min(660px, 80vh); }
+.tree-lines-wave,
+.tree-bubble { display: none; }
+
+/* caminho ainda não feito: tracejado; feito: azul cheio */
+.tree-lines path:not(.is-done) {
+  stroke: var(--muted);
+  stroke-dasharray: 2 10;
+  stroke-width: 3;
+  opacity: 0.55;
+}
+
+/* número da ordem (ou cadeado) no canto do ícone */
+.tree-icon { position: relative; }
+.tree-order {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  border: 2px solid var(--surface);
+  border-radius: 11px;
+  background: var(--primary);
+  color: #fff;
+  font-family: "Manrope", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.tree-leaf.is-done .tree-order { background: var(--accent); }
+.tree-leaf.is-locked .tree-order { background: var(--muted); }
+.tree-leaf.is-locked .tree-icon { background: var(--surface-soft); color: var(--muted); }
+.tree-leaf.is-open .tree-icon { background: var(--primary); color: #fff; } /* o próximo da vez */
+.tree-leaf.is-locked strong,
+.tree-leaf.is-locked small { color: var(--muted); }
+.tree-center { width: 180px; }
+/* títulos com fundo, para a linha da espiral não passar por cima do texto */
+.tree-leaf strong,
+.tree-leaf small,
+.tree-center h2,
+.tree-center p,
+.tree-center small { padding: 0 6px; border-radius: 6px; background: var(--surface); }
+
+@media (max-width: 760px) {
+  .topic-heading { text-align: center; }
+  .topic-heading h2 { font-size: 22px; }
+
+  .tree-canvas {
+    height: var(--wave-height);
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .tree-lines-spiral { display: none; }
+  .tree-lines-wave { display: block; }
+  .tree-lines path { stroke-width: 6; }
+  .tree-lines path:not(.is-done) { stroke-width: 5; stroke-dasharray: 1 12; }
+
+  /* Só o ícone: o título fica no balão (e no aria-label, para leitores de tela) */
+  .tree-leaf {
+    top: var(--my);
+    left: var(--mx);
+    width: auto;
+    padding: 0;
+  }
+
+  .tree-leaf strong,
+  .tree-leaf small { display: none; }
+
+  .tree-leaf .tree-icon {
+    width: 68px;
+    height: 68px;
+    border: 0;
+    border-radius: 50%;
+    font-size: 26px;
+    box-shadow: 0 6px 0 rgba(10, 30, 70, 0.16);
+  }
+
+  .tree-leaf.is-open .tree-icon { background: var(--primary); color: #fff; box-shadow: 0 6px 0 var(--primary-strong); }
+  .tree-leaf.is-done .tree-icon { background: var(--accent-soft); color: var(--accent); box-shadow: 0 6px 0 rgba(25, 167, 161, 0.35); }
+  .tree-leaf.is-selected .tree-icon { outline: 4px solid var(--yellow); outline-offset: 4px; }
+  button.tree-leaf:hover .tree-icon { transform: none; }
+  .tree-order { top: -4px; right: -4px; }
+
+  .tree-center {
+    top: var(--my);
+    left: var(--mx);
+    width: 150px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .tree-center .route-node { width: 88px; height: 88px; border-radius: 50%; font-size: 30px; box-shadow: 0 7px 0 rgba(10, 30, 70, 0.16); }
+  .tree-center.is-open .route-node { box-shadow: 0 7px 0 #d9a20f; }
+  .tree-center.is-selected .route-node { outline: 4px solid var(--yellow); outline-offset: 4px; }
+  .tree-center h2 { margin-top: 10px; font-size: 16px; }
+  .tree-center p,
+  .tree-center small { display: none; }
+
+  /* Balão com título e botão, embaixo do ícone tocado (o da prova fica em cima) */
+  .tree-bubble {
+    position: absolute;
+    z-index: 4;
+    top: calc(var(--my) + 52px);
+    left: clamp(132px, var(--mx), calc(100% - 132px));
+    width: 252px;
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transform: translateX(-50%);
+    animation: bubble-in 160ms ease-out both;
+  }
+
+  .tree-bubble.is-above { top: auto; bottom: calc(var(--wave-height) - var(--my) + 64px); }
+  .tree-bubble strong { font-family: "Manrope", sans-serif; font-size: 17px; }
+  .tree-bubble p { margin: 0 0 4px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .tree-bubble .button { width: 100%; }
+}
+
+@keyframes bubble-in {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }

@@ -8,6 +8,9 @@
 // As perguntas ficam em conteudo.js.
 
 function startBranch(topicId, branchId) {
+  const index = learningTopics[topicId].branches.findIndex((branch) => branch.id === branchId);
+  if (branchId !== "final" && !isBranchUnlocked(topicId, index)) return; // fora de ordem: não começa
+  if (branchId === "final" && !isFinalUnlocked(topicId)) return;
   state.currentLesson = {
     topicId,
     branchId,

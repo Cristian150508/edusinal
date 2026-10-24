@@ -99,6 +99,7 @@ const state = {
   currentLesson: null,     // galho que o aluno está fazendo agora
   answered: false,         // já respondeu a pergunta da tela atual?
   focusTopic: null,        // etapa aberta no modo foco
+  selectedBranch: null,    // celular: exercício tocado na árvore (mostra o balão)
   selectedLetter: "A",     // letra escolhida no dicionário
   selectedWord: null,      // palavra escolhida no dicionário
   dictionaryCategory: "alfabeto",

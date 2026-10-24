@@ -98,6 +98,7 @@ function setScreen(screen) {
   state.screen = screen;
   state.answered = false;
   state.focusTopic = null;
+  state.selectedBranch = null;
   state.editingName = false;
   if (screen !== "lesson") state.currentLesson = null;
   heading.textContent = screenTitles[screen] || "EduSinal";
@@ -124,6 +125,7 @@ function openTopic(topicId) {
 function closeTopic() {
   const topicId = state.focusTopic;
   state.focusTopic = null;
+  state.selectedBranch = null;
   render();
   screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
 }
@@ -154,6 +156,7 @@ document.addEventListener("click", (event) => {
   // Trilha e atividade
   if (action === "open-topic") openTopic(data.topic);
   else if (action === "close-topic") closeTopic();
+  else if (action === "tap-branch") tapBranch(data.topic, data.branch);
   else if (action === "start-branch") startBranch(data.topic, data.branch);
   else if (action === "select-answer") selectAnswer(actionButton);
   else if (action === "check-answer") checkAnswer();
