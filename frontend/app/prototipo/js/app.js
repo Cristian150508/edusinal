@@ -91,6 +91,7 @@ function render() {
   settings.classList.toggle("is-active", state.screen === "more");
   settings.toggleAttribute("aria-current", state.screen === "more");
   screenRoot.innerHTML = screenRenderers[state.screen]();
+  if (state.focusTopic) measureTreeLines(); // para o caminho da árvore "se desenhar"
   app.dataset.theme = state.theme;
   document.documentElement.dataset.theme = state.theme;          // janelas do Bootstrap ficam fora do app
   document.documentElement.setAttribute("data-bs-theme", state.theme); // tema dos componentes do Bootstrap
@@ -123,23 +124,61 @@ function setScreen(screen) {
 // ----- Modo foco (árvore de lições) -----
 
 // Abre a árvore de uma etapa, de qualquer tela (Home, missões...).
+// Animação entre a Home e a árvore (View Transitions do navegador): o destaque
+// de boas-vindas vira a faixa da etapa e a bolinha da etapa vai para o centro,
+// virando a prova final. "pairs" liga o elemento de antes ao de depois pelo nome.
+// Sem suporte no navegador (ou com animações reduzidas), só troca a tela.
+function withTopicTransition(topicId, update) {
+  const reduceMotion = state.motion === "reduced" || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (!document.startViewTransition || reduceMotion) {
+    update();
+    return;
+  }
+  const pairs = [
+    [".home-hero", "topic-banner"],
+    [".topic-heading", "topic-banner"],
+    [`.trail-node[data-topic="${topicId}"]`, "topic-node"],
+    [".tree-final-node", "topic-node"],
+  ];
+  const setNames = (value) => pairs.forEach(([selector, name]) => {
+    const element = screenRoot.querySelector(selector);
+    if (element) element.style.viewTransitionName = value ? name : "";
+  });
+  setNames(true); // tela de antes
+  // durante a transição o menu lateral some de uma vez (a animação própria dele
+  // atrapalharia a "foto" da tela de depois)
+  document.documentElement.classList.add("is-transitioning");
+  const transition = document.startViewTransition(() => {
+    update();
+    setNames(true); // tela de depois
+  });
+  transition.finished.finally(() => {
+    setNames(false);
+    document.documentElement.classList.remove("is-transitioning");
+  });
+}
+
 function openTopic(topicId) {
   if (!isTopicUnlocked(topicId)) {
     showToast("Conclua a etapa anterior para liberar esta.");
     return;
   }
-  setScreen("trail");
-  state.focusTopic = topicId;
-  render();
-  document.getElementById("topic-back").focus({ preventScroll: true });
+  withTopicTransition(topicId, () => {
+    setScreen("trail");
+    state.focusTopic = topicId;
+    render();
+    document.getElementById("topic-back").focus({ preventScroll: true });
+  });
 }
 
 function closeTopic() {
   const topicId = state.focusTopic;
-  state.focusTopic = null;
-  state.selectedBranch = null;
-  render();
-  screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
+  withTopicTransition(topicId, () => {
+    state.focusTopic = null;
+    state.selectedBranch = null;
+    render();
+    screenRoot.querySelector(`[data-topic="${topicId}"]`)?.focus({ preventScroll: true });
+  });
 }
 
 // (a atividade fica em licao.js; as ações de cada aba, no arquivo da aba)

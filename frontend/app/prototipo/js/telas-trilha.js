@@ -79,13 +79,36 @@ function smoothSegment(points, index) {
 }
 
 // O caminho é desenhado em pedaços: o pedaço depois de um exercício feito fica colorido.
+// Cada pedaço tem uma "máscara" (a mesma curva, branca e grossa) que se risca na
+// entrada da árvore, revelando a linha aos poucos, um pedaço depois do outro.
 function renderPath(topicId, points, viewBox, className) {
   const branches = learningTopics[topicId].branches;
   const segments = points.slice(0, -1).map((_, index) => {
     const isDone = isLessonDone(topicId, branches[index].id);
-    return `<path class="${isDone ? "is-done" : ""}" d="${smoothSegment(points, index)}" />`;
+    const curve = smoothSegment(points, index);
+    const maskId = `${className}-${index}`;
+    return `<mask id="${maskId}" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120"><path class="tree-line-mask" d="${curve}" style="--i:${index}" /></mask>
+      <path class="${isDone ? "is-done" : ""}" d="${curve}" mask="url(#${maskId})" />`;
   });
   return `<svg class="tree-lines ${className}" viewBox="${viewBox}" preserveAspectRatio="none" aria-hidden="true">${segments.join("")}</svg>`;
+}
+
+// A máscara precisa saber o comprimento de cada pedaço na tela, em pixels
+// (a linha estica junto com a área da árvore). Mede somando pontos da curva.
+function measureTreeLines() {
+  screenRoot.querySelectorAll(".tree-line-mask").forEach((path) => {
+    const matrix = path.getScreenCTM?.();
+    if (!matrix || !path.getTotalLength) return; // caminho escondido (o outro layout)
+    const total = path.getTotalLength();
+    let length = 0;
+    let previous = path.getPointAtLength(0).matrixTransform(matrix);
+    for (let step = 1; step <= 24; step += 1) {
+      const point = path.getPointAtLength((total * step) / 24).matrixTransform(matrix);
+      length += Math.hypot(point.x - previous.x, point.y - previous.y);
+      previous = point;
+    }
+    path.style.setProperty("--len", `${Math.ceil(length) + 4}px`);
+  });
 }
 
 // Situação de um exercício: feito, aberto ou trancado.
