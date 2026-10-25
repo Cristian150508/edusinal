@@ -587,33 +587,6 @@ a {
   font-size: 11px;
 }
 
-.route-node {
-  width: 58px;
-  height: 58px;
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  position: relative;
-  z-index: 1;
-  margin-bottom: 4px;
-  border: 4px solid var(--surface);
-  border-radius: 18px;
-  color: var(--text);
-  font-family: "Manrope", sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-button.route-node {
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-button.route-node:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 5px 12px rgba(29, 47, 69, 0.16);
-}
-
 .lives-hearts {
   display: flex;
   gap: 3px;
@@ -733,15 +706,6 @@ button.route-node:hover {
   font-family: "Manrope", sans-serif;
   font-size: 21px;
   font-weight: 800;
-}
-
-.node-coral {
-  background: var(--coral-soft);
-}
-
-.panel-icon {
-  color: var(--coral);
-  font-size: 18px;
 }
 
 .progress-track {
@@ -1249,7 +1213,6 @@ textarea {
   .app-shell {
     grid-template-columns: 218px minmax(0, 1fr);
   }
-
 }
 
 @media (max-width: 760px) {
@@ -1524,12 +1487,6 @@ textarea {
     font-size: 8px;
   }
 
-  .route-node {
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-  }
-
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -1586,241 +1543,14 @@ textarea {
   .sidebar {
     transition: opacity 220ms ease, padding 380ms ease;
   }
+
+  /* Modo foco no computador: sem rodapé e com margens menores, para a árvore crescer */
+  .app-shell[data-focus="on"] .app-footer { display: none; }
+  .app-shell[data-focus="on"] .screen-root { padding-top: 20px; padding-bottom: 20px; }
 }
 
 .app-shell[data-focus="on"] .demo-disclaimer {
   display: none;
-}
-
-.topic-tree {
-  display: grid;
-  gap: 8px;
-  animation: topic-in 420ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-@keyframes topic-in {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.topic-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.topic-hud {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.hud-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.hud-item strong {
-  font-family: "Manrope", sans-serif;
-}
-
-.hud-item small {
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.tree-canvas {
-  position: relative;
-  min-height: min(620px, 78vh);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--surface);
-}
-
-.tree-lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.tree-lines path {
-  fill: none;
-  stroke: var(--primary);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  opacity: 0.55;
-  vector-effect: non-scaling-stroke;
-}
-
-.tree-lines path.is-done {
-  stroke-width: 4;
-  opacity: 0.95;
-}
-
-.tree-center {
-  position: absolute;
-  top: var(--y);
-  left: var(--x);
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  width: 190px;
-  padding: 14px 10px;
-  border: 0;
-  border-radius: 22px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  text-align: center;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-}
-
-.tree-center small {
-  max-width: 170px;
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.tree-center:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Prova final trancada: apagada, só serve para voltar à trilha. */
-
-.tree-center:not(.is-open):not(.is-done) .route-node {
-  background: var(--surface-soft);
-  opacity: 0.75;
-}
-
-.tree-center.is-open .route-node,
-.tree-center.is-done .route-node {
-  background: var(--yellow-soft);
-}
-
-.tree-center.is-open .route-node {
-  animation: final-pulse 1.8s ease-in-out infinite;
-}
-
-@keyframes final-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(237, 198, 83, 0.6); }
-  50% { box-shadow: 0 0 0 14px rgba(237, 198, 83, 0); }
-}
-
-.tree-center .route-node {
-  width: 72px;
-  height: 72px;
-  font-size: 16px;
-}
-
-.tree-center h2 {
-  margin: 4px 0 0;
-  font-family: "Manrope", sans-serif;
-  font-size: 18px;
-}
-
-.tree-center p {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.tree-leaf {
-  position: absolute;
-  top: var(--y);
-  left: var(--x);
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  gap: 3px;
-  width: 130px;
-  padding: 8px;
-  border: 0;
-  border-radius: 18px;
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-  text-align: center;
-  transform: translate(-50%, -50%);
-  animation: leaf-in 380ms calc(280ms + var(--i) * 60ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-@keyframes leaf-in {
-  from { opacity: 0; transform: translate(-50%, -30%) scale(0.7); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-button.tree-leaf {
-  cursor: pointer;
-}
-
-button.tree-leaf:hover .tree-icon,
-button.tree-leaf:focus-visible .tree-icon {
-  box-shadow: 0 6px 14px rgba(29, 47, 69, 0.18);
-  transform: translateY(-3px) scale(1.06);
-}
-
-button.tree-leaf:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.tree-icon {
-  width: 58px;
-  height: 58px;
-  display: grid;
-  place-items: center;
-  border: 4px solid var(--surface);
-  border-radius: 18px;
-  font-family: "Manrope", sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.tree-leaf .tree-icon {
-  background: var(--coral-soft);
-}
-
-.tree-leaf.is-done .tree-icon {
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-}
-
-.tree-leaf strong {
-  font-family: "Manrope", sans-serif;
-  font-size: 13px;
-}
-
-.tree-leaf small {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-/* Redesenho da mesma árvore (ex.: tocar num galho): sem repetir a entrada */
-.app-shell[data-redraw="on"] .topic-tree,
-.app-shell[data-redraw="on"] .tree-leaf {
-  animation: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .topic-tree,
-  .tree-leaf,
-  .tree-center.is-open .route-node {
-    animation: none;
-  }
 }
 
 /* ===================================================================
@@ -1859,6 +1589,9 @@ button.tree-leaf:disabled {
 }
 .button-3d:active { transform: translateY(4px); box-shadow: 0 0 0 var(--hero-shadow); }
 .button-3d-light { background: #ffffff; color: var(--hero-shadow); }
+.button-3d-primary { background: var(--hero-from); color: #ffffff; }
+.button-3d-outline { border: 2px solid var(--line); background: var(--surface); box-shadow: 0 4px 0 var(--line); color: var(--primary); }
+.button-3d:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 /* ----- Destaque do topo ----- */
 .home-hero {
@@ -2849,23 +2582,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .category-chip,
   .choice-button { flex: 0 0 auto; min-height: 40px; font-size: 13px; }
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  /* ----- Modo foco: árvore vira um caminho vertical com a prova no fim ----- */
-  .topic-topline { gap: 8px; }
-  .topic-topline .back-label,
+  /* ----- Atividade: botão de voltar só com a seta ----- */
   .lesson-topline .back-label { display: none; }
-  .topic-topline .back-button,
   .lesson-topline .back-button {
     width: 44px;
     height: 44px;
@@ -2876,9 +2594,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
     font-size: 18px;
   }
 
-  .topic-hud { flex-wrap: nowrap; gap: 6px; }
-  .hud-item { padding: 7px 10px; font-size: 13px; }
-  .hud-item small { display: none; }
   /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
   .app-shell[data-current-screen="lesson"] .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
   .lesson-topline { gap: 12px; margin-bottom: 12px; }
@@ -2959,7 +2674,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .signup-aside { font-size: 12px; }
   .signup-intro > p:not(.eyebrow) { font-size: 14px; }
   .login-register { font-size: 14px; }
-
 }
 
 @media (max-width: 360px) {
@@ -3049,16 +2763,12 @@ h3 { font-size: 1.17em; }
 .button .bi,
 .text-button .bi,
 .back-button .bi { font-size: 1.1em; }
-.stat-chip .bi,
-.hud-item .bi { font-size: 0.95em; }
-.stat-streak .bi,
-.hud-streak .bi { color: #f0743a; }
+.stat-chip .bi { font-size: 0.95em; }
+.stat-streak .bi { color: #f0743a; }
 .stat-coins .bi,
-.hud-coins .bi,
 .shop-balance .bi,
 .mission-reward .bi,
 .profile-currency .bi { color: #d9a20f; }
-.hud-xp .bi { color: var(--primary); }
 .life-heart.is-full,
 .stat-lives .bi,
 .tree-warning .bi { color: var(--coral); }
@@ -3151,142 +2861,293 @@ h3 { font-size: 1.17em; }
 }
 
 /* ===================================================================
-   ÁRVORE EM ORDEM: espiral no computador, caminho ondulado no celular
+   ÁRVORE DE EXERCÍCIOS (modo foco)
+   Computador: espiral com a prova final (troféu) no centro.
+   Celular: caminho ondulado só com os ícones; tocar abre um balão.
+   Mesmo visual da Home: bolinhas "3D" com sombra embaixo.
    =================================================================== */
-.topic-heading { margin: 4px 0 2px; }
-.topic-heading .eyebrow { margin-bottom: 2px; }
-.topic-heading h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 24px; }
+.topic-tree {
+  width: min(900px, 100%);
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr); /* nada empurra a largura para fora da tela */
+  animation: topic-in 420ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes topic-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
 
-.tree-canvas { min-height: min(660px, 80vh); }
+/* Faixa colorida única: voltar (esquerda), etapa (meio), progresso e vidas (direita) */
+.topic-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+.topic-heading .back-button {
+  justify-self: start;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  color: #ffffff;
+  font-size: 18px;
+}
+.topic-heading .back-button:hover { text-decoration: none; background: rgba(255, 255, 255, 0.28); }
+.topic-heading .back-button:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+.topic-title { min-width: 0; text-align: center; }
+.topic-title small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.topic-title h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; line-height: 1.2; }
+.topic-status { justify-self: end; width: min(220px, 100%); display: grid; gap: 4px; }
+.topic-progress { display: flex; align-items: center; gap: 8px; }
+.topic-progress .hero-progress-track { flex: 1; height: 12px; }
+.topic-progress strong { font-family: "Manrope", sans-serif; font-size: 14px; }
+.topic-lives { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.topic-lives .life-heart { font-size: 14px; color: rgba(255, 255, 255, 0.35); }
+.topic-lives .life-heart.is-full { color: #ff8f7d; }
+.topic-lives small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+
+/* Área da árvore: a altura acompanha a tela, para tudo caber sem rolar */
+.tree-canvas {
+  position: relative;
+  height: clamp(380px, calc(100vh - 130px), 560px); /* mais alto que isso, o oval estica e as distâncias ficam desiguais */
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.tree-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tree-lines path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+/* caminho ainda não feito: bolinhas; feito: linha turquesa cheia */
+.tree-lines path:not(.is-done) { stroke: var(--line); stroke-width: 7; stroke-dasharray: 0.1 16; }
 .tree-lines-wave,
 .tree-bubble { display: none; }
 
-/* caminho ainda não feito: tracejado; feito: azul cheio */
-.tree-lines path:not(.is-done) {
-  stroke: var(--muted);
-  stroke-dasharray: 2 10;
-  stroke-width: 3;
-  opacity: 0.55;
-}
-
-/* número da ordem (ou cadeado) no canto do ícone */
-.tree-icon { position: relative; }
-.tree-order {
+/* Exercício: o centro da bolinha fica em cima do ponto do caminho */
+.tree-leaf {
+  --lift: -38px;
   position: absolute;
-  top: -8px;
-  right: -8px;
-  min-width: 22px;
-  height: 22px;
+  top: var(--y);
+  left: var(--x);
+  z-index: 1;
+  width: 170px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+  transform: translate(-50%, var(--lift));
+  animation: leaf-in 380ms calc(280ms + var(--i) * 60ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes leaf-in {
+  from { opacity: 0; transform: translate(-50%, calc(var(--lift) + 18px)) scale(0.7); }
+  to { opacity: 1; transform: translate(-50%, var(--lift)) scale(1); }
+}
+button.tree-leaf { cursor: pointer; }
+
+.tree-icon {
+  position: relative;
+  width: 76px;
+  height: 76px;
   display: grid;
   place-items: center;
-  padding: 0 5px;
-  border: 2px solid var(--surface);
-  border-radius: 11px;
-  background: var(--primary);
-  color: #fff;
-  font-family: "Manrope", sans-serif;
-  font-size: 11px;
-  font-weight: 800;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  box-shadow: 0 6px 0 var(--line);
+  color: var(--muted);
+  font-size: 28px;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+button.tree-leaf:hover .tree-icon { transform: translateY(-2px); }
+button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+.tree-leaf.is-open .tree-icon { background: var(--hero-from); box-shadow: 0 6px 0 var(--hero-shadow); color: #ffffff; }
+.tree-leaf.is-done .tree-icon { background: var(--accent); box-shadow: 0 6px 0 var(--done-shadow); color: #ffffff; }
+/* o próximo da vez ganha um anel amarelo pulsando */
+.tree-leaf.is-open .tree-icon::after {
+  position: absolute;
+  inset: -9px;
+  border: 4px solid var(--yellow);
+  border-radius: 50%;
+  animation: ring-pulse 1.8s ease-in-out infinite;
+  content: "";
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.06); }
 }
 
-.tree-leaf.is-done .tree-order { background: var(--accent); }
+/* número da ordem (ou cadeado) no canto da bolinha */
+.tree-order {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 1;
+  min-width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  border: 3px solid var(--surface);
+  border-radius: 13px;
+  background: var(--hero-from);
+  color: #ffffff;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tree-leaf.is-done .tree-order { background: var(--done-shadow); }
 .tree-leaf.is-locked .tree-order { background: var(--muted); }
-.tree-leaf.is-locked .tree-icon { background: var(--surface-soft); color: var(--muted); }
-.tree-leaf.is-open .tree-icon { background: var(--primary); color: #fff; } /* o próximo da vez */
-.tree-leaf.is-locked strong,
-.tree-leaf.is-locked small { color: var(--muted); }
-.tree-center { width: 180px; }
-/* títulos com fundo, para a linha da espiral não passar por cima do texto */
-.tree-leaf strong,
-.tree-leaf small,
-.tree-center h2,
-.tree-center p,
-.tree-center small { padding: 0 6px; border-radius: 6px; background: var(--surface); }
+
+/* Texto em cima da bolinha (exercícios da parte de cima do oval) */
+.tree-leaf.label-top { --lift: calc(-100% + 38px); }
+.tree-leaf.label-top .tree-icon { order: 2; margin-top: 6px; }
+.tree-leaf strong { margin-top: 4px; font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 800; }
+.tree-leaf small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.tree-leaf.is-locked strong { color: var(--muted); }
+
+/* Prova final: troféu no centro. Trancada, só serve para voltar à trilha. */
+.tree-center {
+  --lift: -52px;
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  z-index: 1;
+  width: 190px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transform: translate(-50%, var(--lift));
+}
+.tree-final-node {
+  width: 104px;
+  height: 104px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  box-shadow: 0 7px 0 var(--line);
+  color: var(--muted);
+  font-size: 42px;
+  transition: transform 80ms ease;
+}
+.tree-center:active .tree-final-node { transform: translateY(5px); }
+.tree-center.is-open .tree-final-node,
+.tree-center.is-done .tree-final-node { background: var(--yellow); box-shadow: 0 7px 0 #c99a1c; color: #6b4f00; }
+.tree-center.is-open .tree-final-node { animation: final-pulse 1.8s ease-in-out infinite; }
+@keyframes final-pulse {
+  0%, 100% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 0 rgba(237, 198, 83, 0.6); }
+  50% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 16px rgba(237, 198, 83, 0); }
+}
+.tree-center h2 { margin: 12px 0 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.tree-center p { margin: 0; color: var(--muted); font-size: 13px; }
+.tree-center small { max-width: 180px; margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+/* Redesenho da mesma árvore (ex.: tocar num exercício): sem repetir a entrada */
+.app-shell[data-redraw="on"] .topic-tree,
+.app-shell[data-redraw="on"] .tree-leaf { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-tree,
+  .tree-leaf,
+  .tree-leaf.is-open .tree-icon::after,
+  .tree-center.is-open .tree-final-node { animation: none; }
+}
 
 @media (max-width: 760px) {
-  .topic-heading { text-align: center; }
-  .topic-heading h2 { font-size: 22px; }
+  .topic-heading { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; padding: 10px 12px; }
+  .topic-heading .back-button { width: 40px; height: 40px; }
+  .topic-title h2 { font-size: 18px; }
+  .topic-status { width: 104px; }
+  .topic-lives small { display: none; } /* no celular, só os corações */
 
-  .tree-canvas {
-    height: var(--wave-height);
-    min-height: 0;
-    padding: 0;
-    overflow: visible;
-  }
-
+  .tree-canvas { height: max(330px, calc(100dvh - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); border-radius: 20px; }
   .tree-lines-spiral { display: none; }
   .tree-lines-wave { display: block; }
-  .tree-lines path { stroke-width: 6; }
-  .tree-lines path:not(.is-done) { stroke-width: 5; stroke-dasharray: 1 12; }
 
-  /* Só o ícone: o título fica no balão (e no aria-label, para leitores de tela) */
-  .tree-leaf {
-    top: var(--my);
-    left: var(--mx);
-    width: auto;
-    padding: 0;
-  }
-
+  /* Só a bolinha: o título fica no balão (e no aria-label, para leitores de tela) */
+  .tree-leaf,
+  .tree-leaf.label-top { --lift: -50%; top: var(--my); left: var(--mx); width: auto; }
   .tree-leaf strong,
   .tree-leaf small { display: none; }
+  .tree-icon { width: 72px; height: 72px; font-size: 26px; }
+  .tree-leaf.is-selected .tree-icon { outline: 4px solid var(--yellow); outline-offset: 6px; }
 
-  .tree-leaf .tree-icon {
-    width: 68px;
-    height: 68px;
-    border: 0;
-    border-radius: 50%;
-    font-size: 26px;
-    box-shadow: 0 6px 0 rgba(10, 30, 70, 0.16);
-  }
-
-  .tree-leaf.is-open .tree-icon { background: var(--primary); color: #fff; box-shadow: 0 6px 0 var(--primary-strong); }
-  .tree-leaf.is-done .tree-icon { background: var(--accent-soft); color: var(--accent); box-shadow: 0 6px 0 rgba(25, 167, 161, 0.35); }
-  .tree-leaf.is-selected .tree-icon { outline: 4px solid var(--yellow); outline-offset: 4px; }
-  button.tree-leaf:hover .tree-icon { transform: none; }
-  .tree-order { top: -4px; right: -4px; }
-
-  .tree-center {
-    top: var(--my);
-    left: var(--mx);
-    width: 150px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-  }
-
-  .tree-center .route-node { width: 88px; height: 88px; border-radius: 50%; font-size: 30px; box-shadow: 0 7px 0 rgba(10, 30, 70, 0.16); }
-  .tree-center.is-open .route-node { box-shadow: 0 7px 0 #d9a20f; }
-  .tree-center.is-selected .route-node { outline: 4px solid var(--yellow); outline-offset: 4px; }
-  .tree-center h2 { margin-top: 10px; font-size: 16px; }
+  .tree-center { --lift: -48px; top: var(--my); left: var(--mx); width: 150px; }
+  .tree-final-node { width: 96px; height: 96px; font-size: 38px; }
+  .tree-center.is-selected .tree-final-node { outline: 4px solid var(--yellow); outline-offset: 6px; }
+  .tree-center h2 { font-size: 16px; }
   .tree-center p,
   .tree-center small { display: none; }
 
-  /* Balão com título e botão, embaixo do ícone tocado (o da prova fica em cima) */
+  /* Balão com título e botão, embaixo da bolinha tocada (o da prova fica em cima) */
   .tree-bubble {
     position: absolute;
     z-index: 4;
-    top: calc(var(--my) + 52px);
+    top: calc(var(--my) + 58px);
     left: clamp(132px, var(--mx), calc(100% - 132px));
     width: 252px;
     display: grid;
     gap: 6px;
-    padding: 14px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
+    padding: 16px;
+    border: 2px solid var(--line);
+    border-radius: 20px;
     background: var(--surface);
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 0 var(--line);
     text-align: center;
     transform: translateX(-50%);
     animation: bubble-in 160ms ease-out both;
   }
-
-  .tree-bubble.is-above { top: auto; bottom: calc(var(--wave-height) - var(--my) + 64px); }
-  .tree-bubble strong { font-family: "Manrope", sans-serif; font-size: 17px; }
-  .tree-bubble p { margin: 0 0 4px; color: var(--muted); font-size: 14px; line-height: 1.45; }
-  .tree-bubble .button { width: 100%; }
+  .tree-bubble.is-above { top: auto; bottom: calc(100% - var(--my) + 64px); }
+  .tree-bubble strong { font-family: "Manrope", sans-serif; font-size: 17px; font-weight: 800; }
+  .tree-bubble p { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .tree-bubble .button-3d { width: 100%; }
 }
-
+/* Celular com tela baixa: bolinhas menores para o caminho inteiro caber */
+@media (max-width: 760px) and (max-height: 700px) {
+  .tree-icon { width: 58px; height: 58px; font-size: 22px; }
+  .tree-center { --lift: -38px; }
+  .tree-final-node { width: 76px; height: 76px; font-size: 30px; }
+  .tree-center h2 { margin-top: 8px; font-size: 14px; }
+  .tree-bubble { top: calc(var(--my) + 46px); }
+}
+/* Celular estreito: o título pode quebrar em duas linhas, então a árvore desconta um pouco mais */
+@media (max-width: 360px) {
+  .tree-canvas { height: max(330px, calc(100dvh - 152px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
+}
+@media (max-width: 760px) and (max-height: 600px) {
+  .tree-icon { width: 48px; height: 48px; font-size: 18px; }
+  .tree-order { min-width: 22px; height: 22px; font-size: 11px; }
+  .tree-center { --lift: -32px; }
+  .tree-final-node { width: 64px; height: 64px; font-size: 26px; }
+  .tree-bubble { top: calc(var(--my) + 38px); }
+}
 @keyframes bubble-in {
   from { opacity: 0; transform: translate(-50%, -6px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
+

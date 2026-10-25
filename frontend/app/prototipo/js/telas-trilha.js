@@ -32,25 +32,28 @@ function renderIntro() {
 // ícone abre um balão com o título e o botão para começar.
 
 // Posições na espiral (computador), em % da área: 5 exercícios + a prova final.
+// Os exercícios ficam num oval em volta da prova, todos à mesma distância um
+// do outro. "label" diz de que lado fica o texto: sempre para fora do oval,
+// para a linha do caminho não passar por cima dele.
 const SPIRAL_POINTS = [
-  { x: 12, y: 70 },
-  { x: 22, y: 16 },
-  { x: 78, y: 14 },
-  { x: 88, y: 68 },
-  { x: 58, y: 86 },
-  { x: 48, y: 48 }, // prova final (centro)
+  { x: 21.3, y: 71, label: "bottom" },
+  { x: 26.8, y: 31.6, label: "top" },
+  { x: 50, y: 24, label: "top" },
+  { x: 73.2, y: 31.6, label: "top" },
+  { x: 78.7, y: 71, label: "bottom" },
+  { x: 50, y: 50 }, // prova final (centro exato)
 ];
 
-// Posições no caminho ondulado (celular): x em % da largura, y em pixels.
+// Posições no caminho ondulado (celular), em % da área. A altura da área
+// acompanha a tela, para a árvore inteira caber sem rolar.
 const WAVE_POINTS = [
-  { x: 50, y: 50 },
-  { x: 74, y: 150 },
-  { x: 50, y: 250 },
-  { x: 26, y: 350 },
-  { x: 50, y: 450 },
-  { x: 50, y: 580 }, // prova final
+  { x: 50, y: 9 },
+  { x: 74, y: 24 },
+  { x: 50, y: 39 },
+  { x: 26, y: 54 },
+  { x: 50, y: 69 },
+  { x: 50, y: 84 }, // prova final
 ];
-const WAVE_HEIGHT = 690; // altura do caminho no celular, em pixels
 
 // No celular, o primeiro toque mostra o balão; no computador, já começa.
 function isMobileLayout() {
@@ -100,7 +103,7 @@ function renderBranch(topicId, branch, index) {
   if (status === "done") hint = "Concluído · refazer";
   if (status === "locked") hint = "Conclua o exercício anterior";
   const isSelected = state.selectedBranch === branch.id;
-  return `<button class="tree-leaf is-${status}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}px;--i:${index}" data-action="tap-branch" data-topic="${topicId}" data-branch="${branch.id}" aria-label="${index + 1}. ${branch.label}: ${hint}" aria-expanded="${isSelected}"><span class="tree-icon">${symbol}<span class="tree-order" aria-hidden="true">${status === "locked" ? icon("lock-fill") : index + 1}</span></span><strong>${branch.label}</strong><small>${hint}</small></button>`;
+  return `<button class="tree-leaf is-${status} label-${spiral.label}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}%;--i:${index}" data-action="tap-branch" data-topic="${topicId}" data-branch="${branch.id}" aria-label="${index + 1}. ${branch.label}: ${hint}" aria-expanded="${isSelected}"><span class="tree-icon">${symbol}<span class="tree-order" aria-hidden="true">${status === "locked" ? icon("lock-fill") : index + 1}</span></span><strong>${branch.label}</strong><small>${hint}</small></button>`;
 }
 
 // Centro (computador) ou fim do caminho (celular): a prova final.
@@ -109,8 +112,8 @@ function finalNodeInfo(topicId) {
   const topic = learningTopics[topicId];
   const done = doneBranchCount(topicId);
   const total = topic.branches.length;
-  if (isLessonDone(topicId, "final")) return { status: "done", symbol: icon("check-lg"), hint: "Etapa concluída · toque para voltar" };
-  if (isFinalUnlocked(topicId)) return { status: "open", symbol: icon("star-fill"), hint: `Liberada! Pode errar no máximo ${FINAL_MAX_MISTAKES}` };
+  if (isLessonDone(topicId, "final")) return { status: "done", symbol: icon("trophy-fill"), hint: "Etapa concluída · toque para voltar" };
+  if (isFinalUnlocked(topicId)) return { status: "open", symbol: icon("trophy-fill"), hint: `Liberada! Pode errar no máximo ${FINAL_MAX_MISTAKES}` };
   return { status: "locked", symbol: icon("lock-fill"), hint: `Conclua os exercícios (${done} / ${total})` };
 }
 
@@ -120,7 +123,7 @@ function renderFinalNode(topicId) {
   const spiral = SPIRAL_POINTS[SPIRAL_POINTS.length - 1];
   const wave = WAVE_POINTS[WAVE_POINTS.length - 1];
   const isSelected = state.selectedBranch === "final";
-  return `<button class="tree-center is-${info.status}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}px" data-action="tap-branch" data-topic="${topicId}" data-branch="final" aria-label="Prova final: ${info.hint}" aria-expanded="${isSelected}"><span class="route-node node-coral">${info.symbol}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${info.hint}</small></button>`;
+  return `<button class="tree-center is-${info.status}${isSelected ? " is-selected" : ""}" type="button" style="--x:${spiral.x}%;--y:${spiral.y}%;--mx:${wave.x}%;--my:${wave.y}%" data-action="tap-branch" data-topic="${topicId}" data-branch="final" aria-label="Prova final: ${info.hint}" aria-expanded="${isSelected}"><span class="tree-final-node">${info.symbol}</span><h2 id="topic-title">Prova final</h2><p>${topic.title}</p><small>${info.hint}</small></button>`;
 }
 
 // Balão do celular: aparece embaixo do ícone tocado, com título e botão.
@@ -138,8 +141,8 @@ function renderBranchBubble(topicId) {
     title = "Prova final";
     text = info.status === "locked" ? `Conclua os 5 exercícios para liberar (${doneBranchCount(topicId)} / 5).` : info.hint;
     point = WAVE_POINTS[WAVE_POINTS.length - 1];
-    if (info.status === "open") action = `<button class="button button-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="final" ${state.lives === 0 ? "disabled" : ""}>Começar a prova ${icon("arrow-right")}</button>`;
-    else action = `<button class="button button-outline" type="button" data-action="close-topic">Voltar à trilha</button>`;
+    if (info.status === "open") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="final" ${state.lives === 0 ? "disabled" : ""}>Começar a prova ${icon("arrow-right")}</button>`;
+    else action = `<button class="button-3d button-3d-outline" type="button" data-action="close-topic">Voltar à trilha</button>`;
   } else {
     const index = topic.branches.findIndex((branch) => branch.id === selected);
     const branch = topic.branches[index];
@@ -147,9 +150,9 @@ function renderBranchBubble(topicId) {
     title = `${index + 1}. ${branch.label}`;
     text = status === "locked" ? "Conclua o exercício anterior para liberar este." : `${branch.hint} · ${status === "done" ? "já concluído (revisão, sem XP)" : `+${XP_PER_EXERCISE} XP`}`;
     point = WAVE_POINTS[index];
-    if (status !== "locked") action = `<button class="button button-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
+    if (status !== "locked") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
   }
-  return `<div class="tree-bubble${selected === "final" ? " is-above" : ""}" role="dialog" aria-label="${title}" style="--mx:${point.x}%;--my:${point.y}px"><strong>${title}</strong><p>${text}</p>${action}</div>`;
+  return `<div class="tree-bubble${selected === "final" ? " is-above" : ""}" role="dialog" aria-label="${title}" style="--mx:${point.x}%;--my:${point.y}%"><strong>${title}</strong><p>${text}</p>${action}</div>`;
 }
 
 // Toque num exercício (ou na prova): no celular mostra o balão; no computador começa direto.
@@ -177,14 +180,22 @@ function renderTopicTree() {
   const hearts = livesHeartsHtml();
   const topicId = state.focusTopic;
   const topic = learningTopics[topicId];
+  const done = doneBranchCount(topicId);
+  const total = topic.branches.length;
   return `
     <section class="topic-tree" aria-labelledby="topic-title">
-      <div class="topic-topline"><button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar à trilha"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span class="back-label">Voltar à trilha</span></button><div class="topic-hud" aria-label="Seu progresso no jogo"><span class="hud-item hud-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></span><span class="hud-item hud-xp">${icon("lightning-charge-fill")}<strong>${state.xp}</strong> XP</span><span class="hud-item hud-coins">${icon("coin")}<strong>${state.coins}</strong></span><span class="hud-item hud-streak">${icon("fire")}<strong>${state.streak}</strong> dias</span></div></div>
-      <div class="topic-heading"><p class="eyebrow">ETAPA ${topic.number}</p><h2>${topic.title}</h2></div>
+      <div class="topic-heading">
+        <button class="back-button" type="button" data-action="close-topic" id="topic-back" aria-label="Voltar para a Home" title="Voltar para a Home">${icon("arrow-left")}</button>
+        <div class="topic-title"><small>ETAPA ${topic.number}</small><h2>${topic.title}</h2></div>
+        <div class="topic-status">
+          <div class="topic-progress"><div class="hero-progress-track" role="progressbar" aria-label="Exercícios feitos" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${total}"><span style="width: ${Math.round((done / total) * 100)}%"></span></div><strong>${done}/${total}</strong></div>
+          <div class="topic-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></div>
+        </div>
+      </div>
       ${state.lives === 0 ? `<p class="tree-warning" role="status"><i class="bi bi-heart-fill" aria-hidden="true"></i> Sem vidas agora (${timeUntilNextLife()}). Enquanto isso, revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na <button class="text-button" type="button" data-screen="shop">lojinha</button>.</p>` : ""}
-      <div class="tree-canvas" style="--wave-height:${WAVE_HEIGHT}px">
+      <div class="tree-canvas">
         ${renderPath(topicId, SPIRAL_POINTS, "0 0 100 100", "tree-lines-spiral")}
-        ${renderPath(topicId, WAVE_POINTS, `0 0 100 ${WAVE_HEIGHT}`, "tree-lines-wave")}
+        ${renderPath(topicId, WAVE_POINTS, "0 0 100 100", "tree-lines-wave")}
         ${topic.branches.map((branch, index) => renderBranch(topicId, branch, index)).join("")}
         ${renderFinalNode(topicId)}
         ${renderBranchBubble(topicId)}
