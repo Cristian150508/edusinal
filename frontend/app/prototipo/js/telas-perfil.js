@@ -136,48 +136,92 @@ function renderProfile() {
     <p class="demo-disclaimer">Este perfil é local e não representa uma conta autenticada.</p>`;
 }
 
-// Botões lado a lado para escolher uma opção (ex.: Claro | Escuro).
-function renderChoice(action, current, options) {
-  return `<div class="choice-group">${options.map(([value, label]) => `<button class="choice-button${current === value ? " is-active" : ""}" type="button" data-action="${action}" data-value="${value}" aria-pressed="${current === value}">${label}</button>`).join("")}</div>`;
+// Interruptor com as opções lado a lado (ex.: Claro | Escuro).
+// options = [[valor, texto, ícone], ...]
+function renderChoice(action, current, label, options) {
+  const buttons = options.map(([value, text, iconName]) => {
+    const isActive = current === value;
+    return `<button class="segmented-option${isActive ? " is-active" : ""}" type="button" data-action="${action}" data-value="${value}" aria-pressed="${isActive}">${icon(iconName)} ${text}</button>`;
+  }).join("");
+  return `<div class="segmented" role="group" aria-label="${label}">${buttons}</div>`;
+}
+
+// Uma linha de configuração: ícone colorido, nome, explicação e o controle.
+function renderSettingRow(iconName, color, title, text, control) {
+  return `
+    <div class="settings-row">
+      <span class="settings-row-icon is-${color}">${icon(iconName)}</span>
+      <div class="settings-row-text"><strong>${title}</strong><small>${text}</small></div>
+      ${control}
+    </div>`;
+}
+
+// Perguntas da Ajuda (cada uma abre e fecha ao tocar).
+function helpQuestions() {
+  const energyHours = ENERGY_RECHARGE_MS / 3600000;
+  return [
+    ["Como funcionam as vidas?", `Você tem ${MAX_LIVES} vidas. Cada resposta errada gasta uma, e uma vida volta a cada 30 minutos. O dicionário é livre.`],
+    ["Como funciona a energia?", `Você tem ${MAX_ENERGY} de energia. Cada atividade nova concluída gasta 1, e 1 volta a cada ${energyHours} horas. Refazer o que já fez não gasta. Na lojinha dá para recarregar uma vez por dia.`],
+    ["Como libero a prova final?", "Conclua os 5 exercícios da árvore da etapa. A prova fica no centro da árvore."],
+    ["Como ganho moedas?", "Concluindo exercícios novos e resgatando missões. Use as moedas na lojinha."],
+    ["O que é a vitrine do dia?", "Todo dia, 3 itens do mascote ficam à venda na lojinha. À meia-noite eles trocam por outros."],
+    ["O que é a ofensiva?", "São os dias seguidos em que você praticou. Um protetor de ofensiva salva um dia perdido."],
+  ];
 }
 
 function renderMore() {
+  const faq = helpQuestions().map(([question, answer]) => `
+    <details class="faq-item">
+      <summary>${question}${icon("chevron-down")}</summary>
+      <p>${answer}</p>
+    </details>`).join("");
+  const privacy = [
+    "Não existe chat nem mensagens entre alunos.",
+    "Nas ligas aparecem só apelidos e avatares.",
+    "Nesta demonstração, os dados ficam só neste navegador e não são enviados.",
+    "Não há compras com dinheiro real: as moedas são do jogo.",
+  ].map((item) => `<li>${icon("check-circle-fill")} ${item}</li>`).join("");
+
   return `
-    <section class="page-intro"><div><p class="eyebrow">EDUSINAL</p><h2>Configurações</h2><p>Preferências, privacidade, ajuda e conta.</p></div></section>
-    <div class="more-sections">
-      <details class="more-section" open>
-        <summary><span class="more-icon"><i class="bi bi-sliders" aria-hidden="true"></i></span>Preferências</summary>
-        <div class="setting-row"><div><strong>Tema</strong><small>Cores claras ou escuras.</small></div>${renderChoice("set-theme", state.theme, [["light", "Claro"], ["dark", "Escuro"]])}</div>
-        <div class="setting-row"><div><strong>Tamanho do texto</strong><small>Deixa tudo um pouco maior.</small></div>${renderChoice("set-text-size", state.textSize, [["normal", "Normal"], ["large", "Grande"]])}</div>
-        <div class="setting-row"><div><strong>Animações</strong><small>Reduz movimentos na tela.</small></div>${renderChoice("set-motion", state.motion, [["normal", "Ligadas"], ["reduced", "Reduzidas"]])}</div>
-      </details>
-      <details class="more-section">
-        <summary><span class="more-icon"><i class="bi bi-shield-lock-fill" aria-hidden="true"></i></span>Segurança e privacidade</summary>
-        <ul class="more-list">
-          <li>Não existe chat nem mensagens entre alunos.</li>
-          <li>Nas ligas aparecem só apelidos e avatares.</li>
-          <li>Nesta demonstração, os dados ficam só neste navegador e não são enviados.</li>
-          <li>Não há compras com dinheiro real: as moedas são do jogo.</li>
-        </ul>
-      </details>
-      <details class="more-section">
-        <summary><span class="more-icon"><i class="bi bi-question-circle" aria-hidden="true"></i></span>Ajuda</summary>
-        <dl class="faq">
-          <dt>Como funcionam as vidas?</dt><dd>Você tem ${MAX_LIVES} vidas. Cada resposta errada gasta uma, e uma vida volta a cada 30 minutos. O dicionário é livre.</dd>
-          <dt>Como libero a prova final?</dt><dd>Conclua os 5 exercícios da árvore da etapa. A prova fica no centro da árvore.</dd>
-          <dt>Como ganho moedas?</dt><dd>Concluindo exercícios novos e resgatando missões. Use as moedas na lojinha.</dd>
-          <dt>O que é a ofensiva?</dt><dd>São os dias seguidos em que você praticou. Um protetor de ofensiva salva um dia perdido.</dd>
-        </dl>
-      </details>
-      <details class="more-section">
-        <summary><span class="more-icon"><i class="bi bi-info-circle" aria-hidden="true"></i></span>Sobre o EduSinal</summary>
-        <p class="more-text">Plataforma para aprender Libras de forma visual e no seu ritmo, com trilha, exercícios e dicionário.</p>
-        <a class="text-button" href="../../landing/index.html">Conhecer o projeto <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
-      </details>
-      <details class="more-section">
-        <summary><span class="more-icon"><i class="bi bi-person-gear" aria-hidden="true"></i></span>Conta</summary>
-        <div class="setting-row"><div><strong>Recomeçar demonstração</strong><small>Apaga XP, moedas e progresso deste navegador.</small></div><button class="button button-outline" type="button" data-action="reset-demo">Recomeçar</button></div>
-        <div class="setting-row"><div><strong>Sair</strong><small>Volta para a tela de apresentação.</small></div><button class="button button-outline" type="button" data-action="logout">Sair</button></div>
-      </details>
-    </div>`;
+    <section class="settings-hero" aria-labelledby="settings-title">
+      <span class="settings-hero-icon">${icon("gear-fill")}</span>
+      <div class="settings-hero-copy">
+        <small>SEU JEITO</small>
+        <h2 id="settings-title">Configurações</h2>
+        <p>Deixe o EduSinal confortável para você.</p>
+      </div>
+    </section>
+
+    <section class="settings-group" aria-labelledby="settings-prefs-title">
+      <h2 class="settings-heading" id="settings-prefs-title">Preferências</h2>
+      <div class="settings-card">
+        ${renderSettingRow("palette-fill", "blue", "Tema", "Cores claras ou escuras.", renderChoice("set-theme", state.theme, "Tema", [["light", "Claro", "sun-fill"], ["dark", "Escuro", "moon-fill"]]))}
+        ${renderSettingRow("type", "teal", "Tamanho do texto", "Deixa tudo um pouco maior.", renderChoice("set-text-size", state.textSize, "Tamanho do texto", [["normal", "Normal", "fonts"], ["large", "Grande", "zoom-in"]]))}
+        ${renderSettingRow("stars", "yellow", "Animações", "Reduz movimentos na tela.", renderChoice("set-motion", state.motion, "Animações", [["normal", "Ligadas", "play-fill"], ["reduced", "Reduzidas", "pause-fill"]]))}
+      </div>
+    </section>
+
+    <section class="settings-group" aria-labelledby="settings-help-title">
+      <h2 class="settings-heading" id="settings-help-title">Ajuda</h2>
+      <div class="settings-card settings-faq">${faq}</div>
+    </section>
+
+    <section class="settings-group" aria-labelledby="settings-privacy-title">
+      <h2 class="settings-heading" id="settings-privacy-title">Segurança e privacidade</h2>
+      <div class="settings-card"><ul class="settings-privacy">${privacy}</ul></div>
+    </section>
+
+    <section class="settings-group" aria-labelledby="settings-account-title">
+      <h2 class="settings-heading" id="settings-account-title">Conta</h2>
+      <div class="settings-card">
+        ${renderSettingRow("arrow-counterclockwise", "coral", "Recomeçar demonstração", "Apaga XP, moedas e progresso deste navegador.", '<button class="button-3d button-3d-outline settings-danger" type="button" data-action="reset-demo">Recomeçar</button>')}
+        ${renderSettingRow("box-arrow-right", "blue", "Sair", "Volta para a tela de apresentação.", '<button class="button-3d button-3d-outline" type="button" data-action="logout">Sair</button>')}
+      </div>
+    </section>
+
+    <section class="settings-about" aria-label="Sobre o EduSinal">
+      <img src="icones/icone-192.png" alt="" width="56" height="56" />
+      <div><strong>EduSinal</strong><p>Aprender Libras de forma visual e no seu ritmo, com trilha, exercícios e dicionário.</p></div>
+      <a class="text-button" href="../../landing/index.html">Conhecer o projeto ${icon("box-arrow-up-right")}</a>
+    </section>`;
 }

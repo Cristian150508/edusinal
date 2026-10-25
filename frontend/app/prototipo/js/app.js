@@ -106,6 +106,9 @@ function render() {
   app.dataset.theme = state.theme;
   document.documentElement.dataset.theme = state.theme;          // janelas do Bootstrap ficam fora do app
   document.documentElement.setAttribute("data-bs-theme", state.theme); // tema dos componentes do Bootstrap
+  // Barra de status do celular com a cor do tema escolhido no app (e não a do sistema)
+  const background = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute("content", background));
   app.dataset.textSize = state.textSize;
   app.dataset.motion = state.motion;
 }
