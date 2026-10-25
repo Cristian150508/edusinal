@@ -1,8 +1,10 @@
 // ATIVIDADE
-// Dois tipos, vindos de conteudo.js:
-//   Aprender (learn): cartões com sinais novos. Não tem certo ou errado e não
-//     gasta vidas; "Próximo" passa para o cartão seguinte.
-//   Exercício (practice) e prova final: pergunta por pergunta,
+// Uma atividade é uma lista de passos. Cada passo é:
+//   um cartão (type "card"): um sinal novo para aprender. Não tem certo ou
+//     errado; "Próximo" passa para o passo seguinte;
+//   ou uma pergunta (os outros types, ver conteudo.js).
+// Aprender (learn) só tem cartões e não gasta vidas. Exercício (practice),
+// prova final e as letras do alfabeto têm perguntas (e podem ter cartões):
 //     1. o aluno escolhe uma resposta (pode trocar);
 //     2. toca em "Conferir": errar gasta uma vida;
 //     3. "Continuar" vai para a próxima; na última, "Concluir".
@@ -38,6 +40,10 @@ function isLearning(lesson = state.currentLesson) {
   return lesson.kind === "learn";
 }
 
+function isCardStep(step) {
+  return step.type === "card";
+}
+
 // ----- Vídeo do sinal -----
 
 // Mostra o vídeo do sinal; enquanto ele não foi gravado, um espaço reservado
@@ -50,7 +56,7 @@ function signVideoHtml(sign, size = "large") {
   return `<div class="sign-video sign-video-${size} is-placeholder" role="img" aria-label="Vídeo do sinal ${escapeHtml(sign)} (em produção)">
       ${icon("play-circle-fill", "sign-video-play")}
       <span>Vídeo em produção</span>
-      <small class="sign-preview">prévia: ${escapeHtml(sign)}</small>
+      <small class="sign-preview">${size === "small" ? "" : "prévia: "}${escapeHtml(sign)}</small>
     </div>`;
 }
 
@@ -75,6 +81,7 @@ function optionLetter(position) {
 
 // Título grande de cada tipo de pergunta.
 function questionTitle(question) {
+  if (question.title) return question.title; // título próprio (ex.: letras do alfabeto)
   if (question.type === "video-palavra") return "O que este sinal significa?";
   if (question.type === "palavra-video") return `Qual é o sinal de “${escapeHtml(question.sign)}”?`;
   if (question.type === "vf") return "Verdadeiro ou falso?";
@@ -115,9 +122,11 @@ function questionBodyHtml(question) {
 // Linha pequena do topo: etapa · atividade · passo.
 function lessonKicker() {
   const lesson = state.currentLesson;
+  const position = `${lesson.index + 1} de ${lesson.steps.length}`;
+  if (lesson.topicId === ALPHABET_TOPIC) return `Alfabeto manual · Letra ${lesson.branchId} · ${position}`;
   const topic = learningTopics[lesson.topicId];
   const name = isFinalExam() ? "Prova final" : topic.branches.find((branch) => branch.id === lesson.branchId).label;
-  return `${topic.title} · ${name} · ${lesson.index + 1} de ${lesson.steps.length}`;
+  return `${topic.title} · ${name} · ${position}`;
 }
 
 function renderLesson() {
@@ -127,12 +136,12 @@ function renderLesson() {
   const isLast = lesson.index === total - 1;
   const progress = Math.round((lesson.index / total) * 100);
 
-  // Aprender: cartão do sinal e botão para seguir
+  // Cartão: o sinal novo e o botão para seguir. Pergunta: as opções e "Conferir".
   let body;
   let footerHint;
   let button;
-  if (isLearning()) {
-    body = `<h2>Sinal novo</h2>${signVideoHtml(step.sign)}<p class="learn-word">${escapeHtml(step.sign)}</p><p class="learn-tip">${step.tip}</p>`;
+  if (isCardStep(step)) {
+    body = `<h2>${step.title || "Sinal novo"}</h2>${signVideoHtml(step.sign)}<p class="learn-word">${escapeHtml(step.label || step.sign)}</p><p class="learn-tip">${step.tip}</p>`;
     footerHint = `${icon("eye")} Assista ao sinal e repita com as mãos.`;
     button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="${isLast ? "finish-lesson" : "next-question"}">${isLast ? "Concluir" : "Próximo"}</button>`;
   } else {
@@ -239,10 +248,15 @@ function nextQuestion() {
   (document.querySelector(".answer-option") || document.getElementById("lesson-continue"))?.focus({ preventScroll: true });
 }
 
-// Volta direto para a árvore da etapa (sem a animação de abrir, que é só a partir da Home).
-function backToTree(topicId) {
+// Depois da atividade: volta direto para a árvore da etapa (sem a animação de
+// abrir, que é só a partir da Home) ou, nas letras, para o alfabeto do dicionário.
+function returnFromLesson(lesson) {
+  if (lesson.topicId === ALPHABET_TOPIC) {
+    showAlphabet();
+    return;
+  }
   setScreen("trail");
-  state.focusTopic = topicId;
+  state.focusTopic = lesson.topicId;
   render();
 }
 
@@ -257,6 +271,9 @@ function finishLesson() {
     showToast(`Você errou ${lesson.mistakes}. Na prova, pode errar no máximo ${FINAL_MAX_MISTAKES}. Tente de novo!`);
   } else if (markLessonDone(lesson.topicId, lesson.branchId)) {
     giveActivityReward();
+    if (lesson.topicId === ALPHABET_TOPIC && nextLetter()) {
+      showToast(`Letra ${lesson.branchId} aprendida! A letra ${nextLetter()} foi liberada. +${XP_PER_EXERCISE} XP`);
+    }
     if (isFinalExam(lesson)) {
       const next = TOPIC_ORDER[TOPIC_ORDER.indexOf(lesson.topicId) + 1];
       showToast(next ? `Etapa concluída! “${learningTopics[next].title}” foi liberada. +${XP_PER_EXERCISE} XP` : `Etapa concluída! +${XP_PER_EXERCISE} XP`);
@@ -264,13 +281,13 @@ function finishLesson() {
   } else {
     showToast("Revisão concluída!");
   }
-  backToTree(lesson.topicId);
+  returnFromLesson(lesson);
 }
 
 // Sair no meio: volta para a árvore sem concluir (vidas perdidas não voltam).
 function leaveLesson() {
   const lesson = state.currentLesson;
-  if (lesson) backToTree(lesson.topicId);
+  if (lesson) returnFromLesson(lesson);
   else setScreen("trail");
 }
 

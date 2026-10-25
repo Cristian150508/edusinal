@@ -1,6 +1,7 @@
 // DICIONÁRIO
-// Consulta livre de sinais (não gasta vidas). Tem busca, categorias e o
-// alfabeto manual. Os vídeos dos sinais ainda serão gravados.
+// Consulta livre de sinais (não gasta vidas), com busca e categorias.
+// O alfabeto manual é uma trilha à parte: o aluno aprende uma letra por vez,
+// em ordem; cada letra concluída libera a próxima. Os vídeos ainda serão gravados.
 
 const DICTIONARY_CATEGORIES = [
   { id: "alfabeto", label: "Alfabeto" },
@@ -37,8 +38,6 @@ const DICTIONARY_WORDS = [
   { id: "branco", word: "Branco", category: "cores", example: "O papel é branco." },
 ];
 
-const UNLOCKED_LETTERS = "ABC";
-
 // Tira acentos e maiúsculas para a busca achar "mae" em "Mãe".
 function normalizeText(text) {
   return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -61,12 +60,6 @@ function selectWord(wordId) {
   render();
 }
 
-function selectLetter(letter) {
-  state.selectedLetter = letter;
-  markSignViewed(`letra-${letter}`);
-  render();
-}
-
 function chooseDictionaryCategory(categoryId) {
   state.dictionaryCategory = categoryId;
   state.dictionaryQuery = "";
@@ -82,28 +75,164 @@ function searchDictionary(query) {
   document.getElementById("dictionary-results").innerHTML = renderDictionaryResults();
 }
 
-function renderAlphabet() {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => {
-    const isUnlocked = UNLOCKED_LETTERS.includes(letter);
-    const isSelected = state.selectedLetter === letter;
-    return `<button class="alphabet-letter${isUnlocked ? " is-unlocked" : " is-locked"}${isSelected ? " is-selected" : ""}" type="button" data-alphabet-letter="${letter}" aria-label="${isUnlocked ? `Letra ${letter}` : `Letra ${letter}, bloqueada`}" ${isUnlocked ? `aria-pressed="${isSelected}"` : "disabled"}>${isUnlocked ? "" : icon("lock-fill", "alphabet-lock")}<span>${letter}</span></button>`;
-  }).join("");
+// ----- Alfabeto manual: uma letra por vez -----
 
-  return `
-    <section class="alphabet-section" aria-labelledby="alphabet-title"><div class="section-heading"><div><p class="eyebrow">ALFABETO MANUAL · ${UNLOCKED_LETTERS.length} DE 26 LETRAS</p><h2 id="alphabet-title">Escolha uma letra</h2></div><span class="alphabet-legend"><i class="bi bi-lock-fill" aria-hidden="true"></i> Em breve</span></div><div class="alphabet-grid" aria-label="Alfabeto manual, letras A a Z">${letters}</div></section>
-    <section class="alphabet-detail" aria-live="polite" aria-labelledby="selected-letter-title"><div class="alphabet-detail-letter" aria-hidden="true">${state.selectedLetter}</div><div class="alphabet-detail-copy"><p class="eyebrow">LETRA LIBERADA</p><h2 id="selected-letter-title">Letra ${state.selectedLetter}</h2><p>O material visual desta letra está sendo preparado para revisão por pessoas fluentes em Libras. Consulte um professor ou intérprete para aprender a configuração correta da mão.</p></div><i class="bi bi-stars alphabet-detail-mark" aria-hidden="true"></i></section>`;
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const ALPHABET_TOPIC = "alfabeto"; // o progresso fica salvo como "alfabeto:A", "alfabeto:B"...
+
+// Dicas das letras (sem descrever como o sinal é feito).
+const LETTER_TIPS = {
+  A: "A primeira letra! Com o alfabeto manual dá para soletrar nomes e palavras que ainda não têm sinal.",
+  E: "Você já sabe as vogais A e E. Soletrar o próprio nome é um ótimo treino.",
+  M: "Metade do alfabeto! Tente soletrar o nome de alguém da sua família.",
+  Z: "A última letra! Agora você consegue soletrar qualquer palavra.",
+};
+
+function isLetterDone(letter) {
+  return isLessonDone(ALPHABET_TOPIC, letter);
 }
+
+// A próxima letra a aprender (ou nenhuma, se já aprendeu todas).
+function nextLetter() {
+  return ALPHABET.find((letter) => !isLetterDone(letter)) || null;
+}
+
+function isLetterUnlocked(letter) {
+  return isLetterDone(letter) || letter === nextLetter();
+}
+
+function learnedLettersCount() {
+  return ALPHABET.filter(isLetterDone).length;
+}
+
+// Duas outras letras para as opções: de preferência as vizinhas.
+function letterDistractors(letter) {
+  const index = ALPHABET.indexOf(letter);
+  return [index - 1, index + 1, index - 2, index + 2]
+    .filter((position) => position >= 0 && position < ALPHABET.length)
+    .slice(0, 2)
+    .map((position) => ALPHABET[position]);
+}
+
+// Coloca a resposta certa numa posição que muda de letra para letra.
+function lettersWithAnswer(letter) {
+  const options = letterDistractors(letter);
+  const answer = letter.charCodeAt(0) % (options.length + 1);
+  options.splice(answer, 0, letter);
+  return { options, answer };
+}
+
+// A atividade de cada letra: aprender (cartão) e depois duas perguntas.
+function letterSteps(letter) {
+  const tip = LETTER_TIPS[letter] || "Mais uma letra para soletrar nomes e palavras.";
+  const toWord = lettersWithAnswer(letter);
+  const toVideo = lettersWithAnswer(letter);
+  return [
+    { type: "card", sign: `Letra ${letter}`, label: letter, title: "Letra nova", tip },
+    { type: "video-palavra", sign: `Letra ${letter}`, title: "Que letra é esta?", options: toWord.options, answer: toWord.answer, explain: `Essa é a letra ${letter} do alfabeto manual.` },
+    { type: "palavra-video", sign: letter, title: `Qual é o sinal da letra ${letter}?`, options: toVideo.options.map((option) => `Letra ${option}`), answer: toVideo.answer, explain: `Esse é o sinal da letra ${letter}.` },
+  ];
+}
+
+function startLetter(letter) {
+  if (!isLetterUnlocked(letter)) return;
+  state.currentLesson = {
+    topicId: ALPHABET_TOPIC,
+    branchId: letter,
+    kind: "practice",
+    steps: letterSteps(letter),
+    index: 0,
+    mistakes: 0,
+    outOfLives: false,
+  };
+  setScreen("lesson");
+}
+
+// Volta para o alfabeto do dicionário, com a próxima letra escolhida.
+function showAlphabet() {
+  setScreen("signs");
+  state.dictionaryCategory = "alfabeto";
+  state.selectedLetter = nextLetter() || state.selectedLetter;
+  render();
+}
+
+function selectLetter(letter) {
+  if (!isLetterUnlocked(letter)) {
+    showToast(`Aprenda a letra ${nextLetter()} primeiro: as letras abrem em ordem.`);
+    return;
+  }
+  state.selectedLetter = letter;
+  if (isLetterDone(letter)) markSignViewed(`letra-${letter}`);
+  render();
+}
+
+function renderLetterTile(letter) {
+  const isDone = isLetterDone(letter);
+  const isNext = letter === nextLetter();
+  const isSelected = state.selectedLetter === letter;
+  let status = "is-locked";
+  let label = `Letra ${letter}, bloqueada`;
+  let mark = icon("lock-fill", "letter-mark");
+  if (isDone) {
+    status = "is-done";
+    label = `Letra ${letter}, aprendida`;
+    mark = icon("check-lg", "letter-mark");
+  } else if (isNext) {
+    status = "is-next";
+    label = `Letra ${letter}, próxima a aprender`;
+    mark = "";
+  }
+  return `<button class="letter-tile ${status}${isSelected ? " is-selected" : ""}" type="button" data-alphabet-letter="${letter}" aria-label="${label}" aria-pressed="${isSelected}">${mark}<span>${letter}</span></button>`;
+}
+
+// Painel ao lado da grade: a letra escolhida e o botão para aprender ou praticar.
+function renderLetterPanel() {
+  const letter = isLetterUnlocked(state.selectedLetter) ? state.selectedLetter : nextLetter();
+  if (!letter) {
+    return `<aside class="letter-panel"><span class="letter-panel-trophy">${icon("trophy-fill")}</span><h3>Alfabeto completo!</h3><p>Você aprendeu as 26 letras. Escolha uma letra para rever.</p></aside>`;
+  }
+  const isDone = isLetterDone(letter);
+  const button = isDone
+    ? `<button class="button-3d button-3d-outline" type="button" data-action="start-letter" data-letter="${letter}">${icon("arrow-repeat")} Praticar de novo</button>`
+    : `<button class="button-3d button-3d-primary" type="button" data-action="start-letter" data-letter="${letter}" ${state.lives === 0 ? "disabled" : ""}>Aprender a letra ${letter}</button>`;
+  return `
+    <aside class="letter-panel" aria-live="polite">
+      ${signVideoHtml(`Letra ${letter}`, "small")}
+      <p class="letter-panel-kicker">${isDone ? "LETRA APRENDIDA" : "PRÓXIMA LETRA"}</p>
+      <h3>Letra ${letter}</h3>
+      <p>${isDone ? "Reveja o sinal e pratique de novo quando quiser (revisão, sem XP)." : "Um cartão para aprender e duas perguntas para praticar."}</p>
+      ${button}
+      ${state.lives === 0 && !isDone ? `<small class="letter-panel-warning">${icon("heart-fill")} Suas vidas estão recarregando.</small>` : ""}
+    </aside>`;
+}
+
+function renderAlphabet() {
+  const learned = learnedLettersCount();
+  return `
+    <section class="alphabet-track" aria-labelledby="alphabet-title">
+      <div class="alphabet-banner">
+        <div><small>ALFABETO MANUAL</small><h2 id="alphabet-title">Aprenda letra por letra</h2></div>
+        <div class="alphabet-progress"><div class="hero-progress-track" role="progressbar" aria-label="Letras aprendidas" aria-valuenow="${learned}" aria-valuemin="0" aria-valuemax="${ALPHABET.length}"><span style="width: ${Math.round((learned / ALPHABET.length) * 100)}%"></span></div><strong>${learned}/${ALPHABET.length}</strong></div>
+      </div>
+      <div class="alphabet-layout">
+        <div class="letter-grid" role="group" aria-label="Letras do alfabeto manual">${ALPHABET.map(renderLetterTile).join("")}</div>
+        ${renderLetterPanel()}
+      </div>
+    </section>`;
+}
+
+// ----- Palavras -----
 
 function renderWordDetail(word) {
   if (!word) {
-    return '<aside class="word-detail word-detail-empty"><i class="bi bi-hand-index-thumb" aria-hidden="true"></i><p>Escolha uma palavra para ver o sinal.</p></aside>';
+    return `<aside class="word-detail word-detail-empty">${icon("hand-index-thumb")}<p>Escolha uma palavra para ver o sinal.</p></aside>`;
   }
   return `
     <aside class="word-detail" aria-live="polite">
-      <div class="word-video" aria-hidden="true"><i class="bi bi-play-circle-fill" aria-hidden="true"></i><small>Vídeo em produção</small></div>
-      <p class="eyebrow">${categoryLabel(word.category).toUpperCase()}</p>
+      ${signVideoHtml(word.word, "small")}
+      <p class="word-detail-kicker">${categoryLabel(word.category).toUpperCase()}</p>
       <h2>${word.word}</h2>
-      <p>Exemplo de uso: “${word.example}”</p>
+      <p class="word-example">${icon("chat-quote")} “${word.example}”</p>
       <p class="word-note">O vídeo deste sinal será gravado e revisado por pessoas surdas fluentes em Libras.</p>
     </aside>`;
 }
@@ -118,13 +247,13 @@ function renderDictionaryResults() {
     : DICTIONARY_WORDS.filter((word) => word.category === state.dictionaryCategory);
 
   if (words.length === 0) {
-    return `<p class="dictionary-empty">Nenhum sinal encontrado para “${escapeHtml(state.dictionaryQuery)}”. Tente outra palavra.</p>`;
+    return `<p class="dictionary-empty">${icon("search")} Nenhum sinal encontrado para “${escapeHtml(state.dictionaryQuery)}”. Tente outra palavra.</p>`;
   }
 
   const cards = words.map((word) => {
     const isSelected = state.selectedWord === word.id;
-    const seen = state.signsSeen.includes(word.id) ? `<small class="word-seen">visto ${icon("check-lg")}</small>` : "";
-    return `<button class="word-card${isSelected ? " is-selected" : ""}" type="button" data-action="select-word" data-word="${word.id}" aria-pressed="${isSelected}"><strong>${word.word}</strong><small>${categoryLabel(word.category)}</small>${seen}</button>`;
+    const seen = state.signsSeen.includes(word.id) ? `<small class="word-seen">${icon("check-circle-fill")} visto</small>` : "";
+    return `<button class="word-card${isSelected ? " is-selected" : ""}" type="button" data-action="select-word" data-word="${word.id}" aria-pressed="${isSelected}"><span class="word-card-play">${icon("play-fill")}</span><span class="word-card-text"><strong>${word.word}</strong><small>${categoryLabel(word.category)}</small></span>${seen}</button>`;
   }).join("");
 
   const selected = words.find((word) => word.id === state.selectedWord);
@@ -137,13 +266,13 @@ function renderDictionaryResults() {
 function renderSigns() {
   const chips = DICTIONARY_CATEGORIES.map((category) => {
     const isActive = !state.dictionaryQuery && state.dictionaryCategory === category.id;
-    return `<button class="category-chip${isActive ? " is-active" : ""}" type="button" data-action="dictionary-category" data-category="${category.id}" aria-pressed="${isActive}">${category.label}</button>`;
+    return `<button class="category-chip${isActive ? " is-active" : ""}" type="button" data-action="dictionary-category" data-category="${category.id}" aria-pressed="${isActive}">${category.id === "alfabeto" ? icon("alphabet-uppercase") : ""}${category.label}</button>`;
   }).join("");
 
   return `
     <section class="page-intro"><div><p class="eyebrow">DICIONÁRIO DE LIBRAS</p><h2>Dicionário</h2><p>Consulte sinais quando quiser. Revisar é livre e não gasta vidas.</p></div><span class="demo-pill">${state.signsSeen.length} SINAIS VISTOS</span></section>
     <div class="dictionary-tools">
-      <input class="dictionary-search" id="dictionary-search" type="search" placeholder="Buscar palavra, ex.: obrigado" aria-label="Buscar palavra no dicionário" value="${escapeHtml(state.dictionaryQuery)}" autocomplete="off" />
+      <label class="dictionary-search-box">${icon("search")}<input class="dictionary-search" id="dictionary-search" type="search" placeholder="Buscar palavra, ex.: obrigado" aria-label="Buscar palavra no dicionário" value="${escapeHtml(state.dictionaryQuery)}" autocomplete="off" /></label>
       <div class="dictionary-categories" role="group" aria-label="Categorias do dicionário">${chips}</div>
     </div>
     <div id="dictionary-results">${renderDictionaryResults()}</div>

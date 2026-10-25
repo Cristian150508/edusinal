@@ -798,124 +798,6 @@ a {
   letter-spacing: 0.08em;
 }
 
-.alphabet-section {
-  margin-top: 4px;
-}
-
-.alphabet-section .section-heading {
-  margin-bottom: 15px;
-}
-
-.alphabet-legend {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.alphabet-legend span {
-  font-size: 12px;
-}
-
-.alphabet-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.alphabet-letter {
-  position: relative;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-  color: var(--text);
-  font-family: "Manrope", sans-serif;
-  font-size: 25px;
-  font-weight: 800;
-  transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
-}
-
-.alphabet-letter.is-unlocked {
-  cursor: pointer;
-}
-
-.alphabet-letter.is-unlocked:hover {
-  transform: translateY(-2px);
-  border-color: var(--primary);
-}
-
-.alphabet-letter.is-unlocked.is-selected {
-  border-color: var(--primary-strong);
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-  box-shadow: inset 0 0 0 1px var(--primary-strong);
-}
-
-.alphabet-letter.is-locked {
-  cursor: not-allowed;
-  color: var(--muted);
-  opacity: 0.48;
-}
-
-.alphabet-lock {
-  position: absolute;
-  top: 5px;
-  right: 6px;
-  color: var(--muted);
-  font-family: sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.alphabet-detail {
-  min-height: 165px;
-  display: grid;
-  grid-template-columns: 118px minmax(0, 1fr) 24px;
-  align-items: center;
-  gap: 22px;
-  margin-top: 22px;
-  padding: 22px 25px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-}
-
-.alphabet-detail-letter {
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 5px;
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-  font-family: "Manrope", sans-serif;
-  font-size: 64px;
-  font-weight: 800;
-}
-
-.alphabet-detail-copy h2 {
-  margin: 4px 0 8px;
-  font-family: "Manrope", sans-serif;
-  font-size: 20px;
-}
-
-.alphabet-detail-copy p:last-child {
-  max-width: 650px;
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.65;
-}
-
-.alphabet-detail-mark {
-  align-self: start;
-  color: var(--coral);
-  font-size: 19px;
-}
-
 textarea::placeholder,
 .field-label input::placeholder {
   color: var(--muted);
@@ -1238,41 +1120,6 @@ textarea {
 }
 
 @media (max-width: 480px) {
-  .alphabet-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 7px;
-  }
-
-  .alphabet-letter {
-    font-size: 21px;
-  }
-
-  .alphabet-lock {
-    top: 4px;
-    right: 4px;
-  }
-
-  .alphabet-detail {
-    grid-template-columns: 76px minmax(0, 1fr);
-    gap: 13px;
-    padding: 15px;
-  }
-
-  .alphabet-detail-letter {
-    font-size: 44px;
-  }
-
-  .alphabet-detail-copy h2 {
-    font-size: 17px;
-  }
-
-  .alphabet-detail-copy p:last-child {
-    font-size: 10px;
-  }
-
-  .alphabet-detail-mark {
-    display: none;
-  }
 
   .settings-button {
     width: 34px;
@@ -1826,6 +1673,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .sign-preview { padding: 2px 10px; border-radius: 99px; background: var(--surface); font-size: 12px; font-weight: 700; }
 .sign-video-small { width: 100%; border-radius: 12px; }
 .sign-video-small.is-placeholder { gap: 4px; font-size: 11px; }
+.sign-video-small.is-placeholder > span { display: none; } /* cartão pequeno: só o play e a prévia */
+.sign-video-small .sign-preview { padding: 1px 8px; font-size: 11px; white-space: nowrap; }
 .sign-video-small .sign-video-play { font-size: 30px; }
 
 /* Aprender: nome do sinal e dica */
@@ -2154,105 +2003,214 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .mission-group + .button { margin-top: 24px; }
 
 /* ----- Dicionário ----- */
-.dictionary-tools { display: grid; gap: 12px; margin-bottom: 22px; }
+.dictionary-tools { display: grid; gap: 14px; margin-bottom: 22px; }
 
+/* Busca com a lupa dentro do campo */
+.dictionary-search-box {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  color: var(--muted);
+  font-size: 18px;
+}
+.dictionary-search-box:focus-within { border-color: var(--primary); box-shadow: 0 3px 0 var(--primary); }
 .dictionary-search {
   width: 100%;
-  min-height: 46px;
-  padding: 0 16px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
 }
-
-.dictionary-search:focus-visible { outline: 3px solid var(--primary-soft); border-color: var(--primary); }
 .dictionary-categories { display: flex; flex-wrap: wrap; gap: 8px; }
 
+/* Botões de escolha em pílula (categorias, abas do mascote e Configurações) */
 .category-chip,
 .choice-button {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
   border-radius: 99px;
   background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
   color: var(--text);
   cursor: pointer;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
-
+.category-chip:active,
+.choice-button:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
 .category-chip.is-active,
-.choice-button.is-active { border-color: var(--primary); background: var(--primary); color: #fff; }
-.app-shell[data-theme="dark"] .category-chip.is-active,
-.app-shell[data-theme="dark"] .choice-button.is-active { color: var(--bg); }
+.choice-button.is-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 3px 0 var(--hero-shadow);
+  color: #ffffff;
+}
 
+/* Palavras: cartões com o "play" e o painel do sinal escolhido ao lado */
 .dictionary-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
   align-items: start;
-  gap: 16px;
+  gap: 18px;
 }
-
-.word-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-}
-
+.word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
 .word-card {
   position: relative;
-  display: grid;
-  gap: 2px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
   background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
   color: var(--text);
   cursor: pointer;
   font: inherit;
   text-align: left;
 }
-
-.word-card:hover { border-color: var(--primary); }
-.word-card.is-selected { border-color: var(--primary); background: var(--primary-soft); }
-.word-card strong { font-family: "Manrope", sans-serif; font-size: 15px; }
-.word-card small { color: var(--muted); font-size: 11px; }
-.word-card .word-seen { color: var(--accent); font-weight: 700; }
+.word-card:hover { background: var(--surface-soft); }
+.word-card:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.word-card.is-selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 4px 0 var(--primary); }
+.word-card-play { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--primary-soft); color: var(--primary); font-size: 20px; }
+.word-card.is-selected .word-card-play { background: var(--hero-from); color: #ffffff; }
+.word-card-text { min-width: 0; display: grid; gap: 1px; }
+.word-card strong { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
+.word-card small { color: var(--muted); font-size: 12px; }
+.word-card .word-seen { position: absolute; top: 8px; right: 10px; color: var(--accent); font-size: 11px; font-weight: 800; }
 
 .word-detail {
   position: sticky;
   top: 20px;
+  display: grid;
+  gap: 6px;
   padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
   background: var(--surface);
 }
+.word-detail .sign-video { margin-bottom: 8px; }
+.word-detail-kicker { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; }
+.word-detail h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; }
+.word-detail p { margin: 0; font-size: 14px; line-height: 1.5; }
+.word-example { display: flex; gap: 8px; }
+.word-example .bi { color: var(--accent); }
+.word-detail .word-note { color: var(--muted); font-size: 12px; }
+.word-detail-empty { justify-items: center; padding: 28px 16px; color: var(--muted); text-align: center; }
+.word-detail-empty > .bi { color: var(--primary); font-size: 32px; }
+.dictionary-empty { display: flex; justify-content: center; gap: 8px; padding: 30px 0; color: var(--muted); text-align: center; }
 
-.word-detail h2 { margin: 0 0 6px; font-family: "Manrope", sans-serif; font-size: 24px; }
-.word-detail p { margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
-.word-detail .word-note { color: var(--muted); font-size: 11px; }
-.word-detail-empty { display: grid; justify-items: center; gap: 6px; color: var(--muted); text-align: center; }
-.word-detail-empty span { font-size: 28px; }
+/* Alfabeto manual: faixa com o progresso, grade de letras e painel da letra */
+.alphabet-track { display: grid; gap: 16px; }
+.alphabet-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+.alphabet-banner small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.alphabet-banner h2 { margin: 2px 0 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; }
+.alphabet-progress { width: min(240px, 40%); display: flex; align-items: center; gap: 10px; }
+.alphabet-progress .hero-progress-track { flex: 1; height: 12px; }
+.alphabet-progress strong { font-family: "Manrope", sans-serif; font-size: 15px; }
 
-.word-video {
-  aspect-ratio: 4 / 3;
+.alphabet-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); align-items: start; gap: 18px; }
+.letter-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.letter-tile {
+  position: relative;
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  align-content: center;
-  gap: 4px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  background: var(--primary-soft);
-  color: var(--primary-strong);
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: "Manrope", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+}
+.letter-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.letter-tile.is-done { border-color: transparent; background: var(--accent); box-shadow: 0 4px 0 var(--done-shadow); color: #ffffff; }
+.letter-tile.is-next { border-color: transparent; background: var(--hero-from); box-shadow: 0 4px 0 var(--hero-shadow); color: #ffffff; }
+.letter-tile.is-next::after { position: absolute; inset: -7px; border: 3px solid var(--yellow); border-radius: 20px; animation: ring-pulse 1.8s ease-in-out infinite; content: ""; pointer-events: none; }
+.letter-tile.is-selected { outline: 3px solid var(--primary); outline-offset: 3px; }
+.letter-tile.is-next.is-selected { outline: 0; }
+.letter-tile .letter-mark { position: absolute; top: 5px; right: 6px; font-size: 11px; }
+.letter-tile.is-locked .letter-mark { color: var(--muted); }
+
+.letter-panel {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  text-align: center;
+}
+.letter-panel .sign-video { margin-bottom: 4px; }
+.letter-panel-kicker { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; }
+.letter-panel h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; }
+.letter-panel p { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.letter-panel .button-3d { width: 100%; }
+.letter-panel-warning { color: var(--coral); font-size: 12px; font-weight: 700; }
+.letter-panel-trophy { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); box-shadow: 0 5px 0 #c99a1c; color: #6b4f00; font-size: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-tile.is-next::after { animation: none; }
 }
 
-.word-video span { font-size: 30px; }
-.word-video small { font-size: 11px; font-weight: 700; }
-.dictionary-empty { padding: 30px 0; color: var(--muted); text-align: center; }
+@media (max-width: 760px) {
+  .alphabet-banner { padding: 12px 16px; }
+  .alphabet-banner h2 { font-size: 18px; }
+  .alphabet-layout { grid-template-columns: minmax(0, 1fr); }
+  /* no celular, o painel da letra vem antes da grade, compacto: vídeo pequeno ao lado do texto */
+  .letter-panel {
+    position: static;
+    order: -1;
+    grid-template-columns: 96px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 2px;
+    text-align: left;
+  }
+  .letter-panel .sign-video { grid-row: 1 / span 3; width: 96px; margin: 0; }
+  .letter-panel h3 { font-size: 20px; }
+  .letter-panel p:not(.letter-panel-kicker) { display: none; }
+  .letter-panel .button-3d,
+  .letter-panel-warning { grid-column: 1 / -1; margin-top: 10px; }
+  .letter-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+  .letter-tile { border-radius: 14px; font-size: 20px; }
+  .word-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .word-card { padding: 10px; gap: 10px; }
+  .word-card-play { width: 32px; height: 32px; font-size: 17px; }
+}
 
 /* ----- Lojinha ----- */
 .mascot-avatar.mascot-small { width: 76px; height: 76px; }
@@ -2689,7 +2647,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
   .dictionary-categories::-webkit-scrollbar { display: none; }
   .category-chip,
-  .choice-button { flex: 0 0 auto; min-height: 40px; font-size: 13px; }
+  .choice-button { flex: 0 0 auto; }
 
   /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
   .app-shell[data-current-screen="lesson"] .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
@@ -2715,8 +2673,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .profile-currency span,
   .profile-stat small { font-size: 11px; }
   .achievement p { font-size: 13px; }
-  .word-card strong { font-size: 16px; }
-  .alphabet-grid { gap: 8px; }
+
   .setting-row small,
   .faq,
   .more-list,
@@ -2748,8 +2705,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   /* Cadastro e login: campos grandes e fáceis de tocar */
   .field-label { font-size: 14px; }
   .field-label input { min-height: 50px; font-size: 16px; }
-  /* Abaixo de 16px o iPhone dá zoom sozinho ao tocar no campo */
-  .dictionary-search { font-size: 16px; }
   .field-hint,
   .form-legal,
   .signup-aside { font-size: 12px; }
@@ -2834,13 +2789,10 @@ h3 { font-size: 1.17em; }
 .stat-lives .bi,
 .tree-warning .bi { color: var(--coral); }
 .mission-claimed .bi,
-.achievement-done .bi,
-.word-seen .bi { color: var(--accent); }
+.achievement-done .bi { color: var(--accent); }
 .profile-stat > .bi { font-size: 20px; color: var(--primary); }
 .achievement-icon .bi { font-size: 26px; color: var(--primary); }
 .achievement.is-done .achievement-icon .bi { color: var(--accent); }
-.word-video .bi { font-size: 34px; }
-.word-detail-empty > .bi { font-size: 30px; }
 
 /* Botão vermelho da janela de confirmação */
 .button-danger { background: var(--coral); color: #fff; }

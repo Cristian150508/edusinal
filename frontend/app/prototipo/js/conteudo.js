@@ -223,7 +223,7 @@ function markLessonDone(topicId, branchId) {
   return true;
 }
 
-// Passos de uma atividade: os cartões (aprender) ou as perguntas (exercício).
+// Passos de uma atividade: os cartões (aprender, com type "card") ou as perguntas (exercício).
 // A prova final junta as 2 primeiras perguntas de cada exercício da etapa.
 function stepsFor(topicId, branchId) {
   const topic = learningTopics[topicId];
@@ -233,7 +233,7 @@ function stepsFor(topicId, branchId) {
       .flatMap((branch) => branch.questions.slice(0, 2));
   }
   const branch = topic.branches.find((entry) => entry.id === branchId);
-  return branch.kind === "learn" ? branch.cards : branch.questions;
+  return branch.kind === "learn" ? branch.cards.map((card) => ({ type: "card", ...card })) : branch.questions;
 }
 
 // Tipo da atividade: "learn" (aprender) ou "practice" (exercício; a prova final também).

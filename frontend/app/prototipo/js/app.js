@@ -227,6 +227,7 @@ document.addEventListener("click", (event) => {
   // Dicionário
   else if (action === "dictionary-category") chooseDictionaryCategory(data.category);
   else if (action === "select-word") selectWord(data.word);
+  else if (action === "start-letter") startLetter(data.letter);
   // Missões e lojinha
   else if (action === "claim-mission") claimMission(data.scope, data.mission);
   else if (action === "buy-power") buyPowerUp(data.power);
