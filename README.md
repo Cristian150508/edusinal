@@ -11,7 +11,7 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 - **Vidas:** 3 vidas; cada resposta errada consome uma e uma vida se recupera a cada 30 minutos. Revisar o dicionário continua livre.
 - **Recompensas demonstrativas:** uma atividade nova correta concede 20 XP. A primeira dá 15 moedas e libera um broche local no protótipo; cada atividade nova seguinte dá 5 moedas. O inventário ainda não está na API.
 - **Alfabeto manual:** fica no Dicionário, como uma trilha de 26 letras. Só a A começa liberada; cada letra é uma mini atividade (um cartão para aprender e duas perguntas: vídeo → letra e letra → vídeo) e, ao concluir, libera a próxima, em ordem. Letras já aprendidas podem ser revistas e praticadas de novo (revisão, sem XP). O progresso fica salvo como `alfabeto:A`, `alfabeto:B`... (código em `js/telas-dicionario.js`).
-- **Abas do aluno:** dicionário com busca e categorias (revisar é livre); ligas semanais com colegas fictícios (os 3 primeiros sobem, os 2 últimos descem); missões do dia e da semana que dão moedas; lojinha com ajudas (recarga de vidas, protetor de ofensiva), acessórios e fundos; perfil com conquistas; e Configurações (engrenagem) com tema, tamanho do texto, animações reduzidas, ajuda, privacidade e conta.
+- **Abas do aluno:** dicionário com busca e categorias (revisar é livre); ligas semanais com colegas fictícios (os 3 primeiros sobem, os 2 últimos descem); missões do dia e da semana que dão moedas; lojinha com ajudas (recarga de vidas, protetor de ofensiva) e uma vitrine do dia com 3 itens do mascote, sorteados pela data, que trocam à meia-noite (um item com preço só pode ser comprado no dia em que está na vitrine); perfil com conquistas; e Configurações (engrenagem) com tema, tamanho do texto, animações reduzidas, ajuda, privacidade e conta.
 - **Ofensiva:** conta os dias seguidos com pelo menos um exercício novo. Se o aluno ficar dias sem praticar, ela zera, a não ser que tenha protetores de ofensiva. Tocar no foguinho (barra de cima do celular, quadradinho da ofensiva na Home do computador ou cartão Ofensiva do Perfil) abre o calendário do mês, com os dias praticados e os salvos pelo protetor.
 - **Segurança para menores:** não há chat nem mensagens entre alunos, e as ligas mostram só apelidos.
 - **Conta demonstrativa:** o cadastro cria um perfil novo, do zero (com 20 moedas de boas-vindas), salvo só neste navegador. Entrar usa o mesmo e-mail do cadastro; sem servidor, a senha não é conferida. Tema claro/escuro, tamanho do texto e animações ficam em "Configurações → Preferências".
@@ -34,7 +34,7 @@ frontend/
     js/telas-dicionario.js  Dicionário: busca, categorias e alfabeto
     js/telas-ligas.js       Ligas: ranking semanal, sobe e desce de liga
     js/telas-missoes.js     Missões do dia e da semana, com resgate de moedas
-    js/telas-lojinha.js     Lojinha: ajudas, acessórios e fundos do mascote
+    js/telas-lojinha.js     Lojinha: ajudas e vitrine do dia (itens do mascote)
     js/telas-perfil.js      Perfil (conquistas, nome) e Configurações
     js/mascote-desenho.js   Desenho do mascote em SVG (partes do personagem da logo)
     js/telas-mascote.js     Itens do mascote, regras de liberação e o editor

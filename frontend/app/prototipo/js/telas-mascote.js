@@ -101,7 +101,7 @@ function renderMascot(extraClass = "", look = state.mascot) {
 
 // ----- Ações do editor -----
 
-// Clique em um item: usa se já for do aluno; compra se custar moedas.
+// Clique em um item: usa se já for do aluno; compra se estiver na vitrine do dia.
 function chooseMascotItem(slot, id) {
   const item = findMascotItem(slot, id);
   if (!item) return;
@@ -113,6 +113,10 @@ function chooseMascotItem(slot, id) {
     }
     if (item.unlock.type === "reward") {
       showToast("Complete a primeira atividade para receber este item.");
+      return;
+    }
+    if (!isInDailyShop(item)) {
+      showToast("Este item não está na vitrine de hoje. Fique de olho na Lojinha!");
       return;
     }
     if (state.coins < item.unlock.cost) {
@@ -151,6 +155,7 @@ function renderMascotOption(item, slotInfo) {
   let status = isOwned ? "Usar" : unlockLabel(item);
   if (isEquipped) status = "Em uso";
   if (!isOwned && item.unlock.type === "achievement") status = `${icon("lock-fill")} ${unlockLabel(item)}`;
+  if (!isOwned && item.unlock.type === "coins" && !isInDailyShop(item)) status = "Fora da loja hoje";
 
   // Miniatura: o mascote atual vestindo este item, sobre o fundo escolhido.
   const look = lookWith(item.slot, item.id);
@@ -174,7 +179,7 @@ function renderMascotEditor() {
 
   return `
     <section class="page-intro">
-      <div><p class="eyebrow">SEU PERSONAGEM</p><h2>Personalizar mascote</h2><p>Escolha roupa e acessórios. Itens com preço são comprados com moedas; os com cadeado vêm de conquistas.</p></div>
+      <div><p class="eyebrow">SEU PERSONAGEM</p><h2>Personalizar mascote</h2><p>Escolha roupa e acessórios. Itens com preço só podem ser comprados no dia em que estão na vitrine da Lojinha; os com cadeado vêm de conquistas.</p></div>
       <span class="shop-balance"><i class="bi bi-coin" aria-hidden="true"></i> ${state.coins} moedas</span>
     </section>
     <div class="mascot-editor">

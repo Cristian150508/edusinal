@@ -24,6 +24,8 @@ const MASCOT_VIEWBOX = {
   full: "-14 -30 204 204", // corpo inteiro (com espaço para chapéus)
   head: "34 -20 124 112", // só a cabeça (miniaturas de chapéu e óculos)
   avatar: "34 -12 124 124", // cabeça e ombros no centro (foto de perfil redonda)
+  hat: "24 -38 144 144", // cabeça com espaço em cima (vitrine da Lojinha)
+  chest: "32 2 152 152", // peito de perto, para o broche aparecer (vitrine da Lojinha)
 };
 
 // Cada SVG precisa de ids únicos (por causa da camiseta listrada).
@@ -191,7 +193,8 @@ function drawChestItem(id) {
 // ----- Montagem -----
 
 // look = { shirt, head, face, chest } com os ids dos itens escolhidos.
-// crop = "full" (corpo inteiro), "head" (só a cabeça) ou "avatar" (foto de perfil).
+// crop = "full" (corpo inteiro), "head" (só a cabeça), "avatar" (foto de perfil),
+// "hat" ou "chest" (recortes de perto usados na vitrine da Lojinha).
 function mascotSvg(look, crop = "full", label = "Mascote do EduSinal") {
   mascotDrawCount += 1;
   const shirt = MASCOT_ITEMS.find((item) => item.id === look.shirt) || MASCOT_ITEMS.find((item) => item.id === DEFAULT_LOOK.shirt);
