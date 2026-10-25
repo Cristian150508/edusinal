@@ -91,23 +91,33 @@ function renderLeagueStatus(ranking) {
     <section class="league-status zone-${zone}">
       <div class="league-status-place"><strong>${position}º</strong><span>lugar</span></div>
       <div><p>${message}</p><small>${me.xp} XP nesta semana · cada exercício novo vale ${XP_PER_EXERCISE} XP</small></div>
-      <button class="button button-primary" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Ganhar XP <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      <button class="button-3d button-3d-primary" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Ganhar XP ${icon("arrow-right")}</button>
     </section>`;
 }
 
+// Uma linha do ranking. Os 3 primeiros ganham medalha; o aluno aparece com o mascote dele.
 function renderRankingRow(player, position, total) {
   const zone = zoneOf(position, total);
   const youLabel = player.isMe ? ' <small class="ranking-you">você</small>' : "";
-  return `<li class="ranking-row zone-${zone}${player.isMe ? " is-me" : ""}"><span class="ranking-position">${position}</span><span class="ranking-avatar avatar-tone-${position % 4}" aria-hidden="true">${escapeHtml(player.name.slice(0, 1))}</span><strong>${escapeHtml(player.name)}${youLabel}</strong><span class="ranking-points">${player.xp} XP</span></li>`;
+  const place = position <= 3
+    ? `<span class="ranking-position ranking-medal medal-${position}" aria-label="${position}º lugar">${position}</span>`
+    : `<span class="ranking-position">${position}</span>`;
+  const avatar = player.isMe
+    ? `<span class="ranking-avatar is-me ${backdropClass()}" aria-hidden="true">${mascotSvg(state.mascot, "avatar", "")}</span>`
+    : `<span class="ranking-avatar avatar-tone-${position % 4}" aria-hidden="true">${escapeHtml(player.name.slice(0, 1))}</span>`;
+  return `<li class="ranking-row zone-${zone}${player.isMe ? " is-me" : ""}">${place}${avatar}<strong>${escapeHtml(player.name)}${youLabel}</strong><span class="ranking-points">${player.xp} XP</span></li>`;
 }
 
 function renderLeagues() {
   const league = LEAGUES[state.league];
   const ranking = buildRanking(state.week.xp, weekDayNumber());
 
+  // Escada: as ligas já passadas ficam coloridas, a atual em destaque e as próximas cinza
   const ladder = LEAGUES.map((item, index) => {
-    const status = index === state.league ? " is-current" : index > state.league ? " is-locked" : "";
-    return `<li class="league-step ${item.className}${status}"><span class="league-badge"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span><small>${item.name}</small></li>`;
+    let status = " is-passed";
+    if (index === state.league) status = " is-current";
+    else if (index > state.league) status = " is-locked";
+    return `<li class="league-step ${item.className}${status}"${index === state.league ? ' aria-current="step"' : ""}><span class="league-badge">${icon(index > state.league ? "lock-fill" : "trophy-fill")}</span><small>${item.name}</small></li>`;
   }).join("");
 
   // Linhas da tabela, com um aviso entre as zonas.
@@ -124,9 +134,14 @@ function renderLeagues() {
   });
 
   return `
-    <section class="page-intro">
-      <div><p class="eyebrow">LIGA DA SEMANA</p><h2>Liga ${league.name}</h2><p>Os ${PROMOTION_SPOTS} primeiros sobem de liga e os ${DEMOTION_SPOTS} últimos descem. A semana termina em <strong>${leagueTimeLeft()}</strong>.</p></div>
-      <span class="league-badge league-badge-large ${league.className}"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
+    <section class="league-hero" aria-labelledby="league-title">
+      <span class="league-badge league-badge-large ${league.className}">${icon("trophy-fill")}</span>
+      <div class="league-hero-copy">
+        <small>LIGA DA SEMANA</small>
+        <h2 id="league-title">Liga ${league.name}</h2>
+        <p>Os ${PROMOTION_SPOTS} primeiros sobem de liga e os ${DEMOTION_SPOTS} últimos descem.</p>
+      </div>
+      <span class="league-timer">${icon("clock-fill")} Termina em <strong>${leagueTimeLeft()}</strong></span>
     </section>
     <ol class="league-ladder" aria-label="Ligas, da primeira à última">${ladder}</ol>
     ${renderLeagueStatus(ranking)}

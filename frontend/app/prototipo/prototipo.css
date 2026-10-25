@@ -1827,14 +1827,16 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .safety-note {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 22px 0 0;
-  padding: 12px 14px;
-  border-radius: 10px;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  border-radius: 16px;
   background: var(--accent-soft);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 1.5;
 }
+.safety-note > .bi { flex: none; color: var(--accent); font-size: 22px; }
 
 /* ----- Ligas ----- */
 .league-badge {
@@ -1844,11 +1846,11 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   height: 44px;
   border-radius: 14px;
   background: var(--league-color, var(--primary));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--league-color, var(--primary)) 70%, #000);
   color: #fff;
   font-size: 22px;
 }
-
-.league-badge-large { width: 76px; height: 76px; border-radius: 22px; font-size: 38px; }
+.league-badge-large { width: 84px; height: 84px; border-radius: 24px; box-shadow: 0 6px 0 color-mix(in srgb, var(--league-color) 70%, #000); font-size: 42px; }
 
 .league-bronze { --league-color: #b87645; }
 .league-prata { --league-color: #8d9aab; }
@@ -1856,104 +1858,141 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .league-safira { --league-color: #1f6fb8; }
 .league-diamante { --league-color: #19a7a1; }
 
-.league-ladder {
+/* Topo: faixa em degradê com o troféu da liga, as regras e o relógio */
+.league-hero {
   display: flex;
-  gap: 10px;
-  margin: 0;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.league-hero .league-badge-large { flex: none; border: 3px solid rgba(255, 255, 255, 0.85); }
+.league-hero-copy { flex: 1; min-width: 0; }
+.league-hero-copy small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.league-hero-copy h2 { margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 30px; font-weight: 800; }
+.league-hero-copy p { margin: 0; font-size: 14px; opacity: 0.95; }
+.league-timer { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+/* Escada das 5 ligas, ligadas por uma linha (como a trilha da Home) */
+.league-ladder {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 22px 0 0;
   padding: 0;
-  overflow-x: auto;
   list-style: none;
 }
-
-.league-step {
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  min-width: 64px;
-  padding: 10px 6px;
-  border-radius: 12px;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
+.league-step { position: relative; display: grid; justify-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 700; }
+.league-step:not(:last-child)::after {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  z-index: 0;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line);
+  content: "";
 }
+.league-step.is-passed:not(:last-child)::after { background: var(--accent); }
+.league-step .league-badge { position: relative; z-index: 1; width: 52px; height: 52px; border-radius: 16px; font-size: 24px; }
+.league-step.is-locked .league-badge { background: var(--surface-soft); box-shadow: 0 4px 0 var(--line); color: var(--muted); font-size: 18px; }
+.league-step.is-current { color: var(--text); }
+.league-step.is-current .league-badge { width: 60px; height: 60px; margin-top: -4px; outline: 3px solid var(--yellow); outline-offset: 4px; font-size: 28px; }
 
-.league-step .league-badge { width: 36px; height: 36px; font-size: 17px; }
-.league-step.is-current { background: var(--surface); box-shadow: inset 0 0 0 2px var(--league-color); color: var(--text); }
-.league-step.is-locked .league-badge { background: var(--line); color: var(--muted); }
-
+/* Sua situação na semana */
 .league-status {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
-  margin-top: 18px;
+  margin-top: 24px;
   padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-left: 6px solid var(--primary);
-  border-radius: 12px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
   background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
 }
+.league-status.zone-promotion { border-color: var(--accent); box-shadow: 0 4px 0 var(--accent); }
+.league-status.zone-demotion { border-color: var(--coral); box-shadow: 0 4px 0 var(--coral); }
+.league-status p { margin: 0 0 4px; font-size: 15px; line-height: 1.5; }
+.league-status small { color: var(--muted); font-size: 12px; }
+.league-status-place { width: 72px; height: 72px; display: grid; place-content: center; justify-items: center; border-radius: 50%; background: var(--primary-soft); color: var(--primary); }
+.league-status.zone-promotion .league-status-place { background: var(--accent-soft); color: var(--accent); }
+.league-status.zone-demotion .league-status-place { background: var(--coral-soft); color: var(--coral); }
+.league-status-place strong { font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 800; line-height: 1; }
+.league-status-place span { font-size: 11px; font-weight: 700; }
 
-.league-status.zone-promotion { border-left-color: var(--accent); }
-.league-status.zone-demotion { border-left-color: var(--coral); }
-.league-status p { margin: 0 0 4px; font-size: 14px; line-height: 1.5; }
-.league-status small { color: var(--muted); font-size: 11px; }
-.league-status-place { display: grid; justify-items: center; }
-.league-status-place strong { font-family: "Manrope", sans-serif; font-size: 30px; line-height: 1; }
-.league-status-place span { color: var(--muted); font-size: 10px; }
-
-.ranking-list {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
+/* Ranking: cartões 3D, medalhas no pódio e o aluno com o mascote */
+.ranking-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .ranking-row {
   display: grid;
-  grid-template-columns: 30px 38px minmax(0, 1fr) auto;
+  grid-template-columns: 34px 42px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  padding: 10px 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
   background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
 }
-
-.ranking-row.is-me { border-color: var(--primary); background: var(--primary-soft); }
-.ranking-position { font-family: "Manrope", sans-serif; font-weight: 800; text-align: center; }
-.ranking-row.zone-promotion .ranking-position { color: var(--accent); }
+.ranking-row.is-me { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 3px 0 var(--primary); }
+.ranking-position { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; text-align: center; }
 .ranking-row.zone-demotion .ranking-position { color: var(--coral); }
-.ranking-row strong { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-.ranking-points { color: var(--muted); font-size: 13px; font-weight: 700; }
-.ranking-you { margin-left: 6px; padding: 2px 7px; border-radius: 99px; background: var(--primary); color: #fff; font-size: 10px; }
-
+.ranking-medal { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: #ffffff; font-size: 14px; }
+.medal-1 { background: #e3b52c; box-shadow: 0 3px 0 #b58a12; }
+.medal-2 { background: #a4afbd; box-shadow: 0 3px 0 #7b8696; }
+.medal-3 { background: #c4854f; box-shadow: 0 3px 0 #96603a; }
+.ranking-row strong { overflow: hidden; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-points { color: var(--muted); font-size: 14px; font-weight: 800; }
+.ranking-you { margin-left: 6px; padding: 2px 8px; border-radius: 99px; background: var(--primary); color: #fff; font-size: 11px; }
 .ranking-avatar {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
+  overflow: hidden;
   border-radius: 50%;
   font-family: "Manrope", sans-serif;
+  font-size: 17px;
   font-weight: 800;
 }
-
+.ranking-avatar.is-me { border: 2px solid var(--surface); box-shadow: 0 0 0 2px var(--primary); }
+.ranking-avatar .mascot-svg { width: 100%; height: 100%; }
 .avatar-tone-0 { background: var(--coral-soft); }
 .avatar-tone-1 { background: var(--yellow-soft); }
 .avatar-tone-2 { background: var(--primary-soft); }
 .avatar-tone-3 { background: var(--accent-soft); }
 
+/* Etiquetas entre as zonas */
 .ranking-divider {
-  padding: 4px 14px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.ranking-divider.zone-promotion { background: var(--accent-soft); color: var(--accent); }
+.ranking-divider.zone-demotion { background: var(--coral-soft); color: var(--coral); }
 
-.ranking-divider.zone-promotion { color: var(--accent); }
-.ranking-divider.zone-demotion { color: var(--coral); }
+@media (max-width: 760px) {
+  .league-hero { flex-wrap: wrap; gap: 14px; padding: 18px; border-radius: 20px; }
+  .league-hero .league-badge-large { width: 64px; height: 64px; border-radius: 18px; font-size: 32px; }
+  .league-hero-copy h2 { font-size: 24px; }
+  .league-timer { width: 100%; justify-content: center; }
+  .league-step { font-size: 11px; }
+  .league-step .league-badge { width: 44px; height: 44px; border-radius: 14px; font-size: 20px; }
+  .league-step.is-current .league-badge { width: 50px; height: 50px; font-size: 24px; }
+  .league-step:not(:last-child)::after { top: 20px; height: 5px; }
+}
 
 /* ----- Missões ----- */
 .mission-list { display: grid; gap: 10px; }
@@ -2335,9 +2374,9 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 /* ----- Celular ----- */
 @media (max-width: 760px) {
   .league-status { grid-template-columns: auto minmax(0, 1fr); }
-  .league-status .button { grid-column: 1 / -1; }
-  .ranking-row { grid-template-columns: 24px 32px minmax(0, 1fr) auto; gap: 8px; padding: 8px 10px; }
-  .ranking-avatar { width: 32px; height: 32px; }
+  .league-status .button-3d { grid-column: 1 / -1; }
+  .ranking-row { grid-template-columns: 32px 36px minmax(0, 1fr) auto; gap: 10px; padding: 8px 12px; }
+  .ranking-avatar { width: 36px; height: 36px; font-size: 15px; }
 
   .mission-row { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
   .mission-mark { width: 40px; height: 40px; }
@@ -2629,7 +2668,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .page-intro p:not(.eyebrow) { font-size: 14px; }
   .page-intro > .demo-pill { margin-top: 22px; font-size: 10px; }
   .page-intro > .shop-balance { margin-top: 18px; font-size: 13px; }
-  .page-intro > .league-badge-large { width: 52px; height: 52px; margin-top: 16px; border-radius: 16px; font-size: 26px; }
   .section-heading h2 { font-size: 20px; }
   input,
   select,
@@ -2654,8 +2692,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
   /* ----- Telas das abas ----- */
   .ranking-row strong { font-size: 14px; }
-  .league-ladder { scrollbar-width: none; }
-  .league-step { min-width: 62px; }
   .league-status p { font-size: 14px; }
   .mission-row { grid-template-columns: 40px minmax(0, 1fr) auto; row-gap: 8px; }
   .mission-copy { grid-column: 2 / -1; }
