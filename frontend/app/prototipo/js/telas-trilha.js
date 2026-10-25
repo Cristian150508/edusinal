@@ -164,7 +164,7 @@ function renderBranchBubble(topicId) {
     title = "Prova final";
     text = info.status === "locked" ? `Conclua os 5 exercícios para liberar (${doneBranchCount(topicId)} / 5).` : info.hint;
     point = WAVE_POINTS[WAVE_POINTS.length - 1];
-    if (info.status === "open") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="final" ${state.lives === 0 ? "disabled" : ""}>Começar a prova ${icon("arrow-right")}</button>`;
+    if (info.status === "open") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="final" ${activityBlockReason(topicId, "final", "practice") ? "disabled" : ""}>Começar a prova ${icon("arrow-right")}</button>`;
     else action = `<button class="button-3d button-3d-outline" type="button" data-action="close-topic">Voltar à trilha</button>`;
   } else {
     const index = topic.branches.findIndex((branch) => branch.id === selected);
@@ -173,7 +173,7 @@ function renderBranchBubble(topicId) {
     title = `${index + 1}. ${branch.label}`;
     text = status === "locked" ? "Conclua o exercício anterior para liberar este." : `${branch.hint} · ${status === "done" ? "já concluído (revisão, sem XP)" : `+${XP_PER_EXERCISE} XP`}`;
     point = WAVE_POINTS[index];
-    if (status !== "locked") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 && branch.kind === "practice" ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
+    if (status !== "locked") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${activityBlockReason(topicId, branch.id, branch.kind) ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
   }
   return `<div class="tree-bubble${selected === "final" ? " is-above" : ""}" role="dialog" aria-label="${title}" style="--mx:${point.x}%;--my:${point.y}%"><strong>${title}</strong><p>${text}</p>${action}</div>`;
 }
@@ -198,8 +198,17 @@ function tapBranch(topicId, branchId) {
   startBranch(topicId, branchId);
 }
 
+// Aviso em cima da árvore quando falta energia ou vidas.
+function renderTreeWarning() {
+  const shop = `<button class="text-button" type="button" data-screen="shop">lojinha</button>`;
+  if (state.energy === 0) return `<p class="tree-warning is-energy" role="status">${icon("battery")} Sem energia (${timeUntilNextEnergy()}). Refaça o que já fez ou recarregue na ${shop}.</p>`;
+  if (state.lives === 0) return `<p class="tree-warning" role="status">${icon("heart-fill")} Sem vidas (${timeUntilNextLife()}). Revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na ${shop}.</p>`;
+  return "";
+}
+
 function renderTopicTree() {
   refreshLives();
+  refreshEnergy();
   const hearts = livesHeartsHtml();
   const topicId = state.focusTopic;
   const topic = learningTopics[topicId];
@@ -213,9 +222,10 @@ function renderTopicTree() {
         <div class="topic-status">
           <div class="topic-progress"><div class="hero-progress-track" role="progressbar" aria-label="Exercícios feitos" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${total}"><span style="width: ${Math.round((done / total) * 100)}%"></span></div><strong>${done}/${total}</strong></div>
           <div class="topic-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}"><span class="lives-hearts" aria-hidden="true">${hearts}</span><small>${timeUntilNextLife()}</small></div>
+          <div class="topic-energy" aria-label="${state.energy} de ${MAX_ENERGY} de energia, ${timeUntilNextEnergy()}">${energyBatteryHtml()}<small>${timeUntilNextEnergy()}</small></div>
         </div>
       </div>
-      ${state.lives === 0 ? `<p class="tree-warning" role="status"><i class="bi bi-heart-fill" aria-hidden="true"></i> Sem vidas agora (${timeUntilNextLife()}). Enquanto isso, revise no <button class="text-button" type="button" data-screen="signs">dicionário</button> ou recarregue na <button class="text-button" type="button" data-screen="shop">lojinha</button>.</p>` : ""}
+      ${renderTreeWarning()}
       <div class="tree-canvas">
         ${renderPath(topicId, SPIRAL_POINTS, "0 0 100 100", "tree-lines-spiral")}
         ${renderPath(topicId, WAVE_POINTS, "0 0 100 100", "tree-lines-wave")}
@@ -338,12 +348,13 @@ function renderDailyGoal() {
     </section>`;
 }
 
-// Três números coloridos: ofensiva (abre o calendário), XP e vidas.
+// Números coloridos: ofensiva (abre o calendário), XP, energia e vidas.
 function renderHomeTiles() {
   return `
     <section class="home-tiles" aria-label="Seus números">
       <button class="home-tile tile-streak" type="button" data-action="open-streak" aria-label="Ofensiva: ${state.streak} dias. Abrir calendário">${icon("fire")}<strong>${state.streak}</strong><small>${state.streak === 1 ? "dia" : "dias"}</small></button>
       <div class="home-tile tile-xp">${icon("lightning-charge-fill")}<strong>${state.xp}</strong><small>XP</small></div>
+      <div class="home-tile tile-energy" aria-label="${state.energy} de ${MAX_ENERGY} de energia, ${timeUntilNextEnergy()}">${icon("battery-charging")}<strong>${state.energy}/${MAX_ENERGY}</strong><small>${state.energy >= MAX_ENERGY ? "energia" : timeUntilNextEnergy(true)}</small></div>
       <div class="home-tile tile-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}">${icon("heart-fill")}<strong>${state.lives}/${MAX_LIVES}</strong><small>${state.lives >= MAX_LIVES ? "vidas" : timeUntilNextLife()}</small></div>
     </section>`;
 }
@@ -351,6 +362,7 @@ function renderHomeTiles() {
 function renderTrail() {
   if (state.focusTopic) return renderTopicTree();
   refreshLives();
+  refreshEnergy();
   return `
     <div class="home-dashboard">
       <div class="home-main-column">

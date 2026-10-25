@@ -43,12 +43,14 @@ function renderBottomNav() {
   }).join("");
 }
 
-// Celular: ofensiva, moedas e vidas na barra de cima (como no Duolingo).
+// Celular: ofensiva, moedas, energia e vidas na barra de cima (como no Duolingo).
 function renderMobileStats() {
   refreshLives();
+  refreshEnergy();
   document.getElementById("mobile-stats").innerHTML = `
     <button class="stat-chip stat-streak" type="button" data-action="open-streak" aria-label="Ofensiva: ${state.streak} dias. Abrir calendário">${icon("fire")}<strong>${state.streak}</strong></button>
     <button class="stat-chip stat-coins" type="button" data-screen="shop" aria-label="${state.coins} moedas. Abrir lojinha">${icon("coin")}<strong>${state.coins}</strong></button>
+    <button class="stat-chip stat-energy" type="button" data-screen="shop" aria-label="${state.energy} de ${MAX_ENERGY} de energia">${icon("battery-charging")}<strong>${state.energy}</strong></button>
     <button class="stat-chip stat-lives" type="button" data-screen="shop" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></button>`;
 }
 
@@ -108,13 +110,18 @@ function render() {
   app.dataset.motion = state.motion;
 }
 
-// Vai para outra tela. Sem vidas, os exercícios ficam bloqueados (aprender e
-// revisar no dicionário continuam livres).
+// Vai para outra tela. Sem energia, as atividades novas ficam bloqueadas; sem
+// vidas, os exercícios (ver activityBlockReason em estado.js).
 function setScreen(screen) {
   if (screen === "lesson" && !state.currentLesson) screen = "trail"; // atividade só começa pela árvore
-  if (screen === "lesson" && state.currentLesson.kind !== "learn") {
-    refreshLives();
-    if (state.lives === 0) {
+  if (screen === "lesson") {
+    const lesson = state.currentLesson;
+    const reason = activityBlockReason(lesson.topicId, lesson.branchId, lesson.kind);
+    if (reason === "energy") {
+      showToast(`Sua energia acabou (${timeUntilNextEnergy()}). Você ainda pode refazer atividades e revisar no dicionário.`);
+      return;
+    }
+    if (reason === "lives") {
       showToast("Suas vidas estão recarregando. Você ainda pode revisar sinais e conteúdos.");
       return;
     }
@@ -273,7 +280,7 @@ document.addEventListener("keydown", (event) => {
   if (state.focusTopic) closeTopic();
 });
 
-// Mantém as vidas (e o tempo de recarga) atualizadas na Home e na barra do celular.
+// Mantém vidas e energia (e o tempo de recarga) atualizadas na Home e na barra do celular.
 window.setInterval(() => {
   if (state.screen === "trail") updateLifeIndicator();
   renderMobileStats();

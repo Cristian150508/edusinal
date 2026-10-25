@@ -1369,7 +1369,7 @@ button.trail-node:active { transform: translateY(6px); box-shadow: 0 0 0 transpa
 .trail-step.is-soon .trail-step-copy h3 { color: var(--muted); }
 
 /* ----- Lateral (computador) ----- */
-.home-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.home-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .home-tile {
   display: grid;
   justify-items: center;
@@ -1390,6 +1390,7 @@ button.home-tile { cursor: pointer; transition: transform 80ms ease, box-shadow 
 button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
 .tile-streak > .bi { color: var(--coral); }
 .tile-xp > .bi { color: var(--yellow); }
+.tile-energy > .bi { color: var(--accent); }
 .tile-lives > .bi { color: var(--coral); }
 
 .home-side-card { padding: 18px; }
@@ -2036,12 +2037,14 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   box-shadow: 0 4px 0 var(--line);
 }
 .shop-card-icon { width: 60px; height: 60px; display: grid; place-items: center; margin-bottom: 6px; border-radius: 18px; background: var(--coral-soft); color: var(--coral); font-size: 30px; }
-.shop-card-protetor-ofensiva .shop-card-icon { background: var(--accent-soft); color: var(--accent); }
+.shop-card-protetor-ofensiva .shop-card-icon,
+.shop-card-recarga-energia .shop-card-icon { background: var(--accent-soft); color: var(--accent); }
 .shop-card h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
 .shop-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
 .shop-card-status { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 4px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700; }
 .shop-card-status .bi { color: var(--coral); }
-.shop-card-protetor-ofensiva .shop-card-status .bi { color: var(--accent); }
+.shop-card-protetor-ofensiva .shop-card-status .bi,
+.shop-card-recarga-energia .shop-card-status .bi { color: var(--accent); }
 .shop-buy { width: 100%; margin-top: auto; }
 
 /* Vitrine do dia: 3 itens do mascote, cada um mostrado já no mascote */
@@ -2769,21 +2772,22 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .login-register { font-size: 14px; }
 }
 
+/* Celular comum: com 4 números na barra de cima, o nome "EduSinal" não cabe
+   (o mascote no canto já faz o papel de logo) */
+@media (max-width: 440px) {
+  .mobile-brand { display: none; }
+}
+
 @media (max-width: 360px) {
   .bottom-tab { font-size: 10px; letter-spacing: -0.01em; }
   .bottom-tab-icon { width: 34px; }
-  .mobile-brand { display: none; }
   .stat-chip { padding: 0 8px; font-size: 13px; }
   .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ----- Vistoria de lógica ----- */
-/* Aviso da árvore quando acabam as vidas */
+/* Aviso da árvore quando acabam a energia ou as vidas */
 .tree-warning {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 6px;
   margin: 0;
   padding: 12px 14px;
   border-radius: 12px;
@@ -2793,7 +2797,11 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 }
 
 .tree-warning > span { color: var(--coral); }
-.tree-warning .text-button { min-height: 0; font-size: 13px; text-decoration: underline; }
+.tree-warning.is-energy { background: var(--accent-soft); }
+.tree-warning.is-energy .bi { color: var(--accent); }
+.tree-warning .text-button { min-height: 0; padding: 0; font-size: 13px; text-decoration: underline; }
+/* com o aviso, a árvore fica um pouco mais baixa para continuar cabendo na tela */
+.tree-warning + .tree-canvas { height: clamp(380px, calc(100vh - 190px), 560px); }
 
 /* ===================================================================
    BOOTSTRAP + BOOTSTRAP ICONS
@@ -2842,6 +2850,7 @@ h3 { font-size: 1.17em; }
 .shop-balance .bi,
 .mission-reward .bi,
 .profile-currency .bi { color: #d9a20f; }
+.stat-energy .bi { color: var(--accent); }
 .life-heart.is-full,
 .stat-lives .bi,
 .tree-warning .bi { color: var(--coral); }
@@ -3011,6 +3020,13 @@ h3 { font-size: 1.17em; }
 .topic-lives .life-heart { font-size: 14px; color: rgba(255, 255, 255, 0.35); }
 .topic-lives .life-heart.is-full { color: #ff8f7d; }
 .topic-lives small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+/* Energia: uma bateria com um tracinho por ponto */
+.topic-energy { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.topic-energy small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+.energy-battery { position: relative; display: inline-flex; gap: 2px; margin-right: 3px; padding: 2px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 5px; }
+.energy-battery::after { content: ""; position: absolute; top: 50%; right: -5px; width: 3px; height: 6px; border-radius: 0 2px 2px 0; background: rgba(255, 255, 255, 0.85); transform: translateY(-50%); }
+.energy-cell { width: 7px; height: 8px; border-radius: 2px; background: rgba(255, 255, 255, 0.22); }
+.energy-cell.is-full { background: #7ff0c8; }
 
 /* Área da árvore: a altura acompanha a tela, para tudo caber sem rolar */
 .tree-canvas {
@@ -3183,9 +3199,11 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .topic-heading .back-button { width: 40px; height: 40px; }
   .topic-title h2 { font-size: 18px; }
   .topic-status { width: 104px; }
-  .topic-lives small { display: none; } /* no celular, só os corações */
+  .topic-lives small,
+  .topic-energy small { display: none; } /* no celular, só os corações e a bateria */
 
   .tree-canvas { --origin-y: 84%; height: max(330px, calc(100dvh - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); border-radius: 20px; }
+  .tree-warning + .tree-canvas { height: max(300px, calc(100dvh - 200px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); }
   .tree-lines-spiral { display: none; }
   .tree-lines-wave { display: block; }
 

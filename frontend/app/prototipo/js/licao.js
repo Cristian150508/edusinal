@@ -278,6 +278,7 @@ function finishLesson() {
       const next = TOPIC_ORDER[TOPIC_ORDER.indexOf(lesson.topicId) + 1];
       showToast(next ? `Etapa concluída! “${learningTopics[next].title}” foi liberada. +${XP_PER_EXERCISE} XP` : `Etapa concluída! +${XP_PER_EXERCISE} XP`);
     }
+    if (state.energy === 0) showToast(`Atividade concluída! Sua energia acabou: ela volta aos poucos (${timeUntilNextEnergy()}).`);
   } else {
     showToast("Revisão concluída!");
   }

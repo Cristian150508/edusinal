@@ -5,14 +5,20 @@
 
 const MAX_STREAK_FREEZES = 2;
 
-// Ajudas: são usadas na hora (vidas) ou guardadas (protetor de ofensiva).
+// Ajudas: são usadas na hora (vidas e energia) ou guardadas (protetor de ofensiva).
 const POWER_UPS = [
+  { id: "recarga-energia", icon: "battery-charging", name: "Recarga de energia", text: `Enche as ${MAX_ENERGY} energias na hora. Só uma por dia, para ir com calma.`, cost: 40 },
   { id: "recarga-vidas", icon: "heart-pulse-fill", name: "Recarga de vidas", text: `Enche as ${MAX_LIVES} vidas na hora.`, cost: 30 },
   { id: "protetor-ofensiva", icon: "shield-fill-check", name: "Protetor de ofensiva", text: `Salva sua ofensiva se você ficar um dia sem praticar. Máximo de ${MAX_STREAK_FREEZES}.`, cost: 50 },
 ];
 
 // Se a ajuda pode ser comprada agora; se não, o motivo.
 function powerUpBlockReason(power) {
+  if (power.id === "recarga-energia") {
+    refreshEnergy();
+    if (state.energyRefillDate === dateKey()) return "Volte amanhã";
+    if (state.energy >= MAX_ENERGY) return "Energia cheia";
+  }
   if (power.id === "recarga-vidas") {
     refreshLives();
     if (state.lives >= MAX_LIVES) return "Vidas completas";
@@ -27,7 +33,12 @@ function buyPowerUp(powerId) {
   if (!power || powerUpBlockReason(power)) return;
 
   state.coins -= power.cost;
-  if (power.id === "recarga-vidas") {
+  if (power.id === "recarga-energia") {
+    state.energy = MAX_ENERGY;
+    state.nextEnergyAt = null;
+    state.energyRefillDate = dateKey();
+    showToast("Energia recarregada!");
+  } else if (power.id === "recarga-vidas") {
     state.lives = MAX_LIVES;
     state.nextLifeAt = null;
     showToast("Vidas recarregadas!");
@@ -41,6 +52,7 @@ function buyPowerUp(powerId) {
 
 // Estado atual de cada ajuda (mostrado no cartão).
 function powerUpStatus(power) {
+  if (power.id === "recarga-energia") return `${icon("battery-charging")} ${state.energy} de ${MAX_ENERGY} · ${state.energyRefillDate === dateKey() ? "já usada hoje" : timeUntilNextEnergy()}`;
   if (power.id === "recarga-vidas") return `${icon("heart-fill")} ${state.lives} de ${MAX_LIVES} vidas`;
   return `${icon("shield-fill-check")} Você tem ${state.streakFreezes} de ${MAX_STREAK_FREEZES}`;
 }

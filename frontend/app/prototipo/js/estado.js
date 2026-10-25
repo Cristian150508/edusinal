@@ -1,6 +1,6 @@
 // ESTADO E REGRAS DO JOGO
 // Aqui ficam os dados do aluno (XP, moedas, vidas...), o que é salvo no
-// navegador e as regras que valem para várias telas: vidas, recompensas,
+// navegador e as regras que valem para várias telas: vidas, energia, recompensas,
 // ofensiva (dias seguidos) e a virada do dia e da semana.
 
 const savedPrototype = JSON.parse(localStorage.getItem("edusinal-prototype") || "{}");
@@ -8,6 +8,8 @@ const requestedScreen = new URLSearchParams(location.search).get("tela");
 
 const MAX_LIVES = 3;
 const LIFE_RECHARGE_MS = 30 * 60 * 1000; // uma vida volta a cada 30 minutos
+const MAX_ENERGY = 5;                          // atividades seguidas com a energia cheia
+const ENERGY_RECHARGE_MS = 3 * 60 * 60 * 1000; // um ponto de energia volta a cada 3 horas
 const DAILY_GOAL = 3;                     // exercícios por dia na meta da Home
 const XP_PER_EXERCISE = 20;
 
@@ -91,6 +93,9 @@ const state = {
   league: savedPrototype.league || 0,                    // posição na lista LEAGUES (0 = Bronze)
   lives: savedPrototype.lives ?? MAX_LIVES,
   nextLifeAt: savedPrototype.nextLifeAt || null,
+  energy: savedPrototype.energy ?? MAX_ENERGY,
+  nextEnergyAt: savedPrototype.nextEnergyAt || null,
+  energyRefillDate: savedPrototype.energyRefillDate || null, // dia em que comprou a recarga na Lojinha
   name: savedPrototype.name || "Marina",
   email: savedPrototype.email || "",      // e-mail do perfil criado neste navegador (para entrar de novo)
   isRegistered: wasRegistered,
@@ -166,6 +171,9 @@ function persist() {
     league: state.league,
     lives: state.lives,
     nextLifeAt: state.nextLifeAt,
+    energy: state.energy,
+    nextEnergyAt: state.nextEnergyAt,
+    energyRefillDate: state.energyRefillDate,
     name: state.name,
     email: state.email,
     isRegistered: state.isRegistered,
@@ -234,64 +242,121 @@ function registerExercise(xpGained) {
   if (!state.practiceDays.includes(dateKey())) state.practiceDays.push(dateKey());
 }
 
-// ----- Vidas -----
+// ----- Vidas e energia -----
+// As duas funcionam igual: gastam 1 ponto e voltam sozinhas com o tempo.
+//   Vidas: errar uma pergunta gasta 1; volta 1 a cada 30 minutos.
+//   Energia: terminar uma atividade gasta 1; volta 1 a cada 3 horas.
+//     Ela limita quantas atividades o aluno faz seguidas (ir com calma).
+// "count" e "next" são os nomes dos campos no state (ex.: "lives" e
+// "nextLifeAt"); "next" guarda a hora em que o próximo ponto volta.
 
-// Devolve as vidas que já tiveram tempo de recarregar.
-function refreshLives() {
-  if (state.lives >= MAX_LIVES) {
-    state.lives = MAX_LIVES;
-    state.nextLifeAt = null;
+// Devolve os pontos que já tiveram tempo de recarregar.
+function rechargeOverTime(count, next, max, interval) {
+  if (state[count] >= max) {
+    state[count] = max;
+    state[next] = null;
     return;
   }
 
   const now = Date.now();
-  let nextLifeAt = Date.parse(state.nextLifeAt || "");
-  if (!Number.isFinite(nextLifeAt)) {
-    nextLifeAt = now + LIFE_RECHARGE_MS;
+  let nextAt = Date.parse(state[next] || "");
+  if (!Number.isFinite(nextAt)) {
+    nextAt = now + interval;
   }
 
-  let livesChanged = false;
-  while (state.lives < MAX_LIVES && now >= nextLifeAt) {
-    state.lives += 1;
-    nextLifeAt += LIFE_RECHARGE_MS;
-    livesChanged = true;
+  let changed = false;
+  while (state[count] < max && now >= nextAt) {
+    state[count] += 1;
+    nextAt += interval;
+    changed = true;
   }
 
-  state.nextLifeAt = state.lives >= MAX_LIVES ? null : new Date(nextLifeAt).toISOString();
-  if (livesChanged) persist();
+  state[next] = state[count] >= max ? null : new Date(nextAt).toISOString();
+  if (changed) persist();
+}
+
+// Gasta 1 ponto e, se ainda não estava contando, começa a contar a recarga.
+function spendOverTime(count, next, max, interval) {
+  rechargeOverTime(count, next, max, interval);
+  state[count] = Math.max(0, state[count] - 1);
+  if (state[count] < max && !state[next]) {
+    state[next] = new Date(Date.now() + interval).toISOString();
+  }
+  persist();
+}
+
+// Texto "+1 em 25 min" ou "+1 em 2 h 10 min" (curto: "+1 em 2h10", para os quadradinhos).
+function timeUntil(isoDate, short = false) {
+  const minutes = Math.max(1, Math.ceil((Date.parse(isoDate) - Date.now()) / 60000));
+  const hours = Math.floor(minutes / 60);
+  if (hours === 0) return `+1 em ${minutes} min`;
+  const rest = String(minutes % 60).padStart(2, "0");
+  return short ? `+1 em ${hours}h${rest}` : `+1 em ${hours} h ${rest} min`;
+}
+
+function refreshLives() {
+  rechargeOverTime("lives", "nextLifeAt", MAX_LIVES, LIFE_RECHARGE_MS);
+}
+
+// Perde uma vida por resposta errada.
+function loseLife() {
+  spendOverTime("lives", "nextLifeAt", MAX_LIVES, LIFE_RECHARGE_MS);
 }
 
 function timeUntilNextLife() {
   if (state.lives >= MAX_LIVES || !state.nextLifeAt) return "Vidas completas";
-  const minutes = Math.max(1, Math.ceil((Date.parse(state.nextLifeAt) - Date.now()) / 60000));
-  return `+1 em ${minutes} min`;
+  return timeUntil(state.nextLifeAt);
 }
 
-// Atualiza o quadradinho de vidas da Home sem redesenhar a tela inteira.
+function refreshEnergy() {
+  rechargeOverTime("energy", "nextEnergyAt", MAX_ENERGY, ENERGY_RECHARGE_MS);
+}
+
+// Gasta uma energia quando o aluno termina uma atividade.
+function spendEnergy() {
+  spendOverTime("energy", "nextEnergyAt", MAX_ENERGY, ENERGY_RECHARGE_MS);
+}
+
+function timeUntilNextEnergy(short = false) {
+  if (state.energy >= MAX_ENERGY || !state.nextEnergyAt) return "Energia cheia";
+  return timeUntil(state.nextEnergyAt, short);
+}
+
+// Pode começar esta atividade agora? Devolve "" (pode), "energy" ou "lives".
+// Atividade nova precisa de energia; refazer uma que já fez é revisão e é livre.
+// Aprender só tem cartões (sem perguntas), então não precisa de vidas.
+function activityBlockReason(topicId, branchId, kind) {
+  refreshEnergy();
+  refreshLives();
+  if (!isLessonDone(topicId, branchId) && state.energy === 0) return "energy";
+  if (kind !== "learn" && state.lives === 0) return "lives";
+  return "";
+}
+
+// Atualiza os quadradinhos de vidas e energia da Home sem redesenhar a tela.
 function updateLifeIndicator() {
   refreshLives();
-  const indicator = document.querySelector(".tile-lives");
-  if (!indicator) return;
-
-  indicator.setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}`);
-  indicator.querySelector("strong").textContent = `${state.lives}/${MAX_LIVES}`;
-  indicator.querySelector("small").textContent = state.lives >= MAX_LIVES ? "vidas" : timeUntilNextLife();
-}
-
-// Perde uma vida por resposta errada e começa a contar a recarga.
-function loseLife() {
-  refreshLives();
-  state.lives = Math.max(0, state.lives - 1);
-  if (state.lives < MAX_LIVES && !state.nextLifeAt) {
-    state.nextLifeAt = new Date(Date.now() + LIFE_RECHARGE_MS).toISOString();
+  refreshEnergy();
+  const lives = document.querySelector(".tile-lives");
+  if (lives) {
+    lives.setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}`);
+    lives.querySelector("strong").textContent = `${state.lives}/${MAX_LIVES}`;
+    lives.querySelector("small").textContent = state.lives >= MAX_LIVES ? "vidas" : timeUntilNextLife();
   }
-  persist();
+  const energy = document.querySelector(".tile-energy");
+  if (energy) {
+    energy.setAttribute("aria-label", `${state.energy} de ${MAX_ENERGY} de energia, ${timeUntilNextEnergy()}`);
+    energy.querySelector("strong").textContent = `${state.energy}/${MAX_ENERGY}`;
+    energy.querySelector("small").textContent = state.energy >= MAX_ENERGY ? "energia" : timeUntilNextEnergy(true);
+  }
 }
 
 // ----- Recompensas -----
 
 // Chamado quando o aluno acerta e conclui um exercício pela primeira vez.
+// É aqui que a energia é gasta (revisões não gastam).
 function giveActivityReward() {
+  spendEnergy();
   state.xp += XP_PER_EXERCISE;
   registerExercise(XP_PER_EXERCISE);
   if (!state.hasFirstActivityReward) {
@@ -302,7 +367,7 @@ function giveActivityReward() {
     showToast("Desafio concluído: +20 XP, +15 moedas e broche para o mascote!");
   } else {
     state.coins += 5;
-    showToast("Atividade concluída: +20 XP e +5 moedas");
+    showToast("Atividade concluída: +20 XP, +5 moedas e −1 de energia");
   }
   persist();
 }
@@ -352,6 +417,12 @@ function livesHeartsHtml() {
   return Array.from({ length: MAX_LIVES }, (_, index) =>
     index < state.lives ? icon("heart-fill", "life-heart is-full") : icon("heart", "life-heart"),
   ).join("");
+}
+
+// Bateria com um tracinho por ponto de energia (placar do modo foco).
+function energyBatteryHtml() {
+  const cells = Array.from({ length: MAX_ENERGY }, (_, index) => `<span class="energy-cell${index < state.energy ? " is-full" : ""}"></span>`).join("");
+  return `<span class="energy-battery" aria-hidden="true">${cells}</span>`;
 }
 
 // Barra de progresso acessível (missões, conquistas, meta do dia).

@@ -192,9 +192,14 @@ function renderLetterPanel() {
     return `<aside class="letter-panel"><span class="letter-panel-trophy">${icon("trophy-fill")}</span><h3>Alfabeto completo!</h3><p>Você aprendeu as 26 letras. Escolha uma letra para rever.</p></aside>`;
   }
   const isDone = isLetterDone(letter);
+  const blocked = activityBlockReason(ALPHABET_TOPIC, letter, "practice");
+  const warning = {
+    energy: `${icon("battery")} Sem energia para letras novas (${timeUntilNextEnergy()}).`,
+    lives: `${icon("heart-fill")} Suas vidas estão recarregando.`,
+  }[blocked];
   const button = isDone
     ? `<button class="button-3d button-3d-outline" type="button" data-action="start-letter" data-letter="${letter}">${icon("arrow-repeat")} Praticar de novo</button>`
-    : `<button class="button-3d button-3d-primary" type="button" data-action="start-letter" data-letter="${letter}" ${state.lives === 0 ? "disabled" : ""}>Aprender a letra ${letter}</button>`;
+    : `<button class="button-3d button-3d-primary" type="button" data-action="start-letter" data-letter="${letter}" ${blocked ? "disabled" : ""}>Aprender a letra ${letter}</button>`;
   return `
     <aside class="letter-panel" aria-live="polite">
       ${signVideoHtml(`Letra ${letter}`, "small")}
@@ -202,7 +207,7 @@ function renderLetterPanel() {
       <h3>Letra ${letter}</h3>
       <p>${isDone ? "Reveja o sinal e pratique de novo quando quiser (revisão, sem XP)." : "Um cartão para aprender e duas perguntas para praticar."}</p>
       ${button}
-      ${state.lives === 0 && !isDone ? `<small class="letter-panel-warning">${icon("heart-fill")} Suas vidas estão recarregando.</small>` : ""}
+      ${warning && !isDone ? `<small class="letter-panel-warning">${warning}</small>` : ""}
     </aside>`;
 }
 
