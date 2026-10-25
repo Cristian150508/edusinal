@@ -75,6 +75,12 @@ function isMascotItemOwned(item) {
   return state.unlockedItems.includes(item.id); // moedas ou recompensa
 }
 
+// Quantos itens o aluno já pode usar, de quantos existem (sem contar os "Nada").
+function mascotItemsCount() {
+  const items = MASCOT_ITEMS.filter((item) => item.id);
+  return { owned: items.filter(isMascotItemOwned).length, total: items.length };
+}
+
 // Texto curto que explica como liberar o item.
 function unlockLabel(item) {
   const unlock = item.unlock;
@@ -92,11 +98,6 @@ function lookWith(slot, id) {
 // Classe CSS do fundo atrás do mascote (sem fundo comprado = azul da logo).
 function backdropClass(look = state.mascot) {
   return look.background ? `mascot-backdrop bg-${look.background}` : "mascot-backdrop";
-}
-
-// Mascote pronto para colocar em qualquer tela, com o fundo escolhido.
-function renderMascot(extraClass = "", look = state.mascot) {
-  return `<div class="mascot-avatar ${backdropClass(look)} ${extraClass}">${mascotSvg(look, "full", `Mascote de ${state.name}`)}</div>`;
 }
 
 // ----- Ações do editor -----
@@ -152,19 +153,22 @@ function renderMascotOption(item, slotInfo) {
   const isEquipped = state.mascot[item.slot] === item.id;
   const isOwned = isMascotItemOwned(item);
 
-  let status = isOwned ? "Usar" : unlockLabel(item);
-  if (isEquipped) status = "Em uso";
-  if (!isOwned && item.unlock.type === "achievement") status = `${icon("lock-fill")} ${unlockLabel(item)}`;
-  if (!isOwned && item.unlock.type === "coins" && !isInDailyShop(item)) status = "Fora da loja hoje";
+  // Etiqueta embaixo do nome: o que acontece ao tocar
+  let status = `<small class="mascot-option-status">Usar</small>`;
+  if (isEquipped) status = `<small class="mascot-option-status is-equipped">Em uso</small>`;
+  else if (!isOwned && item.unlock.type !== "coins") status = `<small class="mascot-option-status">${icon("lock-fill")} ${unlockLabel(item)}</small>`;
+  else if (!isOwned && !isInDailyShop(item)) status = `<small class="mascot-option-status">Fora da loja hoje</small>`;
+  else if (!isOwned) status = `<small class="mascot-option-status is-price">${unlockLabel(item)}</small>`;
 
   // Miniatura: o mascote atual vestindo este item, sobre o fundo escolhido.
   const look = lookWith(item.slot, item.id);
   const preview = `<span class="mascot-option-art ${slotInfo.crop === "head" ? "is-head" : ""} ${backdropClass(look)}">${mascotSvg(look, slotInfo.crop, "")}</span>`;
+  const check = isEquipped ? `<span class="mascot-option-check">${icon("check-lg")}</span>` : "";
 
   const classes = ["mascot-option"];
   if (isEquipped) classes.push("is-equipped");
   if (!isOwned) classes.push("is-locked");
-  return `<button class="${classes.join(" ")}" type="button" data-action="mascot-item" data-slot="${item.slot}" data-item="${item.id}" aria-pressed="${isEquipped}">${preview}<strong>${item.name}</strong><small>${status}</small></button>`;
+  return `<button class="${classes.join(" ")}" type="button" data-action="mascot-item" data-slot="${item.slot}" data-item="${item.id}" aria-pressed="${isEquipped}">${check}${preview}<strong>${item.name}</strong>${status}</button>`;
 }
 
 function renderMascotEditor() {
@@ -174,24 +178,27 @@ function renderMascotEditor() {
     return `<button class="category-chip${isActive ? " is-active" : ""}" type="button" data-action="mascot-tab" data-slot="${slot.id}" aria-pressed="${isActive}">${slot.label}</button>`;
   }).join("");
   const options = MASCOT_ITEMS.filter((item) => item.slot === slotInfo.id).map((item) => renderMascotOption(item, slotInfo)).join("");
-  const ownedCount = MASCOT_ITEMS.filter((item) => item.id && isMascotItemOwned(item)).length;
-  const totalCount = MASCOT_ITEMS.filter((item) => item.id).length;
+  const items = mascotItemsCount();
 
   return `
-    <section class="page-intro">
-      <div><p class="eyebrow">SEU PERSONAGEM</p><h2>Personalizar mascote</h2><p>Escolha roupa e acessórios. Itens com preço só podem ser comprados no dia em que estão na vitrine da Lojinha; os com cadeado vêm de conquistas.</p></div>
-      <span class="shop-balance"><i class="bi bi-coin" aria-hidden="true"></i> ${state.coins} moedas</span>
-    </section>
+    <div class="wardrobe-heading">
+      <button class="wardrobe-back" type="button" data-screen="profile" aria-label="Voltar para o Perfil" title="Voltar para o Perfil">${icon("arrow-left")}</button>
+      <div><small>SEU PERSONAGEM</small><h2>Guarda-roupa</h2></div>
+    </div>
     <div class="mascot-editor">
-      <aside class="mascot-stage">
-        ${renderMascot("mascot-large")}
-        <strong>${escapeHtml(state.name)}</strong>
-        <small>${ownedCount} de ${totalCount} itens liberados</small>
-        <button class="text-button" type="button" data-action="mascot-reset">Voltar ao visual da logo</button>
+      <aside class="wardrobe-stage">
+        <span class="wardrobe-stage-art ${backdropClass()}">${mascotSvg(state.mascot, "full", `Mascote de ${state.name}`)}</span>
+        <div class="wardrobe-stage-info">
+          <strong>${escapeHtml(state.name)}</strong>
+          <div class="wardrobe-progress">${progressBarHtml(items.owned, items.total, "Itens liberados")}<small>${items.owned} de ${items.total} itens</small></div>
+          <span class="wardrobe-coins">${icon("coin")} ${state.coins} moedas</span>
+          <button class="text-button" type="button" data-action="mascot-reset">${icon("arrow-counterclockwise")} Visual da logo</button>
+        </div>
       </aside>
       <section class="mascot-wardrobe" aria-label="Guarda-roupa">
         <div class="dictionary-categories" role="group" aria-label="Partes do mascote">${tabs}</div>
         <div class="mascot-options">${options}</div>
+        <p class="wardrobe-hint">${icon("bag-heart-fill")} Itens com preço só podem ser comprados no dia em que estão na <button class="text-button" type="button" data-screen="shop">vitrine da Lojinha</button>. Os com cadeado vêm de conquistas do Perfil.</p>
       </section>
     </div>
     <p class="demo-disclaimer">As moedas são de demonstração e os itens ficam salvos somente neste navegador.</p>`;

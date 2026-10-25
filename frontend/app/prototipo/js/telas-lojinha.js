@@ -152,8 +152,7 @@ function renderShopItem(item) {
 }
 
 function renderShop() {
-  const ownedCount = MASCOT_ITEMS.filter((item) => item.id && isMascotItemOwned(item)).length;
-  const totalCount = MASCOT_ITEMS.filter((item) => item.id).length;
+  const items = mascotItemsCount();
   return `
     <section class="shop-hero" aria-labelledby="shop-title">
       <span class="shop-hero-coin">${icon("coin")}</span>
@@ -173,7 +172,7 @@ function renderShop() {
       <div class="shop-grid">${POWER_UPS.map(renderPowerUp).join("")}</div>
     </section>
     <section class="shop-group" aria-labelledby="shop-mascot-title">
-      <div class="mission-heading"><h2 id="shop-mascot-title">Guarda-roupa do mascote</h2><span class="mission-timer">${icon("bag-heart-fill")} ${ownedCount} de ${totalCount} itens</span></div>
+      <div class="mission-heading"><h2 id="shop-mascot-title">Guarda-roupa do mascote</h2><span class="mission-timer">${icon("bag-heart-fill")} ${items.owned} de ${items.total} itens</span></div>
       <div class="shop-wardrobe">
         <span class="shop-wardrobe-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "")}</span>
         <div><h3>Roupas, acessórios e fundos</h3><p>Vista o que já é seu. Itens novos aparecem na vitrine do dia ou vêm de conquistas.</p></div>

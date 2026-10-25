@@ -366,81 +366,6 @@ a {
   line-height: 1.5;
 }
 
-.shop-balance {
-  flex: 0 0 auto;
-  padding: 10px 13px;
-  border-radius: 5px;
-  background: var(--yellow-soft);
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.shop-balance span {
-  color: #9f7b18;
-}
-
-.profile-avatar-panel {
-  display: grid;
-  grid-template-columns: 148px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
-}
-
-.mascot-avatar {
-  width: 140px;
-  height: 140px;
-  position: relative;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border: 0;
-  border-radius: 50%;
-  background: var(--surface-soft);
-  box-shadow: 0 10px 24px rgba(21, 90, 200, 0.22);
-}
-
-.profile-identity h3 {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0 0 4px;
-  font-family: "Manrope", sans-serif;
-  font-size: 21px;
-}
-
-.profile-identity > p {
-  margin: 0 0 14px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.profile-currency {
-  display: grid;
-  gap: 10px;
-  padding-left: 20px;
-  border-left: 1px solid var(--line);
-}
-
-.profile-currency > div {
-  display: grid;
-  gap: 3px;
-}
-
-.profile-currency strong {
-  font-family: "Manrope", sans-serif;
-  font-size: 15px;
-}
-
-.profile-currency span {
-  color: var(--muted);
-  font-size: 9px;
-}
-
 .login-layout {
   width: min(900px, 100%);
   min-height: min(610px, calc(100vh - 165px));
@@ -926,26 +851,6 @@ textarea {
     padding: 22px 17px 25px;
   }
 
-  .profile-avatar-panel {
-    grid-template-columns: 104px minmax(0, 1fr);
-    gap: 16px;
-    padding: 18px;
-  }
-
-  .mascot-avatar {
-    width: 100px;
-    height: 100px;
-  }
-
-  .profile-currency {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    padding: 14px 0 0;
-    border-top: 1px solid var(--line);
-    border-left: 0;
-  }
-
   .intro-screen {
     min-height: 0;
     grid-template-columns: minmax(0, 1fr);
@@ -1054,44 +959,6 @@ textarea {
   .screen-root {
     padding-right: 13px;
     padding-left: 13px;
-  }
-
-  .shop-balance {
-    padding: 8px 9px;
-    font-size: 10px;
-  }
-
-  .profile-avatar-panel {
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 12px;
-    padding: 14px;
-  }
-
-  .mascot-avatar {
-    width: 70px;
-    height: 70px;
-  }
-
-  .profile-identity h3 {
-    font-size: 17px;
-  }
-
-  .profile-identity > p {
-    font-size: 10px;
-  }
-
-  .profile-identity .button {
-    min-height: 36px;
-    padding: 0 9px;
-    font-size: 9px;
-  }
-
-  .profile-currency strong {
-    font-size: 12px;
-  }
-
-  .profile-currency span {
-    font-size: 8px;
   }
 
   .section-heading {
@@ -1713,8 +1580,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
 /* ----- Peças comuns ----- */
 .app-shell[data-current-screen="leagues"] .section-heading,
-.app-shell[data-current-screen="missions"] .section-heading,
-.app-shell[data-current-screen="profile"] .section-heading { margin-top: 26px; }
+.app-shell[data-current-screen="missions"] .section-heading { margin-top: 26px; }
 
 .safety-note {
   display: flex;
@@ -2302,56 +2168,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 }
 
 /* ----- Perfil ----- */
-.name-edit { font-size: 11px; }
 .name-form { display: grid; gap: 10px; margin-bottom: 10px; }
 .name-form-actions { display: flex; align-items: center; gap: 14px; }
-
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.profile-stat {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  padding: 14px 8px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
-  text-align: center;
-}
-
-.profile-stat span { font-size: 20px; }
-.profile-stat strong { font-family: "Manrope", sans-serif; font-size: 16px; }
-.profile-stat small { color: var(--muted); font-size: 10px; }
-
-.achievement-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-}
-
-.achievement {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
-}
-
-.achievement:not(.is-done) .achievement-icon { filter: grayscale(1); opacity: 0.55; }
-.achievement.is-done { border-color: var(--accent); }
-.achievement-icon { font-size: 26px; }
-.achievement h3 { margin: 4px 0 0; font-family: "Manrope", sans-serif; font-size: 14px; }
-.achievement p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
-.achievement .progress-track { margin: 8px 0 2px; }
-.achievement small { color: var(--muted); font-size: 11px; }
-.achievement-done { color: var(--accent) !important; font-weight: 700; }
 
 /* Preferências de acessibilidade escolhidas nas Configurações */
 /* Texto grande: aumenta só o conteúdo da tela. As barras de cima e de baixo do
@@ -2380,93 +2198,16 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
   .dictionary-layout { grid-template-columns: minmax(0, 1fr); }
   .word-detail { position: static; order: -1; }
-
-  .profile-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* ===================================================================
    MASCOTE PERSONALIZÁVEL (desenho em SVG + editor)
    =================================================================== */
 .mascot-svg { display: block; width: 100%; height: 100%; }
-.mascot-avatar .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
-.mascot-avatar.mascot-large { width: min(260px, 100%); height: auto; aspect-ratio: 1; }
 
 /* Banner do guarda-roupa na lojinha */
 
 /* Editor */
-.mascot-editor {
-  display: grid;
-  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
-  align-items: start;
-  gap: 20px;
-}
-
-.mascot-stage {
-  position: sticky;
-  top: 20px;
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface);
-  text-align: center;
-}
-
-.mascot-stage > strong { margin-top: 8px; font-family: "Manrope", sans-serif; font-size: 18px; }
-.mascot-stage > small { color: var(--muted); font-size: 12px; }
-.mascot-stage .text-button { margin-top: 6px; }
-
-.mascot-wardrobe { display: grid; gap: 14px; }
-
-.mascot-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-  gap: 10px;
-}
-
-.mascot-option {
-  display: grid;
-  justify-items: center;
-  gap: 3px;
-  padding: 10px 8px 12px;
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  font: inherit;
-  text-align: center;
-}
-
-.mascot-option:hover { border-color: var(--primary); }
-.mascot-option.is-equipped { border-color: var(--primary); background: var(--primary-soft); }
-.mascot-option strong { font-size: 13px; }
-.mascot-option small { color: var(--muted); font-size: 11px; font-weight: 700; }
-.mascot-option.is-equipped small { color: var(--primary-strong); }
-.mascot-option.is-locked .mascot-option-art { opacity: 0.5; filter: saturate(0.6); }
-
-.mascot-option-art {
-  width: 92px;
-  height: 92px;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  margin-bottom: 4px;
-  border-radius: 50%;
-  background: var(--surface-soft);
-}
-
-@media (max-width: 760px) {
-  .mascot-editor { grid-template-columns: minmax(0, 1fr); }
-  .mascot-stage { position: static; }
-  .mascot-avatar.mascot-large { width: 180px; }
-
-  
-  .mascot-options { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
-  .mascot-option-art { width: 72px; height: 72px; }
-}
 
 /* Fundo atrás do mascote: o azul da logo é o padrão; os outros vêm da lojinha.
    São cores fortes porque o personagem é branco, como na logo. */
@@ -2475,8 +2216,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .mascot-backdrop.bg-fundo-mar { background: linear-gradient(160deg, #35cdc2 0%, #12908a 100%); }
 .mascot-backdrop.bg-fundo-por-do-sol { background: linear-gradient(160deg, #ffad6e 0%, #ef5f78 100%); }
 .mascot-backdrop.bg-fundo-sol { background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); }
-.mascot-option-art.is-head .mascot-svg { margin-top: 0; }
-.mascot-option-art .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }
 
 /* ===================================================================
    CELULAR
@@ -2648,7 +2387,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .page-intro h2 { font-size: 26px; }
   .page-intro p:not(.eyebrow) { font-size: 14px; }
   .page-intro > .demo-pill { margin-top: 22px; font-size: 10px; }
-  .page-intro > .shop-balance { margin-top: 18px; font-size: 13px; }
   .section-heading h2 { font-size: 20px; }
   input,
   select,
@@ -2674,38 +2412,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .ranking-row strong { font-size: 14px; }
   .league-status p { font-size: 14px; }
 
-  
-
-  
-  .profile-identity > p { font-size: 13px; }
-  .profile-identity .button { min-height: 42px; padding: 0 14px; font-size: 13px; }
-  .profile-currency span,
-  .profile-stat small { font-size: 11px; }
-  .achievement p { font-size: 13px; }
-
-
   /* Editor do mascote: o personagem fica preso no topo enquanto você rola as opções */
-  .mascot-stage {
-    position: sticky;
-    top: calc(57px + env(safe-area-inset-top));
-    z-index: 5;
-    grid-template-columns: 104px minmax(0, 1fr);
-    justify-items: start;
-    align-items: center;
-    column-gap: 14px;
-    row-gap: 2px;
-    padding: 12px 14px;
-    text-align: left;
-    box-shadow: 0 10px 24px rgba(10, 30, 70, 0.08);
-  }
-
-  .mascot-stage > .mascot-avatar { grid-row: 1 / span 3; width: 104px; }
-  .mascot-stage > strong { margin-top: 0; font-size: 17px; }
-  .mascot-stage .text-button { margin-top: 0; }
-  .mascot-options { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .mascot-option { padding: 8px 4px 10px; }
-  .mascot-option-art { width: min(84px, 100%); height: auto; aspect-ratio: 1; }
-  .mascot-option strong { font-size: 13px; }
 
   /* Cadastro e login: campos grandes e fáceis de tocar */
   .field-label { font-size: 14px; }
@@ -2727,7 +2434,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .bottom-tab { font-size: 10px; letter-spacing: -0.01em; }
   .bottom-tab-icon { width: 34px; }
   .stat-chip { padding: 0 8px; font-size: 13px; }
-  .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ----- Vistoria de lógica ----- */
@@ -2792,18 +2498,12 @@ h3 { font-size: 1.17em; }
 .stat-chip .bi { font-size: 0.95em; }
 .stat-streak .bi { color: #f0743a; }
 .stat-coins .bi,
-.shop-balance .bi,
-.mission-reward .bi,
-.profile-currency .bi { color: #d9a20f; }
+.mission-reward .bi { color: #d9a20f; }
 .stat-energy .bi { color: var(--accent); }
 .life-heart.is-full,
 .stat-lives .bi,
 .tree-warning .bi { color: var(--coral); }
-.mission-claimed .bi,
-.achievement-done .bi { color: var(--accent); }
-.profile-stat > .bi { font-size: 20px; color: var(--primary); }
-.achievement-icon .bi { font-size: 26px; color: var(--primary); }
-.achievement.is-done .achievement-icon .bi { color: var(--accent); }
+.mission-claimed .bi { color: var(--accent); }
 
 /* Botão vermelho da janela de confirmação */
 .button-danger { background: var(--coral); color: #fff; }
@@ -2848,8 +2548,6 @@ h3 { font-size: 1.17em; }
 .modal-footer > .button { margin: 0; }
 
 /* Calendário da ofensiva (janela do foguinho) */
-.profile-stat.is-button { font: inherit; color: inherit; cursor: pointer; }
-.profile-stat.is-button:hover { border-color: var(--coral); }
 
 .streak-summary { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
 .streak-summary strong { font-family: "Manrope", sans-serif; font-size: 18px; }
@@ -3332,4 +3030,262 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .settings-row .button-3d { width: 100%; }
   .settings-about { flex-wrap: wrap; }
   .settings-about .text-button { width: 100%; justify-content: center; } /* o link desce para a linha de baixo */
+}
+
+/* ===================================================================
+   PERFIL
+   =================================================================== */
+/* Topo: faixa em degradê com o mascote grande (tocar abre o guarda-roupa) */
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.profile-hero-avatar {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex: none;
+  padding: 0;
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 6px 0 var(--hero-shadow);
+  cursor: pointer;
+}
+.profile-hero-avatar .mascot-svg { width: 100%; height: 100%; margin-top: 6%; border-radius: 50%; }
+.profile-hero-avatar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hero-shadow); }
+/* pincel no canto: mostra que dá para mudar o visual */
+.profile-hero-edit {
+  position: absolute;
+  right: -2px;
+  bottom: 6px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: var(--yellow);
+  color: #6b4f00;
+  font-size: 18px;
+}
+.profile-hero-copy { flex: 1; min-width: 0; }
+.profile-hero-copy > small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.profile-hero-copy h2 { display: flex; align-items: center; gap: 10px; margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 32px; font-weight: 800; overflow-wrap: anywhere; }
+.profile-hero-copy > p { margin: 0 0 14px; font-size: 14px; opacity: 0.95; }
+.profile-name-edit {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+}
+.profile-name-edit:hover { background: rgba(255, 255, 255, 0.32); }
+.profile-hero .field-label { color: #ffffff; }
+.profile-hero .field-label input { border-color: transparent; }
+.profile-hero .name-form-actions .text-button { color: #ffffff; font-size: 13px; }
+.profile-hero .name-form { margin: 6px 0 4px; max-width: 360px; }
+
+.profile-group { margin-top: 26px; }
+
+/* Estatísticas: quadradinhos 3D com ícone colorido */
+.profile-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.profile-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+.profile-tile.is-button { cursor: pointer; }
+.profile-tile.is-button:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.profile-tile > span:last-child { min-width: 0; display: grid; }
+.profile-tile strong { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; line-height: 1.2; }
+.profile-tile small { color: var(--muted); font-size: 12px; }
+.profile-tile-icon { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 14px; font-size: 20px; }
+.profile-tile-icon.is-coral { background: var(--coral-soft); color: var(--coral); }
+.profile-tile-icon.is-yellow { background: var(--yellow-soft); color: #b58a12; }
+.profile-tile-icon.is-blue { background: var(--primary-soft); color: var(--primary); }
+.profile-tile-icon.is-teal { background: var(--accent-soft); color: var(--accent); }
+
+/* Conquistas: medalha redonda (dourada quando conquistada) */
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.badge-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.badge-medal {
+  width: 60px;
+  height: 60px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--muted);
+  font-size: 26px;
+}
+.badge-card.is-done { border-color: var(--yellow); box-shadow: 0 4px 0 #c99a1c; }
+.badge-card.is-done .badge-medal { border: 3px solid #ffffff; background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); box-shadow: 0 4px 0 #c99a1c; color: #ffffff; }
+.badge-info { flex: 1; min-width: 0; }
+.badge-info h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
+.badge-info p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.badge-info .mission-progress { margin-top: 8px; }
+.badge-info .mission-progress strong { min-width: 0; font-size: 13px; }
+.badge-info .mission-bar { height: 12px; }
+.badge-prize { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 2px 10px; border-radius: 99px; background: var(--primary-soft); color: var(--primary-strong); font-size: 12px; font-weight: 700; }
+.badge-done { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; color: var(--accent); font-size: 13px; font-weight: 800; }
+
+/* ----- Guarda-roupa (editor do mascote) ----- */
+.wardrobe-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.wardrobe-heading small { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; }
+.wardrobe-heading h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 800; }
+.wardrobe-back {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+}
+.wardrobe-back:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+
+.mascot-editor { display: grid; grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); align-items: start; gap: 22px; }
+
+/* Palco: o mascote grande num cartão em degradê, sempre à vista */
+.wardrobe-stage {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+  text-align: center;
+}
+.wardrobe-stage-art { width: min(230px, 100%); aspect-ratio: 1; display: block; overflow: hidden; border: 4px solid rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 6px 0 var(--hero-shadow); }
+.wardrobe-stage-art .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
+.wardrobe-stage-info { width: 100%; display: grid; justify-items: center; gap: 8px; }
+.wardrobe-stage-info > strong { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; }
+.wardrobe-progress { width: 100%; display: grid; gap: 4px; }
+.wardrobe-progress .progress-track { height: 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); }
+.wardrobe-progress .progress-track span { border-radius: inherit; background: var(--yellow); }
+.wardrobe-progress small { font-size: 12px; font-weight: 700; opacity: 0.95; }
+.wardrobe-coins { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); font-size: 13px; font-weight: 800; }
+.wardrobe-coins .bi { color: var(--yellow); }
+.wardrobe-stage .text-button { color: #ffffff; font-size: 13px; }
+
+.mascot-wardrobe { display: grid; gap: 14px; }
+.mascot-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+
+/* Cada item: cartão 3D com o mascote já vestindo o item */
+.mascot-option {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}
+.mascot-option:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.mascot-option.is-equipped { border-color: var(--hero-from); box-shadow: 0 4px 0 var(--hero-shadow); }
+.mascot-option strong { font-size: 13px; line-height: 1.25; }
+.mascot-option.is-locked .mascot-option-art { opacity: 0.5; filter: saturate(0.6); }
+.mascot-option-art { width: 92px; height: 92px; display: block; overflow: hidden; margin-bottom: 4px; border-radius: 50%; }
+.mascot-option-art .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }
+.mascot-option-art.is-head .mascot-svg { margin-top: 0; }
+/* etiqueta: Usar, Em uso, preço, conquista ou fora da loja */
+.mascot-option-status { display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 2px 10px; border-radius: 10px; line-height: 1.35; background: var(--surface-soft); color: var(--muted); font-size: 11px; font-weight: 800; }
+.mascot-option-status.is-equipped { background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%); color: #ffffff; }
+.mascot-option-status.is-price { background: var(--yellow-soft); color: #8a6a0c; }
+.mascot-option-status.is-price .bi { color: #d9a20f; }
+.mascot-option-check { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--hero-from); color: #ffffff; font-size: 14px; }
+.wardrobe-hint { margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--surface-soft); color: var(--muted); font-size: 13px; line-height: 1.5; }
+.wardrobe-hint .bi { color: var(--coral); }
+.wardrobe-hint .text-button { padding: 0; font-size: 13px; text-decoration: underline; }
+
+@media (max-width: 1100px) {
+  .profile-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  /* Perfil: mascote em cima, centralizado */
+  .profile-hero { flex-direction: column; gap: 14px; padding: 20px 18px; border-radius: 20px; text-align: center; }
+  .profile-hero-avatar { width: 128px; height: 128px; }
+  .profile-hero-copy h2 { justify-content: center; font-size: 26px; }
+  .profile-hero-copy .button-3d { width: 100%; }
+  .profile-hero .name-form { margin-inline: auto; text-align: left; }
+  .profile-tiles { gap: 10px; }
+  .profile-tile { gap: 10px; padding: 12px 10px; }
+  .profile-tile-icon { width: 36px; height: 36px; font-size: 17px; border-radius: 12px; }
+  .profile-tile strong { font-size: 17px; }
+  .profile-tile small { font-size: 11px; }
+  .badge-grid { grid-template-columns: minmax(0, 1fr); }
+  .badge-medal { width: 52px; height: 52px; font-size: 22px; }
+
+  /* Guarda-roupa: o palco fica preso no topo, em linha, enquanto rola as opções */
+  .wardrobe-heading { margin-bottom: 14px; }
+  .wardrobe-heading h2 { font-size: 24px; }
+  .mascot-editor { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .wardrobe-stage {
+    top: calc(64px + env(safe-area-inset-top));
+    z-index: 5;
+    grid-template-columns: 96px minmax(0, 1fr);
+    justify-items: start;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 20px;
+    text-align: left;
+  }
+  .wardrobe-stage-art { width: 96px; border-width: 3px; box-shadow: 0 4px 0 var(--hero-shadow); }
+  .wardrobe-stage-info { justify-items: start; gap: 6px; }
+  .wardrobe-stage-info > strong { font-size: 17px; }
+  .wardrobe-coins { padding: 3px 10px; font-size: 12px; }
+  .mascot-options { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .mascot-option { padding: 8px 4px 10px; border-radius: 16px; }
+  .mascot-option-art { width: min(84px, 100%); height: auto; aspect-ratio: 1; }
+  .mascot-option-check { top: 4px; right: 4px; width: 22px; height: 22px; font-size: 12px; }
+  .mascot-option-status { padding: 2px 6px; font-size: 10px; }
+}
+
+@media (max-width: 360px) {
+  .mascot-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

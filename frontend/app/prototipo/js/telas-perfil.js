@@ -92,46 +92,79 @@ function renderNameArea() {
     return `
       <form class="name-form" id="profile-name-form">
         <label class="field-label" for="profile-name-input">Como quer ser chamado(a)?<input id="profile-name-input" name="name" value="${escapeHtml(state.name)}" maxlength="20" autocomplete="nickname" /></label>
-        <div class="name-form-actions"><button class="button button-primary" type="submit">Salvar</button><button class="text-button" type="button" data-action="cancel-name">Cancelar</button></div>
+        <div class="name-form-actions"><button class="button-3d button-3d-light" type="submit">Salvar</button><button class="text-button" type="button" data-action="cancel-name">Cancelar</button></div>
       </form>`;
   }
-  return `<span class="eyebrow">NOME</span><h3>${escapeHtml(state.name)} <button class="text-button name-edit" type="button" data-action="edit-name">Editar</button></h3>`;
+  return `<h2 id="profile-title">${escapeHtml(state.name)} <button class="profile-name-edit" type="button" data-action="edit-name" aria-label="Editar nome" title="Editar nome">${icon("pencil-fill")}</button></h2>`;
 }
 
+// Item do mascote que a conquista dá de prêmio (se der algum).
+function achievementPrize(achievement) {
+  return MASCOT_ITEMS.find((item) => item.unlock.type === "achievement" && item.unlock.id === achievement.id);
+}
+
+// Conquista: uma medalha (dourada quando conquistada) e a barra de progresso.
 function renderAchievement(achievement) {
   const value = Math.min(achievement.progress(), achievement.target);
   const isDone = value >= achievement.target;
-  const footer = isDone ? `<small class="achievement-done">Conquistada ${icon("check-circle-fill")}</small>` : `${progressBarHtml(value, achievement.target, achievement.title)}<small>${value} / ${achievement.target}</small>`;
-  return `<article class="achievement${isDone ? " is-done" : ""}"><span class="achievement-icon">${icon(achievement.icon)}</span><h3>${achievement.title}</h3><p>${achievement.text}</p>${footer}</article>`;
+  const prize = achievementPrize(achievement);
+  const percent = Math.round((value / achievement.target) * 100);
+  const footer = isDone
+    ? `<span class="badge-done">${icon("check-circle-fill")} Conquistada</span>`
+    : `<div class="mission-progress"><div class="mission-bar" role="progressbar" aria-label="${achievement.title}" aria-valuenow="${value}" aria-valuemin="0" aria-valuemax="${achievement.target}"><span style="width: ${percent}%"></span></div><strong>${value} / ${achievement.target}</strong></div>`;
+  return `
+    <article class="badge-card${isDone ? " is-done" : ""}">
+      <span class="badge-medal">${icon(achievement.icon)}</span>
+      <div class="badge-info">
+        <h3>${achievement.title}</h3>
+        <p>${achievement.text}</p>
+        ${prize ? `<small class="badge-prize">${icon("gift-fill")} Prêmio: ${prize.name}</small>` : ""}
+        ${footer}
+      </div>
+    </article>`;
+}
+
+// Quadradinho de número: ícone colorido, valor e nome.
+function renderProfileTile([iconName, value, label, color]) {
+  const content = `<span class="profile-tile-icon is-${color}">${icon(iconName)}</span><span><strong>${value}</strong><small>${label}</small></span>`;
+  // a ofensiva abre o calendário dos dias praticados
+  if (iconName === "fire") return `<button class="profile-tile is-button" type="button" data-action="open-streak" aria-label="Ofensiva: ${value} ${label}. Abrir calendário">${content}</button>`;
+  return `<div class="profile-tile">${content}</div>`;
 }
 
 function renderProfile() {
   const doneCount = ACHIEVEMENTS.filter((achievement) => achievement.progress() >= achievement.target).length;
-  const stats = [
-    ["fire", `${state.streak} ${state.streak === 1 ? "dia" : "dias"}`, "Ofensiva"],
-    ["trophy-fill", LEAGUES[state.league].name, "Liga atual"],
-    ["pencil-square", exerciseCount(), "Exercícios"],
-    ["award-fill", finishedTopicsCount(), "Etapas concluídas"],
-    ["book-half", state.signsSeen.length, "Sinais vistos"],
-    ["shield-fill-check", state.streakFreezes, "Protetores"],
+  const items = mascotItemsCount();
+  const tiles = [
+    ["fire", state.streak, state.streak === 1 ? "dia de ofensiva" : "dias de ofensiva", "coral"],
+    ["lightning-charge-fill", state.xp, "XP total", "yellow"],
+    ["trophy-fill", LEAGUES[state.league].name, "Liga atual", "blue"],
+    ["coin", state.coins, "Moedas", "yellow"],
+    ["pencil-square", exerciseCount(), "Exercícios", "blue"],
+    ["award-fill", finishedTopicsCount(), "Etapas concluídas", "teal"],
+    ["book-half", state.signsSeen.length, "Sinais vistos", "teal"],
+    ["shield-fill-check", state.streakFreezes, "Protetores", "coral"],
   ];
 
   return `
-    <section class="page-intro"><div><p class="eyebrow">SEU ESPAÇO</p><h2>Meu perfil</h2><p>Seu mascote, seus números e as conquistas da jornada.</p></div><span class="demo-pill">${state.isMinor ? "ALUNO MENOR DE IDADE" : "ALUNO"}</span></section>
-    <section class="account-panel profile-avatar-panel">
-      ${renderMascot()}
-      <div class="profile-identity">${renderNameArea()}<p>Liga ${LEAGUES[state.league].name} · trilha iniciante</p><button class="button button-outline" type="button" data-screen="mascot">Personalizar mascote <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
-      <div class="profile-currency"><div><strong>${state.xp} XP</strong><span>Experiência</span></div><div><strong>${state.coins} ${icon("coin")}</strong><span>Moedas</span></div><div><strong>${state.unlockedItems.length}</strong><span>Itens</span></div></div>
+    <section class="profile-hero" aria-labelledby="profile-title">
+      <button class="profile-hero-avatar ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar mascote">${mascotSvg(state.mascot, "full", "")}<span class="profile-hero-edit">${icon("palette-fill")}</span></button>
+      <div class="profile-hero-copy">
+        <small>${state.isMinor ? "ALUNO MENOR DE IDADE" : "SEU PERFIL"}</small>
+        ${renderNameArea()}
+        <p>Liga ${LEAGUES[state.league].name} · ${items.owned} de ${items.total} itens do mascote</p>
+        ${state.editingName ? "" : `<button class="button-3d button-3d-light" type="button" data-screen="mascot">${icon("palette-fill")} Personalizar mascote</button>`}
+      </div>
     </section>
-    <section class="profile-stats" aria-label="Números da jornada">${stats.map(([iconName, value, label]) => {
-      const content = `${icon(iconName)}<strong>${value}</strong><small>${label}</small>`;
-      // a ofensiva abre o calendário dos dias praticados
-      if (label === "Ofensiva") return `<button class="profile-stat is-button" type="button" data-action="open-streak" aria-label="Ofensiva: ${value}. Abrir calendário">${content}</button>`;
-      return `<div class="profile-stat">${content}</div>`;
-    }).join("")}</section>
-    <section aria-labelledby="achievements-title">
-      <div class="section-heading"><div><p class="eyebrow">${doneCount} DE ${ACHIEVEMENTS.length}</p><h2 id="achievements-title">Conquistas</h2></div></div>
-      <div class="achievement-grid">${ACHIEVEMENTS.map(renderAchievement).join("")}</div>
+
+    <section class="profile-group" aria-labelledby="profile-stats-title">
+      <div class="mission-heading"><h2 id="profile-stats-title">Estatísticas</h2></div>
+      <div class="profile-tiles">${tiles.map(renderProfileTile).join("")}</div>
+    </section>
+
+    <section class="profile-group" aria-labelledby="achievements-title">
+      <div class="mission-heading"><h2 id="achievements-title">Conquistas</h2><span class="mission-timer">${icon("award-fill")} ${doneCount} de ${ACHIEVEMENTS.length}</span></div>
+      <div class="badge-grid">${ACHIEVEMENTS.map(renderAchievement).join("")}</div>
     </section>
     <p class="demo-disclaimer">Este perfil é local e não representa uma conta autenticada.</p>`;
 }
