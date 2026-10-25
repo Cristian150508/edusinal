@@ -1,17 +1,26 @@
 // CONTEÚDO DAS ETAPAS
-// Etapas da trilha, os 5 galhos (exercícios) de cada uma e as perguntas.
-// Para mudar ou criar perguntas, é só editar as listas abaixo.
+// Cada etapa tem 5 atividades e uma prova final. A 1ª e a 3ª são para
+// APRENDER (cartões com sinais novos, sem gastar vidas); a 2ª, a 4ª e a 5ª
+// são EXERCÍCIOS. Para mudar ou criar conteúdo, é só editar as listas abaixo.
 //
-// Cada pergunta:
-//   q        texto da pergunta
-//   options  respostas possíveis (2 a 4)
-//   answer   posição da resposta certa na lista (a primeira é 0)
-//   explain  explicação mostrada depois de conferir
-// O "icon" de cada galho é o nome de um ícone do Bootstrap Icons (icons.getbootstrap.com).
+// Atividade de aprender (kind: "learn"):
+//   cards  sinais apresentados: { sign: "Oi", tip: "quando usar" }
 //
-// Enquanto não há vídeos dos sinais, as perguntas tratam de situações,
-// cultura surda e uso da língua — sem descrever como se faz cada sinal.
-// Antes de publicar, o conteúdo deve ser revisado por pessoas surdas fluentes.
+// Exercício (kind: "practice"), cada pergunta tem um "type":
+//   "video-palavra"  mostra o vídeo de "sign"; o aluno escolhe a palavra (options)
+//   "palavra-video"  mostra a palavra "sign"; o aluno escolhe o vídeo (options são sinais)
+//   "situacao"       pergunta em texto (q) com respostas em texto (options)
+//   "vf"             frase (q) para marcar verdadeiro ou falso (answer: true/false)
+// Nos tipos com opções, "answer" é a posição da certa (a primeira é 0).
+// "explain" aparece depois de conferir.
+//
+// Os vídeos dos sinais ainda serão gravados (veja SIGN_VIDEOS). As dicas falam
+// de quando usar cada sinal, sem descrever como ele é feito. Antes de publicar,
+// o conteúdo deve ser revisado por pessoas surdas fluentes em Libras.
+
+// Vídeo de cada sinal. Quando um vídeo for gravado, coloque o caminho aqui,
+// por exemplo: "Oi": "../../assets/videos/oi.mp4". Sem vídeo, aparece um espaço reservado.
+const SIGN_VIDEOS = {};
 
 const learningTopics = {
   "primeiros-sinais": {
@@ -20,38 +29,46 @@ const learningTopics = {
     subtitle: "Saudações do dia a dia",
     branches: [
       {
-        id: "alfabeto", icon: "alphabet-uppercase", label: "Alfabeto", hint: "Letras em Libras",
-        questions: [
-          { q: "Para que serve o alfabeto manual (datilologia)?", options: ["Para soletrar nomes e palavras que ainda não têm sinal", "Para substituir todos os sinais da Libras", "Só para escrever no papel"], answer: 0, explain: "A datilologia soletra letra por letra. É usada em nomes próprios e em palavras sem sinal conhecido." },
-          { q: "Libras é o português feito com as mãos?", options: ["Sim, cada palavra vira um gesto", "Não: é uma língua com gramática própria", "Só quando é escrita"], answer: 1, explain: "Libras tem vocabulário, gramática e regras próprias, independentes do português." },
+        id: "cumprimentos", kind: "learn", icon: "emoji-smile", label: "Oi e tchau", hint: "Aprender · 3 sinais",
+        cards: [
+          { sign: "Oi", tip: "Para cumprimentar alguém, em qualquer hora do dia." },
+          { sign: "Tchau", tip: "Para se despedir. Faça o sinal onde a pessoa possa ver." },
+          { sign: "Tudo bem?", tip: "Pergunta comum logo depois do “oi”." },
         ],
       },
       {
-        id: "oi-tchau", icon: "emoji-smile", label: "Oi e tchau", hint: "Cumprimentos",
+        id: "pratica-cumprimentos", kind: "practice", icon: "pencil-square", label: "Pratique: oi e tchau", hint: "4 exercícios",
         questions: [
-          { q: "Uma pessoa surda está de costas e você quer falar com ela. O que é mais adequado?", options: ["Gritar o nome dela", "Bater palmas atrás dela", "Tocar de leve no ombro ou acenar onde ela possa ver"], answer: 2, explain: "Um toque leve no ombro ou um aceno no campo de visão são formas respeitosas de chamar a atenção." },
-          { q: "No fim da aula, ao se despedir de um colega, qual palavra combina?", options: ["Tchau", "Bom dia", "Por favor"], answer: 0, explain: "“Tchau” é a despedida do dia a dia." },
+          { type: "video-palavra", sign: "Oi", options: ["Tchau", "Oi", "Tudo bem?"], answer: 1, explain: "Esse é o sinal de “oi”, para cumprimentar." },
+          { type: "palavra-video", sign: "Tchau", options: ["Tudo bem?", "Oi", "Tchau"], answer: 2, explain: "“Tchau” é a despedida do dia a dia." },
+          { type: "situacao", q: "Uma pessoa surda está de costas e você quer falar com ela. O que é mais adequado?", options: ["Gritar o nome dela", "Bater palmas atrás dela", "Tocar de leve no ombro ou acenar onde ela possa ver"], answer: 2, explain: "Um toque leve no ombro ou um aceno no campo de visão são formas respeitosas de chamar a atenção." },
+          { type: "vf", q: "Libras é o português feito com as mãos.", answer: false, explain: "Libras tem vocabulário, gramática e regras próprias, independentes do português." },
         ],
       },
       {
-        id: "bom-dia", icon: "brightness-high-fill", label: "Bom dia", hint: "Saudações do dia",
-        questions: [
-          { q: "Você chega na escola às 7h e encontra a turma. Qual saudação combina?", options: ["Boa noite", "Bom dia", "Boa tarde"], answer: 1, explain: "Até o meio-dia, a saudação é “bom dia”." },
-          { q: "E às 15h, ao chegar no curso?", options: ["Bom dia", "Boa noite", "Boa tarde"], answer: 2, explain: "Do meio-dia até o anoitecer, usamos “boa tarde”." },
+        id: "saudacoes", kind: "learn", icon: "brightness-high-fill", label: "Bom dia", hint: "Aprender · 3 sinais",
+        cards: [
+          { sign: "Bom dia", tip: "Saudação até o meio-dia." },
+          { sign: "Boa tarde", tip: "Do meio-dia até o anoitecer." },
+          { sign: "Boa noite", tip: "À noite, tanto ao chegar quanto ao se despedir." },
         ],
       },
       {
-        id: "por-favor", icon: "chat-heart", label: "Por favor", hint: "Gentileza",
+        id: "pratica-saudacoes", kind: "practice", icon: "pencil-square", label: "Pratique: saudações", hint: "4 exercícios",
         questions: [
-          { q: "Qual atitude ajuda a manter uma conversa em Libras?", options: ["Desviar o olhar enquanto a outra pessoa sinaliza", "Manter contato visual durante a conversa", "Falar mais alto para facilitar"], answer: 1, explain: "Em uma língua visual, o contato visual mostra atenção e ajuda a acompanhar a conversa." },
-          { q: "Você não entendeu um sinal. O que é mais educado?", options: ["Pedir, por favor, para a pessoa repetir", "Fingir que entendeu", "Mudar de assunto"], answer: 0, explain: "Pedir para repetir é normal e mostra interesse na conversa." },
+          { type: "video-palavra", sign: "Boa tarde", options: ["Boa tarde", "Bom dia", "Boa noite"], answer: 0, explain: "Esse é o sinal de “boa tarde”." },
+          { type: "situacao", q: "Você chega na escola às 7h e encontra a turma. Qual saudação combina?", options: ["Boa noite", "Bom dia", "Boa tarde"], answer: 1, explain: "Até o meio-dia, a saudação é “bom dia”." },
+          { type: "palavra-video", sign: "Boa noite", options: ["Bom dia", "Boa noite", "Boa tarde"], answer: 1, explain: "“Boa noite” serve para chegar e para se despedir à noite." },
+          { type: "vf", q: "Às 15h, a saudação certa é “bom dia”.", answer: false, explain: "Do meio-dia até o anoitecer, usamos “boa tarde”." },
         ],
       },
       {
-        id: "obrigado", icon: "heart-fill", label: "Obrigado(a)", hint: "Agradecer",
+        id: "revisao-saudacoes", kind: "practice", icon: "arrow-repeat", label: "Revisão", hint: "4 exercícios",
         questions: [
-          { q: "Um colega te ajudou com a lição. O que você diz?", options: ["Desculpa", "Tchau", "Obrigado(a)"], answer: 2, explain: "Agradecer é um dos primeiros sinais que vale aprender." },
-          { q: "Na Libras, as expressões do rosto…", options: ["Não importam", "Fazem parte da língua e podem mudar o sentido", "Devem ser evitadas"], answer: 1, explain: "Expressões faciais e corporais fazem parte da gramática da Libras." },
+          { type: "palavra-video", sign: "Bom dia", options: ["Bom dia", "Tchau", "Boa tarde", "Oi"], answer: 0, explain: "Esse é o sinal de “bom dia”." },
+          { type: "situacao", q: "Qual atitude ajuda a manter uma conversa em Libras?", options: ["Desviar o olhar enquanto a outra pessoa sinaliza", "Manter contato visual durante a conversa", "Falar mais alto para facilitar"], answer: 1, explain: "Em uma língua visual, o contato visual mostra atenção e ajuda a acompanhar a conversa." },
+          { type: "video-palavra", sign: "Tchau", options: ["Oi", "Boa noite", "Tchau"], answer: 2, explain: "Esse é o sinal de “tchau”." },
+          { type: "vf", q: "Na Libras, as expressões do rosto fazem parte da língua.", answer: true, explain: "Expressões faciais e corporais fazem parte da gramática da Libras e podem mudar o sentido." },
         ],
       },
     ],
@@ -63,38 +80,46 @@ const learningTopics = {
     subtitle: "Seu nome e novas conexões",
     branches: [
       {
-        id: "meu-nome", icon: "pencil", label: "Meu nome", hint: "Soletrar o nome",
-        questions: [
-          { q: "Você ainda não tem um sinal para o seu nome. Como se apresenta?", options: ["Soletrando o nome com o alfabeto manual", "Escrevendo no ar com o dedo", "Não dá para se apresentar"], answer: 0, explain: "Antes de ter um sinal-nome, a pessoa soletra o próprio nome com a datilologia." },
-          { q: "Na datilologia, cada configuração de mão representa…", options: ["Uma palavra inteira", "Uma letra", "Uma frase"], answer: 1, explain: "Cada configuração corresponde a uma letra; juntas, elas formam a palavra." },
+        id: "meu-nome", kind: "learn", icon: "tag-fill", label: "Meu nome", hint: "Aprender · 3 sinais",
+        cards: [
+          { sign: "Nome", tip: "Para perguntar e dizer o nome. Sem sinal-nome, soletre com o alfabeto manual." },
+          { sign: "Sinal-nome", tip: "Sinal que identifica uma pessoa. Costuma ser dado por pessoas surdas da comunidade." },
+          { sign: "Prazer", tip: "Para fechar a apresentação: prazer em conhecer." },
         ],
       },
       {
-        id: "sinal-nome", icon: "tag-fill", label: "Sinal-nome", hint: "Seu nome em Libras",
+        id: "pratica-nome", kind: "practice", icon: "pencil-square", label: "Pratique: meu nome", hint: "4 exercícios",
         questions: [
-          { q: "O que é o sinal-nome?", options: ["O nome escrito em português", "Um sinal que identifica uma pessoa", "Um apelido falado em voz alta"], answer: 1, explain: "O sinal-nome identifica a pessoa sem precisar soletrar o nome toda vez." },
-          { q: "Quem costuma dar o sinal-nome a alguém?", options: ["Pessoas surdas da comunidade", "A própria pessoa, sozinha", "O professor de português"], answer: 0, explain: "Na cultura surda, o sinal-nome costuma ser dado por pessoas surdas, muitas vezes ligado a uma característica da pessoa." },
+          { type: "video-palavra", sign: "Nome", options: ["Prazer", "Nome", "Sinal-nome"], answer: 1, explain: "Esse é o sinal de “nome”." },
+          { type: "situacao", q: "Você ainda não tem um sinal para o seu nome. Como se apresenta?", options: ["Soletrando o nome com o alfabeto manual", "Escrevendo no ar com o dedo", "Não dá para se apresentar"], answer: 0, explain: "Antes de ter um sinal-nome, a pessoa soletra o próprio nome com a datilologia." },
+          { type: "vf", q: "O sinal-nome costuma ser dado por pessoas surdas da comunidade.", answer: true, explain: "Na cultura surda, o sinal-nome costuma ser dado por pessoas surdas, muitas vezes ligado a uma característica da pessoa." },
+          { type: "palavra-video", sign: "Prazer", options: ["Prazer", "Nome", "Oi"], answer: 0, explain: "“Prazer em conhecer” fecha bem uma apresentação." },
         ],
       },
       {
-        id: "prazer", icon: "person-plus-fill", label: "Prazer!", hint: "Conhecer alguém",
-        questions: [
-          { q: "Depois de ser apresentado a alguém, o que costuma vir?", options: ["Boa noite", "Desculpa", "Prazer em conhecer"], answer: 2, explain: "“Prazer em conhecer” fecha bem uma apresentação." },
-          { q: "Durante uma apresentação em Libras, para onde olhar?", options: ["Para o chão", "Para o rosto e as mãos de quem sinaliza", "Para o celular"], answer: 1, explain: "Rosto e mãos carregam a mensagem: olhar para eles é acompanhar a conversa." },
+        id: "idade-lugar", kind: "learn", icon: "geo-alt-fill", label: "Idade e lugar", hint: "Aprender · 3 sinais",
+        cards: [
+          { sign: "Idade", tip: "Para perguntar e dizer quantos anos: a resposta usa os sinais dos números." },
+          { sign: "Morar", tip: "Para dizer onde você mora." },
+          { sign: "Cidade", tip: "Muitas cidades têm sinal próprio, criado pela comunidade surda local." },
         ],
       },
       {
-        id: "idade", icon: "cake2-fill", label: "Idade", hint: "Quantos anos?",
+        id: "pratica-idade-lugar", kind: "practice", icon: "pencil-square", label: "Pratique: idade e lugar", hint: "4 exercícios",
         questions: [
-          { q: "Para dizer quantos anos você tem, que tipo de sinal você usa?", options: ["Números", "Cores", "Saudações"], answer: 0, explain: "Idade se diz com os sinais dos números." },
-          { q: "Você não sabe o sinal de um número. O que fazer?", options: ["Desistir da conversa", "Falar mais alto", "Mostrar o número de outro jeito e perguntar o sinal"], answer: 2, explain: "Mostrar o número (nos dedos ou por escrito) e perguntar o sinal é um ótimo jeito de aprender." },
+          { type: "palavra-video", sign: "Cidade", options: ["Morar", "Idade", "Cidade"], answer: 2, explain: "Esse é o sinal de “cidade”." },
+          { type: "situacao", q: "Você não sabe o sinal de um número. O que fazer?", options: ["Desistir da conversa", "Falar mais alto", "Mostrar o número de outro jeito e perguntar o sinal"], answer: 2, explain: "Mostrar o número (nos dedos ou por escrito) e perguntar o sinal é um ótimo jeito de aprender." },
+          { type: "video-palavra", sign: "Morar", options: ["Morar", "Cidade", "Nome"], answer: 0, explain: "Esse é o sinal de “morar”." },
+          { type: "vf", q: "Cada país tem a sua própria língua de sinais.", answer: true, explain: "O Brasil usa a Libras; Portugal, por exemplo, usa a Língua Gestual Portuguesa." },
         ],
       },
       {
-        id: "onde-moro", icon: "geo-alt-fill", label: "Onde moro", hint: "Cidade e bairro",
+        id: "revisao-apresentacoes", kind: "practice", icon: "arrow-repeat", label: "Revisão", hint: "4 exercícios",
         questions: [
-          { q: "Nomes de cidades em Libras…", options: ["Sempre são soletrados", "Muitas vezes têm sinal próprio; se não souber, soletre", "Não podem ser ditos"], answer: 1, explain: "Muitas cidades têm sinal próprio, criado pela comunidade surda local." },
-          { q: "A Libras é a língua de sinais de qual país?", options: ["De todos os países", "Do Brasil", "De Portugal"], answer: 1, explain: "Cada país tem sua língua de sinais. Portugal, por exemplo, usa a Língua Gestual Portuguesa." },
+          { type: "situacao", q: "Durante uma apresentação em Libras, para onde olhar?", options: ["Para o chão", "Para o rosto e as mãos de quem sinaliza", "Para o celular"], answer: 1, explain: "Rosto e mãos carregam a mensagem: olhar para eles é acompanhar a conversa." },
+          { type: "video-palavra", sign: "Sinal-nome", options: ["Nome", "Sinal-nome", "Prazer"], answer: 1, explain: "Esse é o sinal de “sinal-nome”." },
+          { type: "vf", q: "Nomes de cidades sempre precisam ser soletrados em Libras.", answer: false, explain: "Muitas cidades têm sinal próprio. Se você não souber, aí sim soletre." },
+          { type: "palavra-video", sign: "Idade", options: ["Cidade", "Idade", "Morar", "Nome"], answer: 1, explain: "Esse é o sinal de “idade”." },
         ],
       },
     ],
@@ -106,38 +131,47 @@ const learningTopics = {
     subtitle: "Quem faz parte da sua vida",
     branches: [
       {
-        id: "familia", icon: "house-heart-fill", label: "Família", hint: "Mãe, pai e irmãos",
-        questions: [
-          { q: "Qual destas palavras é da família?", options: ["Azul", "Mãe", "Bom dia"], answer: 1, explain: "Mãe, pai, irmão e avó estão no tema família do dicionário." },
-          { q: "Muitas pessoas surdas nascem em famílias ouvintes. Quando a família aprende Libras…", options: ["A comunicação em casa fica mais fácil", "Não faz diferença", "Atrapalha o aprendizado"], answer: 0, explain: "Uma língua em comum aproxima a família e ajuda no desenvolvimento da criança surda." },
+        id: "familia", kind: "learn", icon: "house-heart-fill", label: "Família", hint: "Aprender · 4 sinais",
+        cards: [
+          { sign: "Mãe", tip: "Muitas crianças surdas nascem em famílias ouvintes: quando a família aprende Libras, a conversa em casa fica mais fácil." },
+          { sign: "Pai", tip: "Também está no tema família do dicionário." },
+          { sign: "Irmão", tip: "Para falar do irmão." },
+          { sign: "Irmã", tip: "Para falar da irmã." },
         ],
       },
       {
-        id: "amigos", icon: "people-fill", label: "Amigos", hint: "Turma e colegas",
+        id: "pratica-familia", kind: "practice", icon: "pencil-square", label: "Pratique: família", hint: "4 exercícios",
         questions: [
-          { q: "Dois colegas conversam em Libras e você precisa passar. O que é mais educado?", options: ["Passar no meio dos dois", "Esperar uma pausa ou passar por trás, pedindo licença", "Interromper com um grito"], answer: 1, explain: "Passar entre duas pessoas que sinalizam corta a conversa; espere ou peça licença." },
-          { q: "Em uma roda de conversa em Libras, qual formação ajuda todo mundo?", options: ["Em fila", "De costas", "Em círculo, para todos se verem"], answer: 2, explain: "Em círculo, todos enxergam as mãos e o rosto de quem está sinalizando." },
+          { type: "video-palavra", sign: "Mãe", options: ["Pai", "Irmã", "Mãe"], answer: 2, explain: "Esse é o sinal de “mãe”." },
+          { type: "palavra-video", sign: "Irmã", options: ["Irmã", "Irmão", "Pai"], answer: 0, explain: "Esse é o sinal de “irmã”." },
+          { type: "situacao", q: "Muitas pessoas surdas nascem em famílias ouvintes. Quando a família aprende Libras…", options: ["A comunicação em casa fica mais fácil", "Não faz diferença", "Atrapalha o aprendizado"], answer: 0, explain: "Uma língua em comum aproxima a família e ajuda no desenvolvimento da criança surda." },
+          { type: "vf", q: "“Pai” e “mãe” estão no mesmo tema do dicionário.", answer: true, explain: "Os dois estão no tema família, junto com irmão, irmã e avó." },
         ],
       },
       {
-        id: "apontar", icon: "hand-index-fill", label: "Apontar", hint: "Eu, você, ele",
-        questions: [
-          { q: "Em Libras, para falar de uma pessoa que está presente, é comum…", options: ["Apontar para ela", "Soletrar “ele”", "Fechar os olhos"], answer: 0, explain: "A apontação funciona como pronome: aponta-se para a pessoa de quem se fala." },
-          { q: "E quando a pessoa não está presente?", options: ["Não dá para falar dela", "Só por escrito", "Marca-se um ponto no espaço para representá-la"], answer: 2, explain: "O espaço à frente de quem sinaliza é usado para marcar pessoas e lugares durante a conversa." },
+        id: "pessoas", kind: "learn", icon: "people-fill", label: "Amigos e pessoas", hint: "Aprender · 3 sinais",
+        cards: [
+          { sign: "Amigo", tip: "Para falar de colegas e da turma." },
+          { sign: "Eu", tip: "Para falar de si mesmo." },
+          { sign: "Você", tip: "Para falar com a pessoa que está conversando com você." },
         ],
       },
       {
-        id: "descrever", icon: "person-bounding-box", label: "Descrever", hint: "Como a pessoa é",
+        id: "pratica-pessoas", kind: "practice", icon: "pencil-square", label: "Pratique: pessoas", hint: "4 exercícios",
         questions: [
-          { q: "Para descrever a aparência de alguém, a Libras usa muito…", options: ["O espaço e a forma das mãos", "Só a datilologia", "Só a voz"], answer: 0, explain: "A forma e o movimento das mãos no espaço ajudam a mostrar tamanho, formato e jeito." },
-          { q: "Ao descrever uma pessoa, o que é respeitoso?", options: ["Imitar de forma exagerada", "Falar das características sem zombar", "Apontar e rir"], answer: 1, explain: "Descrever é diferente de caçoar: foque nas características com respeito." },
+          { type: "palavra-video", sign: "Amigo", options: ["Você", "Amigo", "Eu"], answer: 1, explain: "Esse é o sinal de “amigo”." },
+          { type: "situacao", q: "Dois colegas conversam em Libras e você precisa passar. O que é mais educado?", options: ["Passar no meio dos dois", "Esperar uma pausa ou passar por trás, pedindo licença", "Interromper com um grito"], answer: 1, explain: "Passar entre duas pessoas que sinalizam corta a conversa; espere ou peça licença." },
+          { type: "video-palavra", sign: "Você", options: ["Eu", "Amigo", "Você"], answer: 2, explain: "Esse é o sinal de “você”." },
+          { type: "vf", q: "Numa roda de conversa em Libras, ficar em círculo ajuda todo mundo a se ver.", answer: true, explain: "Em círculo, todos enxergam as mãos e o rosto de quem está sinalizando." },
         ],
       },
       {
-        id: "respeito", icon: "flower1", label: "Respeito", hint: "Cultura surda",
+        id: "revisao-pessoas", kind: "practice", icon: "flower1", label: "Respeito", hint: "4 exercícios",
         questions: [
-          { q: "Qual termo é o mais adequado hoje?", options: ["Surdo-mudo", "Mudinho", "Surdo ou pessoa surda"], answer: 2, explain: "“Surdo-mudo” é incorreto: pessoas surdas têm voz e podem falar; muitas preferem se comunicar em Libras." },
-          { q: "Qual lei reconheceu a Libras como meio legal de comunicação no Brasil?", options: ["Lei nº 10.436/2002", "Lei Áurea", "Constituição de 1824"], answer: 0, explain: "A Lei nº 10.436, de 2002, reconheceu a Libras; o Decreto nº 5.626, de 2005, a regulamentou." },
+          { type: "situacao", q: "Qual termo é o mais adequado hoje?", options: ["Surdo-mudo", "Mudinho", "Surdo ou pessoa surda"], answer: 2, explain: "“Surdo-mudo” é incorreto: pessoas surdas têm voz e podem falar; muitas preferem se comunicar em Libras." },
+          { type: "video-palavra", sign: "Irmão", options: ["Irmão", "Amigo", "Pai"], answer: 0, explain: "Esse é o sinal de “irmão”." },
+          { type: "vf", q: "Descrever como uma pessoa é e zombar dela são a mesma coisa.", answer: false, explain: "Descrever é diferente de caçoar: foque nas características, com respeito." },
+          { type: "situacao", q: "Qual lei reconheceu a Libras como meio legal de comunicação no Brasil?", options: ["Lei nº 10.436/2002", "Lei Áurea", "Constituição de 1824"], answer: 0, explain: "A Lei nº 10.436, de 2002, reconheceu a Libras; o Decreto nº 5.626, de 2005, a regulamentou." },
         ],
       },
     ],
@@ -160,12 +194,12 @@ function isLessonDone(topicId, branchId) {
   return state.completedLessons.includes(lessonKey(topicId, branchId));
 }
 
-// Quantos dos 5 galhos desta etapa já foram concluídos.
+// Quantas das 5 atividades desta etapa já foram concluídas.
 function doneBranchCount(topicId) {
   return learningTopics[topicId].branches.filter((branch) => isLessonDone(topicId, branch.id)).length;
 }
 
-// A prova final só abre quando todos os galhos estão concluídos.
+// A prova final só abre quando todas as atividades estão concluídas.
 function isFinalUnlocked(topicId) {
   return doneBranchCount(topicId) === learningTopics[topicId].branches.length;
 }
@@ -189,9 +223,21 @@ function markLessonDone(topicId, branchId) {
   return true;
 }
 
-// Perguntas de um galho; a prova final junta a primeira pergunta de cada galho.
-function questionsFor(topicId, branchId) {
+// Passos de uma atividade: os cartões (aprender) ou as perguntas (exercício).
+// A prova final junta as 2 primeiras perguntas de cada exercício da etapa.
+function stepsFor(topicId, branchId) {
   const topic = learningTopics[topicId];
-  if (branchId === "final") return topic.branches.map((branch) => branch.questions[0]);
-  return topic.branches.find((branch) => branch.id === branchId).questions;
+  if (branchId === "final") {
+    return topic.branches
+      .filter((branch) => branch.kind === "practice")
+      .flatMap((branch) => branch.questions.slice(0, 2));
+  }
+  const branch = topic.branches.find((entry) => entry.id === branchId);
+  return branch.kind === "learn" ? branch.cards : branch.questions;
+}
+
+// Tipo da atividade: "learn" (aprender) ou "practice" (exercício; a prova final também).
+function activityKind(topicId, branchId) {
+  if (branchId === "final") return "practice";
+  return learningTopics[topicId].branches.find((branch) => branch.id === branchId).kind;
 }

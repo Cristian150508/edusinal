@@ -1,11 +1,13 @@
-// ATIVIDADE (LIÇÃO)
-// Como uma atividade funciona, pergunta por pergunta:
-//   1. o aluno escolhe uma resposta (pode trocar);
-//   2. toca em "Conferir": errar gasta uma vida;
-//   3. "Continuar" vai para a próxima pergunta; na última, "Concluir".
-// Exercício: concluído se chegar ao fim com vidas.
-// Prova final: além disso, pode errar no máximo FINAL_MAX_MISTAKES vezes.
-// As perguntas ficam em conteudo.js.
+// ATIVIDADE
+// Dois tipos, vindos de conteudo.js:
+//   Aprender (learn): cartões com sinais novos. Não tem certo ou errado e não
+//     gasta vidas; "Próximo" passa para o cartão seguinte.
+//   Exercício (practice) e prova final: pergunta por pergunta,
+//     1. o aluno escolhe uma resposta (pode trocar);
+//     2. toca em "Conferir": errar gasta uma vida;
+//     3. "Continuar" vai para a próxima; na última, "Concluir".
+//   O exercício é concluído se chegar ao fim com vidas. Na prova final, além
+//   disso, pode errar no máximo FINAL_MAX_MISTAKES vezes.
 
 function startBranch(topicId, branchId) {
   const index = learningTopics[topicId].branches.findIndex((branch) => branch.id === branchId);
@@ -14,63 +16,152 @@ function startBranch(topicId, branchId) {
   state.currentLesson = {
     topicId,
     branchId,
-    questions: questionsFor(topicId, branchId),
-    index: 0,        // pergunta atual
+    kind: activityKind(topicId, branchId),
+    steps: stepsFor(topicId, branchId), // cartões ou perguntas
+    index: 0,        // passo atual
     mistakes: 0,     // quantas erradas até agora
     outOfLives: false,
   };
   setScreen("lesson");
 }
 
-function currentQuestion() {
+function currentStep() {
   const lesson = state.currentLesson;
-  return lesson.questions[lesson.index];
+  return lesson.steps[lesson.index];
 }
 
 function isFinalExam(lesson = state.currentLesson) {
   return lesson.branchId === "final";
 }
 
-// Título pequeno da atividade: etapa / exercício (ou prova final).
-function lessonEyebrow() {
+function isLearning(lesson = state.currentLesson) {
+  return lesson.kind === "learn";
+}
+
+// ----- Vídeo do sinal -----
+
+// Mostra o vídeo do sinal; enquanto ele não foi gravado, um espaço reservado
+// com o nome do sinal ("prévia"), só para dar para testar o protótipo.
+function signVideoHtml(sign, size = "large") {
+  const video = SIGN_VIDEOS[sign];
+  if (video) {
+    return `<video class="sign-video sign-video-${size}" src="${video}" autoplay loop muted playsinline aria-label="Vídeo do sinal ${escapeHtml(sign)}"></video>`;
+  }
+  return `<div class="sign-video sign-video-${size} is-placeholder" role="img" aria-label="Vídeo do sinal ${escapeHtml(sign)} (em produção)">
+      ${icon("play-circle-fill", "sign-video-play")}
+      <span>Vídeo em produção</span>
+      <small class="sign-preview">prévia: ${escapeHtml(sign)}</small>
+    </div>`;
+}
+
+// ----- Respostas -----
+
+// Posição da resposta certa (no verdadeiro ou falso: 0 = Verdadeiro, 1 = Falso).
+function correctOption(question) {
+  if (question.type === "vf") return question.answer ? 0 : 1;
+  return question.answer;
+}
+
+// Nome da resposta certa, para a mensagem depois de conferir.
+function correctAnswerLabel(question) {
+  if (question.type === "vf") return question.answer ? "Verdadeiro" : "Falso";
+  if (question.type === "palavra-video") return `o vídeo ${optionLetter(question.answer)}`;
+  return `“${question.options[question.answer]}”`;
+}
+
+function optionLetter(position) {
+  return "ABCD"[position];
+}
+
+// Título grande de cada tipo de pergunta.
+function questionTitle(question) {
+  if (question.type === "video-palavra") return "O que este sinal significa?";
+  if (question.type === "palavra-video") return `Qual é o sinal de “${escapeHtml(question.sign)}”?`;
+  if (question.type === "vf") return "Verdadeiro ou falso?";
+  return question.q;
+}
+
+// Opções em texto: botões grandes, com o número da tecla (1, 2, 3...).
+function textOptionsHtml(options) {
+  return `<div class="answer-list" role="group" aria-label="Opções de resposta">${options.map((text, position) =>
+    `<button class="answer-option" type="button" data-action="select-answer" data-option="${position}" aria-pressed="false"><span class="answer-key" aria-hidden="true">${position + 1}</span><span>${text}</span></button>`,
+  ).join("")}</div>`;
+}
+
+// Opções em vídeo: cartões com o vídeo de cada sinal e uma letra.
+function videoOptionsHtml(signs) {
+  return `<div class="answer-grid answer-grid-${signs.length}" role="group" aria-label="Escolha o vídeo">${signs.map((sign, position) =>
+    `<button class="answer-option answer-video" type="button" data-action="select-answer" data-option="${position}" aria-pressed="false" aria-label="Vídeo ${optionLetter(position)}">${signVideoHtml(sign, "small")}<span class="answer-key" aria-hidden="true">${optionLetter(position)}</span></button>`,
+  ).join("")}</div>`;
+}
+
+function trueFalseHtml() {
+  return `<div class="answer-tf" role="group" aria-label="Verdadeiro ou falso">
+      <button class="answer-option answer-true" type="button" data-action="select-answer" data-option="0" aria-pressed="false">${icon("check-lg")}<span>Verdadeiro</span></button>
+      <button class="answer-option answer-false" type="button" data-action="select-answer" data-option="1" aria-pressed="false">${icon("x-lg")}<span>Falso</span></button>
+    </div>`;
+}
+
+// O meio da tela de um exercício, conforme o tipo da pergunta.
+function questionBodyHtml(question) {
+  if (question.type === "video-palavra") return `<div class="question-split">${signVideoHtml(question.sign)}${textOptionsHtml(question.options)}</div>`;
+  if (question.type === "palavra-video") return videoOptionsHtml(question.options);
+  if (question.type === "vf") return `<blockquote class="tf-statement">${question.q}</blockquote>${trueFalseHtml()}`;
+  return textOptionsHtml(question.options);
+}
+
+// ----- Tela -----
+
+// Linha pequena do topo: etapa · atividade · passo.
+function lessonKicker() {
   const lesson = state.currentLesson;
   const topic = learningTopics[lesson.topicId];
   const name = isFinalExam() ? "Prova final" : topic.branches.find((branch) => branch.id === lesson.branchId).label;
-  return `${topic.title.toUpperCase()} <span class="eyebrow-separator">/</span> ${name.toUpperCase()}`;
-}
-
-// Recompensa mostrada no topo: refazer algo já concluído é revisão, sem XP.
-function lessonRewardLabel() {
-  const lesson = state.currentLesson;
-  if (isLessonDone(lesson.topicId, lesson.branchId)) return "Revisão · sem XP";
-  return `${icon("lightning-charge-fill")} +${XP_PER_EXERCISE} XP`;
+  return `${topic.title} · ${name} · ${lesson.index + 1} de ${lesson.steps.length}`;
 }
 
 function renderLesson() {
   const lesson = state.currentLesson;
-  const question = currentQuestion();
-  const total = lesson.questions.length;
+  const step = currentStep();
+  const total = lesson.steps.length;
+  const isLast = lesson.index === total - 1;
   const progress = Math.round((lesson.index / total) * 100);
-  const hint = isFinalExam()
-    ? `Prova final: para passar, erre no máximo ${FINAL_MAX_MISTAKES}.`
-    : "Escolha a melhor resposta e toque em Conferir.";
-  const options = question.options.map((text, position) =>
-    `<button class="answer-option" type="button" data-action="select-answer" data-option="${position}" aria-pressed="false">${text}</button>`,
-  ).join("");
+
+  // Aprender: cartão do sinal e botão para seguir
+  let body;
+  let footerHint;
+  let button;
+  if (isLearning()) {
+    body = `<h2>Sinal novo</h2>${signVideoHtml(step.sign)}<p class="learn-word">${escapeHtml(step.sign)}</p><p class="learn-tip">${step.tip}</p>`;
+    footerHint = `${icon("eye")} Assista ao sinal e repita com as mãos.`;
+    button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="${isLast ? "finish-lesson" : "next-question"}">${isLast ? "Concluir" : "Próximo"}</button>`;
+  } else {
+    body = `<h2>${questionTitle(step)}</h2>${questionBodyHtml(step)}`;
+    footerHint = isFinalExam() ? `${icon("trophy-fill")} Prova final: para passar, erre no máximo ${FINAL_MAX_MISTAKES}.` : "";
+    button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="check-answer" disabled>Conferir</button>`;
+  }
+
+  const status = isLearning()
+    ? `<span class="lesson-badge">${icon("book-half")} Aprender</span>`
+    : `<span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></span>`;
 
   return `
-    <section class="lesson-wrap">
-      <div class="lesson-topline"><button class="back-button" type="button" data-action="leave-lesson" aria-label="Sair da atividade"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span class="back-label">Voltar</span></button><span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${livesHeartsHtml()}</span><span class="lesson-xp">${lessonRewardLabel()}</span></div>
-      <div class="lesson-progress" role="progressbar" aria-label="Progresso da atividade" aria-valuenow="${lesson.index}" aria-valuemin="0" aria-valuemax="${total}"><span id="lesson-progress-bar" style="width: ${progress}%"></span></div>
-      <div class="lesson-content">
-        <p class="eyebrow">${lessonEyebrow()} <span class="lesson-count">· ${lesson.index + 1} de ${total}</span></p>
-        <h2>${question.q}</h2>
-        <p class="lesson-hint">${hint}</p>
-        <div class="answer-list" role="group" aria-label="Opções de resposta">${options}</div>
-        <div class="answer-feedback" id="answer-feedback" aria-live="polite"></div>
-        <button class="button button-primary continue-button" id="lesson-continue" type="button" data-action="check-answer" disabled>Conferir</button>
+    <section class="lesson is-${lesson.kind}" aria-labelledby="lesson-kicker">
+      <header class="lesson-top">
+        <button class="lesson-close" type="button" data-action="leave-lesson" aria-label="Sair da atividade" title="Sair">${icon("x-lg")}</button>
+        <div class="lesson-progress" role="progressbar" aria-label="Progresso da atividade" aria-valuenow="${lesson.index}" aria-valuemin="0" aria-valuemax="${total}"><span id="lesson-progress-bar" style="width: ${progress}%"></span></div>
+        ${status}
+      </header>
+      <div class="lesson-body">
+        <p class="lesson-kicker" id="lesson-kicker">${escapeHtml(lessonKicker())}</p>
+        ${body}
       </div>
-      <p class="demo-disclaimer">Atividade demonstrativa; o conteúdo deve ser revisado por pessoas surdas fluentes em Libras.</p>
+      <footer class="lesson-footer" id="lesson-footer">
+        <div class="lesson-footer-inner">
+          <div class="lesson-feedback" id="answer-feedback" aria-live="polite">${footerHint}</div>
+          ${button}
+        </div>
+      </footer>
     </section>`;
 }
 
@@ -84,6 +175,9 @@ function selectAnswer(clickedButton) {
   document.getElementById("lesson-continue").disabled = false;
 }
 
+// Frases de "acertou", variando a cada pergunta.
+const CORRECT_TITLES = ["Muito bem!", "Isso aí!", "Mandou bem!", "Certinho!"];
+
 // 2º passo: "Conferir" mostra se acertou e decide o que vem depois.
 function checkAnswer() {
   const lesson = state.currentLesson;
@@ -91,32 +185,38 @@ function checkAnswer() {
   if (state.answered || !chosen) return;
   state.answered = true;
 
-  const question = currentQuestion();
-  const isCorrect = Number(chosen.dataset.option) === question.answer;
+  const question = currentStep();
+  const rightOption = correctOption(question);
+  const isCorrect = Number(chosen.dataset.option) === rightOption;
   if (!isCorrect) {
     lesson.mistakes += 1;
     loseLife();
     const lives = document.querySelector(".lesson-lives");
-    lives.innerHTML = livesHeartsHtml();
+    lives.querySelector("strong").textContent = state.lives;
     lives.setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas`);
+    lives.classList.add("is-losing"); // coração treme
   }
 
   document.querySelectorAll(".answer-option").forEach((option) => {
     option.disabled = true;
-    if (Number(option.dataset.option) === question.answer) option.classList.add("is-correct");
+    if (Number(option.dataset.option) === rightOption) option.classList.add("is-correct");
     else if (option === chosen) option.classList.add("is-incorrect");
   });
-  document.getElementById("lesson-progress-bar").style.width = `${Math.round(((lesson.index + 1) / lesson.questions.length) * 100)}%`;
+  document.getElementById("lesson-progress-bar").style.width = `${Math.round(((lesson.index + 1) / lesson.steps.length) * 100)}%`;
 
-  const feedback = document.getElementById("answer-feedback");
-  feedback.className = `answer-feedback ${isCorrect ? "is-correct" : "is-incorrect"}`;
-  feedback.textContent = isCorrect
-    ? `Isso! ${question.explain}`
-    : `Resposta certa: “${question.options[question.answer]}”. ${question.explain}`;
+  // Faixa de baixo: verde-turquesa se acertou, coral se errou
+  document.getElementById("lesson-footer").classList.add(isCorrect ? "is-correct" : "is-incorrect");
+  const title = isCorrect ? CORRECT_TITLES[lesson.index % CORRECT_TITLES.length] : `Quase! A resposta certa é ${correctAnswerLabel(question)}.`;
+  document.getElementById("answer-feedback").innerHTML = `
+    <span class="feedback-icon">${icon(isCorrect ? "check-lg" : "x-lg")}</span>
+    <span><strong>${title}</strong><small>${question.explain}</small></span>`;
+  // a faixa cresce com a explicação: o conteúdo ganha espaço para não ficar embaixo dela
+  const footer = document.getElementById("lesson-footer");
+  document.querySelector(".lesson").style.paddingBottom = `${footer.offsetHeight + 16}px`;
 
   // O que o botão faz agora
   const button = document.getElementById("lesson-continue");
-  const isLast = lesson.index === lesson.questions.length - 1;
+  const isLast = lesson.index === lesson.steps.length - 1;
   const failedExam = isFinalExam() && lesson.mistakes > FINAL_MAX_MISTAKES;
   if (!isCorrect && state.lives === 0) {
     lesson.outOfLives = true;
@@ -129,13 +229,21 @@ function checkAnswer() {
     button.dataset.action = "next-question";
     button.textContent = "Continuar";
   }
+  button.focus({ preventScroll: true });
 }
 
 function nextQuestion() {
   state.currentLesson.index += 1;
   state.answered = false;
   render();
-  document.querySelector(".answer-option")?.focus({ preventScroll: true });
+  (document.querySelector(".answer-option") || document.getElementById("lesson-continue"))?.focus({ preventScroll: true });
+}
+
+// Volta direto para a árvore da etapa (sem a animação de abrir, que é só a partir da Home).
+function backToTree(topicId) {
+  setScreen("trail");
+  state.focusTopic = topicId;
+  render();
 }
 
 // Fim da atividade: conclui (e premia na 1ª vez) ou explica por que não passou.
@@ -156,14 +264,28 @@ function finishLesson() {
   } else {
     showToast("Revisão concluída!");
   }
-
-  setScreen("trail");
-  openTopic(lesson.topicId);
+  backToTree(lesson.topicId);
 }
 
 // Sair no meio: volta para a árvore sem concluir (vidas perdidas não voltam).
 function leaveLesson() {
   const lesson = state.currentLesson;
-  setScreen("trail");
-  if (lesson) openTopic(lesson.topicId);
+  if (lesson) backToTree(lesson.topicId);
+  else setScreen("trail");
+}
+
+// Teclado na atividade: 1 a 4 escolhem a resposta; Enter confere ou continua.
+function handleLessonKey(event) {
+  if (state.screen !== "lesson") return false;
+  if (/^[1-4]$/.test(event.key) && !state.answered) {
+    const option = document.querySelector(`.answer-option[data-option="${Number(event.key) - 1}"]`);
+    if (option) selectAnswer(option);
+    return Boolean(option);
+  }
+  if (event.key === "Enter" && event.target.tagName !== "BUTTON") {
+    const button = document.getElementById("lesson-continue");
+    if (button && !button.disabled) button.click();
+    return true;
+  }
+  return false;
 }

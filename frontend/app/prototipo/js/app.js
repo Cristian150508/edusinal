@@ -100,10 +100,11 @@ function render() {
   app.dataset.motion = state.motion;
 }
 
-// Vai para outra tela. Sem vidas, o desafio fica bloqueado (revisar continua livre).
+// Vai para outra tela. Sem vidas, os exercícios ficam bloqueados (aprender e
+// revisar no dicionário continuam livres).
 function setScreen(screen) {
-  if (screen === "lesson" && !state.currentLesson) screen = "trail"; // atividade só começa por um galho
-  if (screen === "lesson") {
+  if (screen === "lesson" && !state.currentLesson) screen = "trail"; // atividade só começa pela árvore
+  if (screen === "lesson" && state.currentLesson.kind !== "learn") {
     refreshLives();
     if (state.lives === 0) {
       showToast("Suas vidas estão recarregando. Você ainda pode revisar sinais e conteúdos.");
@@ -258,6 +259,7 @@ document.addEventListener("submit", (event) => {
 
 // Esc fecha o modo foco.
 document.addEventListener("keydown", (event) => {
+  if (handleLessonKey(event)) return; // atividade: 1 a 4 e Enter (em licao.js)
   if (event.key !== "Escape") return;
   if (state.focusTopic) closeTopic();
 });

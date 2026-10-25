@@ -173,7 +173,7 @@ function renderBranchBubble(topicId) {
     title = `${index + 1}. ${branch.label}`;
     text = status === "locked" ? "Conclua o exercício anterior para liberar este." : `${branch.hint} · ${status === "done" ? "já concluído (revisão, sem XP)" : `+${XP_PER_EXERCISE} XP`}`;
     point = WAVE_POINTS[index];
-    if (status !== "locked") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
+    if (status !== "locked") action = `<button class="button-3d button-3d-primary" type="button" data-action="start-branch" data-topic="${topicId}" data-branch="${branch.id}" ${state.lives === 0 && branch.kind === "practice" ? "disabled" : ""}>${status === "done" ? "Refazer" : "Começar"} ${icon("arrow-right")}</button>`;
   }
   return `<div class="tree-bubble${selected === "final" ? " is-above" : ""}" role="dialog" aria-label="${title}" style="--mx:${point.x}%;--my:${point.y}%"><strong>${title}</strong><p>${text}</p>${action}</div>`;
 }

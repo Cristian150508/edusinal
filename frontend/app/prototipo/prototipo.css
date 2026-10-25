@@ -958,124 +958,7 @@ textarea {
   resize: vertical;
 }
 
-.lesson-wrap {
-  max-width: 710px;
-  margin: 0 auto;
-}
-
-.lesson-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 4px 0 15px;
-}
-
-.lesson-xp {
-  color: #927018;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.lesson-progress {
-  height: 6px;
-  margin-bottom: 31px;
-  overflow: hidden;
-  border-radius: 8px;
-  background: var(--line);
-}
-
-.lesson-progress span {
-  transition: width 400ms ease;
-  height: 100%;
-  display: block;
-  background: var(--primary);
-}
-
-.lesson-content {
-  max-width: 590px;
-  margin: 0 auto;
-  padding: 26px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-}
-
-.lesson-content h2 {
-  margin: 0 0 8px;
-  font-family: "Manrope", sans-serif;
-  font-size: 23px;
-  line-height: 1.35;
-}
-
-.lesson-hint {
-  margin: 0 0 19px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.eyebrow-separator {
-  padding: 0 5px;
-  color: var(--coral);
-}
-
-.answer-list {
-  display: grid;
-  gap: 8px;
-}
-
-.answer-option {
-  min-height: 51px;
-  padding: 10px 13px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  background: var(--surface);
-  cursor: pointer;
-  text-align: left;
-  font-size: 14px;
-  line-height: 1.5;
-  transition: background-color 140ms ease, border-color 140ms ease;
-}
-
-.answer-option:hover:not(:disabled) {
-  border-color: var(--primary);
-  background: var(--surface-alt);
-}
-
-.answer-option.is-selected {
-  border-color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary);
-}
-
 /* Depois de conferir: certa em verde-turquesa, errada em coral (sem o contorno de "escolhida") */
-.answer-option.is-correct {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: none;
-}
-
-.answer-option.is-incorrect {
-  border-color: var(--coral);
-  background: var(--coral-soft);
-  box-shadow: none;
-}
-
-.answer-feedback {
-  min-height: 31px;
-  margin-top: 9px;
-  color: var(--primary-strong);
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.continue-button {
-  width: 100%;
-  margin-top: 5px;
-}
-
-.lesson-wrap > .demo-disclaimer {
-  text-align: center;
-}
 
 .signup-layout {
   min-height: 600px;
@@ -1530,11 +1413,13 @@ textarea {
     transition: grid-template-columns 380ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .app-shell[data-focus="on"] {
+  .app-shell[data-focus="on"],
+  .app-shell[data-current-screen="lesson"] {
     grid-template-columns: 0 minmax(0, 1fr);
   }
 
-  .app-shell[data-focus="on"] .sidebar {
+  .app-shell[data-focus="on"] .sidebar,
+  .app-shell[data-current-screen="lesson"] .sidebar {
     overflow: hidden;
     padding-right: 0;
     padding-left: 0;
@@ -1548,7 +1433,9 @@ textarea {
   }
 
   /* Modo foco no computador: sem rodapé e com margens menores, para a árvore crescer */
-  .app-shell[data-focus="on"] .app-footer { display: none; }
+  .app-shell[data-focus="on"] .app-footer,
+  .app-shell[data-current-screen="lesson"] .app-footer { display: none; }
+  .app-shell[data-current-screen="lesson"] .screen-root { padding-top: 20px; padding-bottom: 0; }
   .app-shell[data-focus="on"] .screen-root { padding-top: 20px; padding-bottom: 20px; }
 }
 
@@ -1594,7 +1481,7 @@ textarea {
 .button-3d-light { background: #ffffff; color: var(--hero-shadow); }
 .button-3d-primary { background: var(--hero-from); color: #ffffff; }
 .button-3d-outline { border: 2px solid var(--line); background: var(--surface); box-shadow: 0 4px 0 var(--line); color: var(--primary); }
-.button-3d:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.button-3d:disabled { background: var(--surface-soft); box-shadow: 0 4px 0 var(--line); color: var(--muted); cursor: not-allowed; transform: none; }
 
 /* ----- Destaque do topo ----- */
 .home-hero {
@@ -1866,6 +1753,233 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .trail-step:not(:last-child)::after { top: 40px; bottom: 0; left: 30px; width: 6px; height: auto; }
   .trail-node { width: 66px; height: 66px; flex: none; font-size: 20px; }
   .trail-tooltip { display: none; }
+}
+
+/* ===================================================================
+   ATIVIDADE (inspirada no Duolingo)
+   Tela cheia: em cima, sair + barra de progresso + vidas; no meio, o cartão
+   do sinal (aprender) ou a pergunta; embaixo, uma faixa fixa com o botão.
+   Depois de conferir, a faixa fica turquesa (acertou) ou coral (errou).
+   =================================================================== */
+.lesson {
+  width: min(760px, 100%);
+  min-height: calc(100vh - 20px);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding-bottom: 100px; /* espaço para a faixa fixa de baixo (o JS ajusta depois de conferir) */
+}
+
+.lesson-top { display: flex; align-items: center; gap: 16px; }
+.lesson-close {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 22px;
+}
+.lesson-close:hover { background: var(--surface-soft); color: var(--text); }
+.lesson-progress { flex: 1; height: 16px; overflow: hidden; border-radius: 99px; background: var(--surface-soft); }
+.lesson-progress span {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: var(--accent);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.1);
+  transition: width 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.lesson-lives { display: inline-flex; align-items: center; gap: 6px; color: var(--coral); font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.lesson-lives.is-losing .bi { animation: heart-shake 500ms ease-in-out; }
+@keyframes heart-shake {
+  0%, 100% { transform: rotate(0) scale(1); }
+  25% { transform: rotate(-14deg) scale(1.2); }
+  75% { transform: rotate(14deg) scale(1.2); }
+}
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lesson-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 20px 0 16px; }
+.lesson-kicker { margin: 0; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.lesson-body h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; line-height: 1.25; }
+
+/* Vídeo do sinal (ou o espaço reservado, enquanto não foi gravado) */
+.sign-video {
+  width: min(440px, 100%, (100vh - 400px) * 1.6); /* em telas baixas, encolhe para caber */
+  aspect-ratio: 16 / 10;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: #0f1b2b;
+  object-fit: cover;
+}
+.sign-video.is-placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  border: 2px dashed var(--line);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.sign-video-play { color: var(--primary); font-size: 46px; }
+.sign-preview { padding: 2px 10px; border-radius: 99px; background: var(--surface); font-size: 12px; font-weight: 700; }
+.sign-video-small { width: 100%; border-radius: 12px; }
+.sign-video-small.is-placeholder { gap: 4px; font-size: 11px; }
+.sign-video-small .sign-video-play { font-size: 30px; }
+
+/* Aprender: nome do sinal e dica */
+.learn-word { margin: 0; font-family: "Manrope", sans-serif; font-size: 34px; font-weight: 800; text-align: center; }
+.learn-tip { max-width: 480px; margin: -8px auto 0; color: var(--muted); font-size: 16px; line-height: 1.5; text-align: center; }
+
+/* Respostas: botões "3D" que afundam ao apertar */
+.answer-list { display: grid; gap: 12px; }
+.answer-option {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.answer-option:hover:not(:disabled) { background: var(--surface-soft); }
+.answer-option:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.answer-option:disabled { cursor: default; }
+.answer-option.is-selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 4px 0 var(--primary); }
+.answer-option.is-correct { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 4px 0 var(--accent); }
+.answer-option.is-incorrect { border-color: var(--coral); background: var(--coral-soft); box-shadow: 0 4px 0 var(--coral); }
+.answer-key {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+}
+.answer-option.is-selected .answer-key { border-color: var(--primary); color: var(--primary); }
+.answer-option.is-correct .answer-key { border-color: var(--accent); color: var(--accent); }
+.answer-option.is-incorrect .answer-key { border-color: var(--coral); color: var(--coral); }
+
+/* Vídeo → palavra: no computador, vídeo à esquerda e respostas à direita */
+.question-split { display: grid; gap: 16px; }
+@media (min-width: 900px) {
+  .question-split { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: 24px; }
+  .question-split .sign-video { width: 100%; }
+}
+
+/* Palavra → vídeo: cartões de vídeo lado a lado */
+.answer-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.answer-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.answer-video { flex-direction: column; gap: 8px; padding: 8px 8px 10px; }
+
+/* Verdadeiro ou falso: a frase e dois botões grandes */
+.tf-statement {
+  margin: 0;
+  padding: 24px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  font-family: "Manrope", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+}
+.answer-tf { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.answer-tf .answer-option { min-height: 112px; flex-direction: column; justify-content: center; gap: 6px; font-size: 18px; font-weight: 800; text-align: center; }
+.answer-tf .answer-option > .bi { font-size: 32px; }
+.answer-true > .bi { color: var(--accent); }
+.answer-false > .bi { color: var(--coral); }
+
+/* Faixa fixa de baixo: dica ou resultado + botão */
+.lesson-footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  border-top: 2px solid var(--line);
+  background: var(--bg);
+  transition: background-color 160ms ease;
+}
+.lesson-footer-inner { width: min(760px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 auto; }
+.lesson-feedback { min-width: 0; display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 14px; }
+.lesson-feedback strong { display: block; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.lesson-feedback small { display: block; margin-top: 2px; color: var(--text); font-size: 14px; line-height: 1.45; }
+.feedback-icon { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--surface); font-size: 22px; }
+.lesson-next { min-width: 190px; flex: none; }
+.lesson-footer.is-correct { border-top-color: transparent; background: var(--accent-soft); }
+.lesson-footer.is-correct .lesson-feedback strong,
+.lesson-footer.is-correct .feedback-icon { color: var(--accent); }
+.lesson-footer.is-correct .lesson-next { background: var(--accent); box-shadow: 0 4px 0 var(--done-shadow); }
+.lesson-footer.is-incorrect { border-top-color: transparent; background: var(--coral-soft); }
+.lesson-footer.is-incorrect .lesson-feedback strong,
+.lesson-footer.is-incorrect .feedback-icon { color: var(--coral); }
+.lesson-footer.is-incorrect .lesson-next { background: var(--coral); box-shadow: 0 4px 0 #b84a3a; }
+/* no escuro o turquesa e o coral são claros: texto escuro no botão para ler bem */
+:root[data-theme="dark"] .lesson-footer.is-correct .lesson-next,
+:root[data-theme="dark"] .lesson-footer.is-incorrect .lesson-next { color: #10202b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-lives.is-losing .bi { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .lesson { min-height: 0; padding-bottom: 124px; }
+  .lesson-top { gap: 10px; }
+  .lesson-body { justify-content: flex-start; gap: 14px; padding: 18px 0; }
+  .lesson-body h2 { font-size: 22px; }
+  .sign-video { width: min(100%, (100dvh - 420px) * 1.6); }
+  .question-split .sign-video { width: min(100%, (100dvh - 535px) * 1.6); } /* vídeo + 3 respostas: o vídeo encolhe para tudo caber */
+  .learn-word { font-size: 28px; }
+  .learn-tip { font-size: 15px; }
+  .answer-option { min-height: 54px; padding: 10px 14px; font-size: 15px; }
+  .answer-grid { gap: 8px; }
+  .answer-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answer-tf .answer-option { min-height: 96px; }
+  .tf-statement { padding: 18px; font-size: 18px; }
+  .lesson-footer { padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .lesson-footer-inner { flex-direction: column; align-items: stretch; gap: 12px; }
+  .lesson-next { width: 100%; min-width: 0; }
+  .feedback-icon { width: 38px; height: 38px; font-size: 18px; }
+  .lesson-feedback strong { font-size: 16px; }
+  .lesson-feedback small { font-size: 13px; }
 }
 
 /* ===================================================================
@@ -2583,36 +2697,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .category-chip,
   .choice-button { flex: 0 0 auto; min-height: 40px; font-size: 13px; }
 
-  /* ----- Atividade: botão de voltar só com a seta ----- */
-  .lesson-topline .back-label { display: none; }
-  .lesson-topline .back-button {
-    width: 44px;
-    height: 44px;
-    justify-content: center;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--surface);
-    font-size: 18px;
-  }
-
   /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
   .app-shell[data-current-screen="lesson"] .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
-  .lesson-topline { gap: 12px; margin-bottom: 12px; }
-  .lesson-lives { display: flex; gap: 2px; margin-left: auto; font-size: 16px; }
-  .lesson-progress { margin-bottom: 18px; }
-  .lesson-content {
-    min-height: calc(100dvh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    display: flex;
-    flex-direction: column;
-    padding: 20px 16px;
-  }
-
-  .lesson-content h2 { font-size: 24px; }
-  .lesson-hint { font-size: 14px; }
-  .answer-list { gap: 10px; }
-  .answer-option { min-height: 58px; padding: 12px 14px; border-width: 2px; border-radius: 14px; }
-  .continue-button { min-height: 52px; margin-top: auto; border-radius: 14px; font-size: 15px; }
-  .lesson-wrap > .demo-disclaimer { display: none; }
 
   /* ----- Telas das abas ----- */
   .ranking-row strong { font-size: 14px; }
@@ -2702,21 +2788,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
 .tree-warning > span { color: var(--coral); }
 .tree-warning .text-button { min-height: 0; font-size: 13px; text-decoration: underline; }
-
-/* Atividade com várias perguntas: resposta comentada depois de conferir */
-.answer-feedback:empty { min-height: 0; }
-.answer-feedback.is-correct,
-.answer-feedback.is-incorrect {
-  margin: 14px 0 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.answer-feedback.is-correct { background: var(--accent-soft); color: var(--text); }
-.answer-feedback.is-incorrect { background: var(--coral-soft); color: var(--text); }
-.lesson-count { color: var(--muted); }
 
 /* ===================================================================
    BOOTSTRAP + BOOTSTRAP ICONS
