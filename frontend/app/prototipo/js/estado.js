@@ -96,6 +96,7 @@ const state = {
   energy: savedPrototype.energy ?? MAX_ENERGY,
   nextEnergyAt: savedPrototype.nextEnergyAt || null,
   energyRefillDate: savedPrototype.energyRefillDate || null, // dia em que comprou a recarga na Lojinha
+  alphabetChallengeDate: savedPrototype.alphabetChallengeDate || null, // dia em que ganhou o prêmio do Desafia-me
   name: savedPrototype.name || "Marina",
   email: savedPrototype.email || "",      // e-mail do perfil criado neste navegador (para entrar de novo)
   isRegistered: wasRegistered,
@@ -174,6 +175,7 @@ function persist() {
     energy: state.energy,
     nextEnergyAt: state.nextEnergyAt,
     energyRefillDate: state.energyRefillDate,
+    alphabetChallengeDate: state.alphabetChallengeDate,
     name: state.name,
     email: state.email,
     isRegistered: state.isRegistered,
@@ -322,13 +324,20 @@ function timeUntilNextEnergy(short = false) {
   return timeUntil(state.nextEnergyAt, short);
 }
 
+// Atividade nova (dá prêmio e gasta energia) ou revisão? O Desafia-me do
+// alfabeto conta como novo uma vez por dia (ver telas-dicionario.js).
+function isNewActivity(topicId, branchId) {
+  if (topicId === ALPHABET_TOPIC && branchId === CHALLENGE_ID) return isChallengeRewardAvailable();
+  return !isLessonDone(topicId, branchId);
+}
+
 // Pode começar esta atividade agora? Devolve "" (pode), "energy" ou "lives".
 // Atividade nova precisa de energia; refazer uma que já fez é revisão e é livre.
 // Aprender só tem cartões (sem perguntas), então não precisa de vidas.
 function activityBlockReason(topicId, branchId, kind) {
   refreshEnergy();
   refreshLives();
-  if (!isLessonDone(topicId, branchId) && state.energy === 0) return "energy";
+  if (isNewActivity(topicId, branchId) && state.energy === 0) return "energy";
   if (kind !== "learn" && state.lives === 0) return "lives";
   return "";
 }

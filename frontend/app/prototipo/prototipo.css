@@ -2089,6 +2089,32 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .alphabet-progress .hero-progress-track { flex: 1; height: 12px; }
 .alphabet-progress strong { font-family: "Manrope", sans-serif; font-size: 15px; }
 
+/* Desafia-me: cartão 3D acima da grade (dourado quando tem prêmio) */
+.challenge-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.challenge-card.has-reward { border-color: var(--yellow); box-shadow: 0 4px 0 #c99a1c; }
+.challenge-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-soft); box-shadow: 0 4px 0 var(--line); color: var(--muted); font-size: 26px; }
+.challenge-card:not(.is-locked) .challenge-icon { border: 3px solid #ffffff; background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); box-shadow: 0 4px 0 #c99a1c; color: #ffffff; }
+.challenge-copy h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.challenge-copy p { margin: 2px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.challenge-prizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.challenge-prize { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; background: var(--yellow-soft); color: #8a6a0c; font-size: 12px; font-weight: 800; }
+.challenge-prize .bi { color: #d9a20f; }
+.challenge-prize.is-done { background: var(--accent-soft); color: var(--accent); }
+.challenge-prize.is-done .bi { color: var(--accent); }
+.challenge-prize.is-locked { background: var(--surface-soft); color: var(--muted); }
+.challenge-prize.is-locked .bi { color: var(--muted); }
+.challenge-button { white-space: nowrap; }
+
 .alphabet-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); align-items: start; gap: 18px; }
 .letter-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
 .letter-tile {
@@ -2160,6 +2186,9 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .letter-panel p:not(.letter-panel-kicker) { display: none; }
   .letter-panel .button-3d,
   .letter-panel-warning { grid-column: 1 / -1; margin-top: 10px; }
+  .challenge-card { grid-template-columns: auto minmax(0, 1fr); gap: 12px 14px; padding: 14px; }
+  .challenge-icon { width: 48px; height: 48px; font-size: 22px; }
+  .challenge-button { grid-column: 1 / -1; width: 100%; }
   .letter-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   .letter-tile { border-radius: 14px; font-size: 20px; }
   .word-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

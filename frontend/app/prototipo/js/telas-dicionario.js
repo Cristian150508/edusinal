@@ -1,7 +1,9 @@
 // DICIONÁRIO
 // Consulta livre de sinais (não gasta vidas), com busca e categorias.
 // O alfabeto manual é uma trilha à parte: o aluno aprende uma letra por vez,
-// em ordem; cada letra concluída libera a próxima. Os vídeos ainda serão gravados.
+// em ordem; cada letra concluída libera a próxima. Com 5 letras aprendidas
+// abre o "Desafia-me" (opcional), que mistura todas elas. Os vídeos ainda
+// serão gravados.
 
 const DICTIONARY_CATEGORIES = [
   { id: "alfabeto", label: "Alfabeto" },
@@ -148,6 +150,107 @@ function startLetter(letter) {
   setScreen("lesson");
 }
 
+// ----- Desafia-me: 5 perguntas misturando as letras já aprendidas -----
+// É opcional (não trava as próximas letras). Passar (errando no máximo 1) dá
+// prêmio uma vez por dia; no resto do dia, refazer é treino livre.
+
+const CHALLENGE_ID = "desafio";
+const CHALLENGE_MIN_LETTERS = 5;
+const CHALLENGE_SIZE = 5;
+const CHALLENGE_COINS = 10;
+
+function isChallengeUnlocked() {
+  return learnedLettersCount() >= CHALLENGE_MIN_LETTERS;
+}
+
+function isChallengeRewardAvailable() {
+  return state.alphabetChallengeDate !== dateKey();
+}
+
+// Embaralha uma cópia da lista (cada desafio sai numa ordem diferente).
+function shuffled(list) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// 5 letras aprendidas, sorteadas; as opções erradas também são letras que o
+// aluno já viu. Cada pergunta é "vídeo → letra" ou "letra → vídeo", ao acaso.
+function challengeSteps() {
+  const learned = ALPHABET.filter(isLetterDone);
+  return shuffled(learned).slice(0, CHALLENGE_SIZE).map((letter) => {
+    const options = shuffled([letter, ...shuffled(learned.filter((other) => other !== letter)).slice(0, 2)]);
+    const answer = options.indexOf(letter);
+    if (Math.random() < 0.5) {
+      return { type: "video-palavra", sign: `Letra ${letter}`, title: "Que letra é esta?", options, answer, explain: `Essa é a letra ${letter} do alfabeto manual.` };
+    }
+    return { type: "palavra-video", sign: letter, title: `Qual é o sinal da letra ${letter}?`, options: options.map((option) => `Letra ${option}`), answer, explain: `Esse é o sinal da letra ${letter}.` };
+  });
+}
+
+function startAlphabetChallenge() {
+  if (!isChallengeUnlocked()) return;
+  state.currentLesson = {
+    topicId: ALPHABET_TOPIC,
+    branchId: CHALLENGE_ID,
+    kind: "practice",
+    isChallenge: true,
+    steps: challengeSteps(),
+    index: 0,
+    mistakes: 0,
+    outOfLives: false,
+  };
+  setScreen("lesson");
+}
+
+// Fim do desafio (já sabendo que passou): prêmio, se ainda não ganhou hoje.
+function finishAlphabetChallenge() {
+  if (!isChallengeRewardAvailable()) {
+    showToast("Desafio vencido! O prêmio de hoje você já ganhou: volte amanhã para outro.");
+    return;
+  }
+  spendEnergy();
+  state.xp += XP_PER_EXERCISE;
+  registerExercise(XP_PER_EXERCISE);
+  state.coins += CHALLENGE_COINS;
+  state.alphabetChallengeDate = dateKey();
+  persist();
+  showToast(`Desafio vencido! +${XP_PER_EXERCISE} XP, +${CHALLENGE_COINS} moedas e −1 de energia`);
+}
+
+// Cartão acima da grade: trancado (com quanto falta), com prêmio ou só treino.
+function renderAlphabetChallenge() {
+  const learned = learnedLettersCount();
+  if (!isChallengeUnlocked()) {
+    return `
+      <section class="challenge-card is-locked" aria-label="Desafia-me">
+        <span class="challenge-icon">${icon("lock-fill")}</span>
+        <div class="challenge-copy"><h3>Desafia-me</h3><p>Aprenda ${CHALLENGE_MIN_LETTERS} letras para liberar um desafio que mistura todas elas.</p><div class="challenge-prizes"><span class="challenge-prize is-locked">${icon("lock-fill")} ${learned}/${CHALLENGE_MIN_LETTERS} letras</span></div></div>
+      </section>`;
+  }
+  const hasReward = isChallengeRewardAvailable();
+  const blocked = activityBlockReason(ALPHABET_TOPIC, CHALLENGE_ID, "practice");
+  const text = hasReward
+    ? `${CHALLENGE_SIZE} perguntas misturando as ${learned} letras que você já aprendeu. Erre no máximo ${FINAL_MAX_MISTAKES} para ganhar o prêmio.`
+    : "Você já ganhou o prêmio de hoje. Pode treinar de novo quando quiser, sem prêmio.";
+  const prize = hasReward
+    ? `<span class="challenge-prize">${icon("lightning-charge-fill")} +${XP_PER_EXERCISE} XP</span><span class="challenge-prize">${icon("coin")} +${CHALLENGE_COINS}</span>`
+    : `<span class="challenge-prize is-done">${icon("check-circle-fill")} Prêmio de hoje ganho</span>`;
+  let button = hasReward
+    ? `<button class="button-3d button-3d-gold challenge-button" type="button" data-action="start-challenge">${icon("lightning-charge-fill")} Desafia-me</button>`
+    : `<button class="button-3d button-3d-outline challenge-button" type="button" data-action="start-challenge">${icon("arrow-repeat")} Treinar de novo</button>`;
+  if (blocked) button = `<button class="button-3d challenge-button" type="button" disabled>${blocked === "energy" ? `${icon("battery")} Sem energia` : `${icon("heart-fill")} Sem vidas`}</button>`;
+  return `
+    <section class="challenge-card${hasReward ? " has-reward" : ""}" aria-label="Desafia-me">
+      <span class="challenge-icon">${icon("lightning-charge-fill")}</span>
+      <div class="challenge-copy"><h3>Desafia-me</h3><p>${text}</p><div class="challenge-prizes">${prize}</div></div>
+      ${button}
+    </section>`;
+}
+
 // Volta para o alfabeto do dicionário, com a próxima letra escolhida.
 function showAlphabet() {
   setScreen("signs");
@@ -219,6 +322,7 @@ function renderAlphabet() {
         <div><small>ALFABETO MANUAL</small><h2 id="alphabet-title">Aprenda letra por letra</h2></div>
         <div class="alphabet-progress"><div class="hero-progress-track" role="progressbar" aria-label="Letras aprendidas" aria-valuenow="${learned}" aria-valuemin="0" aria-valuemax="${ALPHABET.length}"><span style="width: ${Math.round((learned / ALPHABET.length) * 100)}%"></span></div><strong>${learned}/${ALPHABET.length}</strong></div>
       </div>
+      ${renderAlphabetChallenge()}
       <div class="alphabet-layout">
         <div class="letter-grid" role="group" aria-label="Letras do alfabeto manual">${ALPHABET.map(renderLetterTile).join("")}</div>
         ${renderLetterPanel()}

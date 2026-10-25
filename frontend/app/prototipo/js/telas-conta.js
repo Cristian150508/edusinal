@@ -81,6 +81,7 @@ function startNewProfile(name, email, isMinor) {
     energy: MAX_ENERGY,
     nextEnergyAt: null,
     energyRefillDate: null,
+    alphabetChallengeDate: null,
     unlockedItems: [],
     mascot: { ...DEFAULT_LOOK },
     hasFirstActivityReward: false,

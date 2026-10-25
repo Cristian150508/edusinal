@@ -36,6 +36,11 @@ function isFinalExam(lesson = state.currentLesson) {
   return lesson.branchId === "final";
 }
 
+// Prova final e Desafia-me: para passar, pode errar no máximo FINAL_MAX_MISTAKES.
+function hasMistakeLimit(lesson = state.currentLesson) {
+  return isFinalExam(lesson) || Boolean(lesson.isChallenge);
+}
+
 function isLearning(lesson = state.currentLesson) {
   return lesson.kind === "learn";
 }
@@ -123,6 +128,7 @@ function questionBodyHtml(question) {
 function lessonKicker() {
   const lesson = state.currentLesson;
   const position = `${lesson.index + 1} de ${lesson.steps.length}`;
+  if (lesson.isChallenge) return `Alfabeto manual · Desafia-me · ${position}`;
   if (lesson.topicId === ALPHABET_TOPIC) return `Alfabeto manual · Letra ${lesson.branchId} · ${position}`;
   const topic = learningTopics[lesson.topicId];
   const name = isFinalExam() ? "Prova final" : topic.branches.find((branch) => branch.id === lesson.branchId).label;
@@ -146,7 +152,9 @@ function renderLesson() {
     button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="${isLast ? "finish-lesson" : "next-question"}">${isLast ? "Concluir" : "Próximo"}</button>`;
   } else {
     body = `<h2>${questionTitle(step)}</h2>${questionBodyHtml(step)}`;
-    footerHint = isFinalExam() ? `${icon("trophy-fill")} Prova final: para passar, erre no máximo ${FINAL_MAX_MISTAKES}.` : "";
+    footerHint = "";
+    if (isFinalExam()) footerHint = `${icon("trophy-fill")} Prova final: para passar, erre no máximo ${FINAL_MAX_MISTAKES}.`;
+    if (lesson.isChallenge) footerHint = `${icon("lightning-charge-fill")} Desafio: para vencer, erre no máximo ${FINAL_MAX_MISTAKES}.`;
     button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="check-answer" disabled>Conferir</button>`;
   }
 
@@ -226,7 +234,7 @@ function checkAnswer() {
   // O que o botão faz agora
   const button = document.getElementById("lesson-continue");
   const isLast = lesson.index === lesson.steps.length - 1;
-  const failedExam = isFinalExam() && lesson.mistakes > FINAL_MAX_MISTAKES;
+  const failedExam = hasMistakeLimit() && lesson.mistakes > FINAL_MAX_MISTAKES;
   if (!isCorrect && state.lives === 0) {
     lesson.outOfLives = true;
     button.dataset.action = "finish-lesson";
@@ -263,12 +271,14 @@ function returnFromLesson(lesson) {
 // Fim da atividade: conclui (e premia na 1ª vez) ou explica por que não passou.
 function finishLesson() {
   const lesson = state.currentLesson;
-  const failedExam = isFinalExam(lesson) && lesson.mistakes > FINAL_MAX_MISTAKES;
+  const failedExam = hasMistakeLimit(lesson) && lesson.mistakes > FINAL_MAX_MISTAKES;
 
   if (lesson.outOfLives) {
     showToast("Suas vidas acabaram. Elas voltam com o tempo; enquanto isso, revise no dicionário.");
   } else if (failedExam) {
-    showToast(`Você errou ${lesson.mistakes}. Na prova, pode errar no máximo ${FINAL_MAX_MISTAKES}. Tente de novo!`);
+    showToast(`Você errou ${lesson.mistakes}. ${lesson.isChallenge ? "No desafio" : "Na prova"}, pode errar no máximo ${FINAL_MAX_MISTAKES}. Tente de novo!`);
+  } else if (lesson.isChallenge) {
+    finishAlphabetChallenge();
   } else if (markLessonDone(lesson.topicId, lesson.branchId)) {
     giveActivityReward();
     if (lesson.topicId === ALPHABET_TOPIC && nextLetter()) {
