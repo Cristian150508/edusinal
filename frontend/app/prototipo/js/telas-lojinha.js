@@ -39,31 +39,49 @@ function buyPowerUp(powerId) {
   render();
 }
 
+// Estado atual de cada ajuda (mostrado no cartão).
+function powerUpStatus(power) {
+  if (power.id === "recarga-vidas") return `${icon("heart-fill")} ${state.lives} de ${MAX_LIVES} vidas`;
+  return `${icon("shield-fill-check")} Você tem ${state.streakFreezes} de ${MAX_STREAK_FREEZES}`;
+}
+
 function renderPowerUp(power) {
   const reason = powerUpBlockReason(power);
-  const owned = power.id === "protetor-ofensiva" ? `<span class="shop-item-source">Você tem ${state.streakFreezes}</span>` : '<span class="shop-item-source">Ajuda</span>';
+  const button = reason
+    ? `<button class="button-3d shop-buy" type="button" disabled>${reason}</button>`
+    : `<button class="button-3d button-3d-gold shop-buy" type="button" data-action="buy-power" data-power="${power.id}">Comprar ${icon("coin")} ${power.cost}</button>`;
   return `
-    <article class="shop-item">
-      <div class="shop-item-art shop-art-power"><span class="mascot-item-icon">${icon(power.icon)}</span></div>
-      <div class="shop-item-copy">${owned}<h3>${power.name}</h3><p>${power.text}</p></div>
-      <button class="button button-primary" type="button" data-action="buy-power" data-power="${power.id}" ${reason ? "disabled" : ""}>${reason || `Comprar · ${power.cost} moedas`}</button>
+    <article class="shop-card shop-card-${power.id}">
+      <span class="shop-card-icon">${icon(power.icon)}</span>
+      <h3>${power.name}</h3>
+      <p>${power.text}</p>
+      <span class="shop-card-status">${powerUpStatus(power)}</span>
+      ${button}
     </article>`;
 }
 
 function renderShop() {
   const forSale = MASCOT_ITEMS.filter((item) => item.unlock.type === "coins" && !isMascotItemOwned(item)).length;
   return `
-    <section class="page-intro shop-intro">
-      <div><p class="eyebrow">RECOMPENSAS DA JORNADA</p><h2>Lojinha</h2><p>Use as moedas que você ganha nos exercícios e nas missões. Não há compras com dinheiro real.</p></div>
-      <span class="shop-balance"><i class="bi bi-coin" aria-hidden="true"></i> ${state.coins} moedas</span>
+    <section class="shop-hero" aria-labelledby="shop-title">
+      <span class="shop-hero-coin">${icon("coin")}</span>
+      <div class="shop-hero-copy">
+        <small>RECOMPENSAS DA JORNADA</small>
+        <h2 id="shop-title">Lojinha</h2>
+        <p>Use as moedas dos exercícios e das missões. Não há compras com dinheiro real.</p>
+      </div>
+      <span class="shop-hero-balance"><strong>${state.coins}</strong> moedas</span>
     </section>
-    <section class="shop-group" aria-labelledby="shop-power-title"><div class="section-heading"><div><p class="eyebrow">PARA A JORNADA</p><h2 id="shop-power-title">Ajudas</h2></div></div><div class="shop-grid">${POWER_UPS.map(renderPowerUp).join("")}</div></section>
+    <section class="shop-group" aria-labelledby="shop-power-title">
+      <div class="mission-heading"><h2 id="shop-power-title">Ajudas</h2><span class="mission-timer">${icon("lightning-charge-fill")} Para a jornada</span></div>
+      <div class="shop-grid">${POWER_UPS.map(renderPowerUp).join("")}</div>
+    </section>
     <section class="shop-group" aria-labelledby="shop-mascot-title">
-      <div class="section-heading"><div><p class="eyebrow">SEU PERSONAGEM</p><h2 id="shop-mascot-title">Guarda-roupa do mascote</h2></div></div>
-      <div class="shop-mascot-banner">
-        ${renderMascot("mascot-small")}
-        <div><h3>Roupas, acessórios e fundos</h3><p>${forSale} ${forSale === 1 ? "item" : "itens"} à venda, além dos grátis e dos que vêm de conquistas.</p></div>
-        <button class="button button-primary" type="button" data-screen="mascot">Abrir guarda-roupa <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      <div class="mission-heading"><h2 id="shop-mascot-title">Guarda-roupa do mascote</h2><span class="mission-timer">${icon("bag-heart-fill")} ${forSale} ${forSale === 1 ? "item" : "itens"} à venda</span></div>
+      <div class="shop-wardrobe">
+        <span class="shop-wardrobe-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "")}</span>
+        <div><h3>Roupas, acessórios e fundos</h3><p>Compre com moedas, ganhe com conquistas ou use os grátis. Tudo aparece na hora no seu mascote.</p></div>
+        <button class="button-3d button-3d-primary" type="button" data-screen="mascot">Abrir guarda-roupa ${icon("arrow-right")}</button>
       </div>
     </section>
     <p class="demo-disclaimer">As moedas são de demonstração e os itens ficam salvos somente neste navegador.</p>`;

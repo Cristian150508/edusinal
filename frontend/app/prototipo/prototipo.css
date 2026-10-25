@@ -366,10 +366,6 @@ a {
   line-height: 1.5;
 }
 
-.shop-intro {
-  align-items: center;
-}
-
 .shop-balance {
   flex: 0 0 auto;
   padding: 10px 13px;
@@ -382,73 +378,6 @@ a {
 
 .shop-balance span {
   color: #9f7b18;
-}
-
-.shop-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.shop-item {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--surface);
-}
-
-.shop-item-art {
-  width: 72px;
-  height: 72px;
-  display: grid;
-  place-items: center;
-  grid-row: span 2;
-  border-radius: 18px;
-  background: var(--surface-soft);
-}
-
-.mascot-item-icon {
-  font-size: 32px;
-}
-
-.shop-item-copy {
-  min-width: 0;
-}
-
-.shop-item-source {
-  color: var(--primary-strong);
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.shop-item-copy h3 {
-  margin: 4px 0;
-  font-family: "Manrope", sans-serif;
-  font-size: 15px;
-}
-
-.shop-item-copy p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.shop-item > .button {
-  grid-column: 2;
-  justify-self: start;
-  min-height: 38px;
-  font-size: 10px;
-}
-
-.shop-item > .button:disabled {
-  opacity: 0.65;
 }
 
 .profile-avatar-panel {
@@ -997,10 +926,6 @@ textarea {
     padding: 22px 17px 25px;
   }
 
-  .shop-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .profile-avatar-panel {
     grid-template-columns: 104px minmax(0, 1fr);
     gap: 16px;
@@ -1129,39 +1054,6 @@ textarea {
   .screen-root {
     padding-right: 13px;
     padding-left: 13px;
-  }
-
-  .shop-item {
-    grid-template-columns: 58px minmax(0, 1fr);
-    gap: 9px;
-    padding: 12px;
-  }
-
-  .shop-item-art {
-    width: 54px;
-    height: 54px;
-    border-radius: 14px;
-  }
-
-  .mascot-item-icon {
-    font-size: 25px;
-  }
-
-  .shop-item-copy h3 {
-    font-size: 13px;
-  }
-
-  .shop-item-copy p {
-    font-size: 10px;
-  }
-
-  .shop-item > .button {
-    min-height: 35px;
-    font-size: 9px;
-  }
-
-  .shop-intro {
-    gap: 10px;
   }
 
   .shop-balance {
@@ -1821,7 +1713,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 /* ----- Peças comuns ----- */
 .app-shell[data-current-screen="leagues"] .section-heading,
 .app-shell[data-current-screen="missions"] .section-heading,
-.app-shell[data-current-screen="shop"] .section-heading,
 .app-shell[data-current-screen="profile"] .section-heading { margin-top: 26px; }
 
 .safety-note {
@@ -2099,6 +1990,91 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .missions-practice { width: 100%; }
 }
 
+/* ----- Lojinha ----- */
+/* Topo: faixa em degradê com a moeda dourada e o saldo */
+.shop-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.shop-hero-coin {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 6px 0 #c99a1c;
+  color: #6b4f00;
+  font-size: 40px;
+}
+.shop-hero-copy { flex: 1; min-width: 0; }
+.shop-hero-copy small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.shop-hero-copy h2 { margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 30px; font-weight: 800; }
+.shop-hero-copy p { margin: 0; font-size: 14px; opacity: 0.95; }
+.shop-hero-balance { flex: none; display: grid; justify-items: center; padding: 10px 18px; border-radius: 18px; background: rgba(255, 255, 255, 0.2); font-size: 12px; font-weight: 700; }
+.shop-hero-balance strong { font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 800; line-height: 1.1; }
+
+.shop-group { margin-top: 26px; }
+
+/* Ajudas: cartões de produto, com preço no botão dourado */
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.shop-card {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.shop-card-icon { width: 60px; height: 60px; display: grid; place-items: center; margin-bottom: 6px; border-radius: 18px; background: var(--coral-soft); color: var(--coral); font-size: 30px; }
+.shop-card-protetor-ofensiva .shop-card-icon { background: var(--accent-soft); color: var(--accent); }
+.shop-card h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.shop-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.shop-card-status { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 4px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700; }
+.shop-card-status .bi { color: var(--coral); }
+.shop-card-protetor-ofensiva .shop-card-status .bi { color: var(--accent); }
+.shop-buy { width: 100%; margin-top: auto; }
+
+/* Guarda-roupa: o mascote do aluno e o botão para o editor */
+.shop-wardrobe {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.shop-wardrobe-mascot { width: 88px; height: 88px; display: block; overflow: hidden; border-radius: 50%; }
+.shop-wardrobe-mascot .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }
+.shop-wardrobe h3 { margin: 0 0 4px; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.shop-wardrobe p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+@media (max-width: 760px) {
+  .shop-hero { flex-wrap: wrap; gap: 14px; padding: 18px; border-radius: 20px; }
+  .shop-hero-coin { width: 64px; height: 64px; font-size: 30px; }
+  .shop-hero-copy h2 { font-size: 24px; }
+  .shop-hero-balance { width: 100%; grid-auto-flow: column; justify-content: center; align-items: baseline; gap: 6px; }
+  .shop-hero-balance strong { font-size: 22px; }
+  .shop-grid { grid-template-columns: minmax(0, 1fr); }
+  .shop-wardrobe { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: 14px; }
+  .shop-wardrobe-mascot { width: 68px; height: 68px; }
+  .shop-wardrobe .button-3d { grid-column: 1 / -1; width: 100%; }
+  /* na Lojinha o saldo já aparece grande no topo: tira as moedas da barra de cima */
+  .app-shell[data-current-screen="shop"] .stat-coins { display: none; }
+}
+
 /* ----- Dicionário ----- */
 .dictionary-tools { display: grid; gap: 14px; margin-bottom: 22px; }
 
@@ -2309,10 +2285,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .word-card-play { width: 32px; height: 32px; font-size: 17px; }
 }
 
-/* ----- Lojinha ----- */
-.mascot-avatar.mascot-small { width: 76px; height: 76px; }
-.shop-art-power { background: var(--coral-soft); }
-
 /* ----- Perfil ----- */
 .name-edit { font-size: 11px; }
 .name-form { display: grid; gap: 10px; margin-bottom: 10px; }
@@ -2436,7 +2408,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .ranking-row { grid-template-columns: 32px 36px minmax(0, 1fr) auto; gap: 10px; padding: 8px 12px; }
   .ranking-avatar { width: 36px; height: 36px; font-size: 15px; }
 
-
   .dictionary-layout { grid-template-columns: minmax(0, 1fr); }
   .word-detail { position: static; order: -1; }
 
@@ -2452,19 +2423,6 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .mascot-avatar.mascot-large { width: min(260px, 100%); height: auto; aspect-ratio: 1; }
 
 /* Banner do guarda-roupa na lojinha */
-.shop-mascot-banner {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 18px;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
-}
-
-.shop-mascot-banner h3 { margin: 0 0 4px; font-family: "Manrope", sans-serif; font-size: 16px; }
-.shop-mascot-banner p { margin: 0; color: var(--muted); font-size: 12px; }
 
 /* Editor */
 .mascot-editor {
@@ -2535,8 +2493,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .mascot-editor { grid-template-columns: minmax(0, 1fr); }
   .mascot-stage { position: static; }
   .mascot-avatar.mascot-large { width: 180px; }
-  .shop-mascot-banner { grid-template-columns: auto minmax(0, 1fr); }
-  .shop-mascot-banner .button { grid-column: 1 / -1; }
+
+  
   .mascot-options { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
   .mascot-option-art { width: 72px; height: 72px; }
 }
@@ -2747,10 +2705,10 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   /* ----- Telas das abas ----- */
   .ranking-row strong { font-size: 14px; }
   .league-status p { font-size: 14px; }
-  .shop-item-copy h3 { font-size: 15px; }
-  .shop-item-copy p { font-size: 13px; }
-  .shop-item > .button { min-height: 42px; font-size: 13px; }
-  .shop-mascot-banner p { font-size: 13px; }
+
+  
+
+  
   .profile-identity > p { font-size: 13px; }
   .profile-identity .button { min-height: 42px; padding: 0 14px; font-size: 13px; }
   .profile-currency span,
