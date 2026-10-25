@@ -61,12 +61,20 @@ function renderMobileAvatar() {
   avatar.innerHTML = mascotSvg(state.mascot, "avatar", "");
 }
 
+// Menu lateral do computador. O Perfil mostra o rosto do mascote do aluno e as
+// Missões mostram quantas estão prontas para resgatar.
 function renderNavigation() {
+  const activeScreen = state.screen === "mascot" ? "profile" : state.screen; // o editor do mascote fica no Perfil
+  const ready = readyMissionsCount();
   const items = navigationItems.map(([screen, label, iconName], index) => {
-    const isActive = state.screen === screen;
+    const isActive = activeScreen === screen;
+    const symbol = screen === "profile"
+      ? `<span class="nav-icon is-avatar ${backdropClass()}">${mascotSvg(state.mascot, "avatar", "")}</span>`
+      : `<span class="nav-icon nav-icon-${index + 1}">${icon(iconName)}</span>`;
+    const badge = screen === "missions" && ready > 0 ? `<span class="nav-badge" aria-label="${ready} para resgatar">${ready}</span>` : "";
     return `
     <button class="nav-item${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}>
-      <span class="nav-icon nav-icon-${index + 1}">${icon(iconName)}</span><span>${label}</span>
+      ${symbol}<span>${label}</span>${badge}
     </button>`;
   }).join("");
   document.getElementById("side-nav").innerHTML = items;

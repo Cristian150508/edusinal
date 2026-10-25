@@ -103,14 +103,16 @@ a {
   color: var(--text);
 }
 
+/* ----- Menu lateral (computador) -----
+   Item ativo: "pílula" com o degradê azul → turquesa do EduSinal. */
 .sidebar {
   position: sticky;
   top: 0;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 24px 16px 18px;
-  border-right: 1px solid var(--line);
+  padding: 22px 14px 16px;
+  border-right: 2px solid var(--line);
   background: var(--surface);
 }
 
@@ -121,112 +123,109 @@ a {
   gap: 10px;
   padding: 2px 8px;
   font-family: "Manrope", sans-serif;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 800;
 }
-
-.brand img {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
-
-.brand-accent {
-  color: var(--primary);
-}
+.brand img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; }
+.brand-accent { color: var(--primary); }
 
 .sidebar-label {
-  margin: 43px 9px 13px;
+  margin: 34px 10px 10px;
   color: var(--muted);
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   letter-spacing: 0.12em;
 }
 
-.side-nav {
-  display: grid;
-  gap: 5px;
-}
+.side-nav { display: grid; gap: 6px; }
 
 .nav-item {
-  min-height: 47px;
+  position: relative;
+  min-height: 52px;
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 5px;
+  gap: 12px;
+  padding: 0 10px;
+  border: 2px solid transparent;
+  border-radius: 16px;
   background: transparent;
   color: var(--muted);
   cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
   text-align: left;
-  font-size: 13px;
-  font-weight: 600;
   transition: background-color 150ms ease, color 150ms ease;
 }
-
-.nav-item:hover {
-  background: var(--surface-alt);
-  color: var(--text);
-}
-
+.nav-item:hover { background: var(--surface-soft); color: var(--text); }
+.nav-item:active { transform: translateY(2px); }
 .nav-item.is-active {
-  background: var(--primary-soft);
-  color: var(--primary-strong);
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
 }
 
 .nav-icon {
-  width: 29px;
-  height: 29px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
   display: inline-grid;
   place-items: center;
-  border-radius: 8px;
+  overflow: hidden;
+  border-radius: 11px;
   background: var(--primary-soft);
   color: var(--primary-strong);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
 }
-
 .nav-icon-1,
-.nav-icon-6 {
-  background: var(--coral-soft);
-  color: var(--coral);
-}
-
+.nav-icon-6 { background: var(--coral-soft); color: var(--coral); }
 .nav-icon-2,
-.nav-icon-7 {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
+.nav-icon-7 { background: var(--accent-soft); color: var(--accent); }
 .nav-icon-3,
-.nav-icon-5 {
-  background: var(--yellow-soft);
-  color: #9f7b18;
-}
-
-.sidebar-bottom {
+.nav-icon-5 { background: var(--yellow-soft); color: #9f7b18; }
+.nav-item.is-active .nav-icon { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+/* Perfil: o rosto do mascote do aluno no lugar do ícone */
+.nav-icon.is-avatar .mascot-svg { width: 100%; height: 100%; }
+.nav-item.is-active .nav-icon.is-avatar { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7); }
+.nav-badge {
+  min-width: 22px;
+  height: 22px;
   display: grid;
-  gap: 12px;
-  margin-top: auto;
+  place-items: center;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--coral);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
 }
 
+.sidebar-bottom { display: grid; gap: 12px; margin-top: auto; }
 .sidebar-note {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 13px 10px;
-  border-top: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface-soft);
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
   line-height: 1.45;
 }
-
-.sidebar-note-mark {
-  flex: 0 0 auto;
+.sidebar-note .sidebar-note-mark { /* mais específico que a regra geral .bi, que desfazia o centro */
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
   color: var(--coral);
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .workspace {
@@ -1105,23 +1104,6 @@ textarea {
 @media (max-width: 760px) {
   .app-shell {
     display: block;
-  }
-
-  .sidebar {
-    position: fixed;
-    z-index: 15;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: min(280px, calc(100vw - 54px));
-    height: 100dvh;
-    transform: translateX(-105%);
-    box-shadow: var(--shadow);
-    transition: transform 200ms ease;
-  }
-
-  .sidebar-label {
-    margin-top: 34px;
   }
 
   .settings-button {
@@ -2536,8 +2518,8 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: calc(8px + env(safe-area-inset-top)) 16px 8px;
-    border-bottom: 1px solid var(--line);
+    padding: calc(8px + env(safe-area-inset-top)) 16px 10px;
+    border-bottom: 2px solid var(--line);
     background: color-mix(in srgb, var(--bg) 90%, transparent);
     -webkit-backdrop-filter: blur(12px); /* Safari mais antigo (iPhone) */
     backdrop-filter: blur(12px);
@@ -2567,34 +2549,39 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
     overflow: hidden;
     border: 2px solid var(--surface);
     border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--line);
+    box-shadow: 0 0 0 2px var(--line);
     cursor: pointer;
   }
 
   .mobile-avatar .mascot-svg { width: 100%; height: 100%; }
-  .mobile-avatar.is-active { box-shadow: 0 0 0 2px var(--primary); }
+  .mobile-avatar.is-active { box-shadow: 0 0 0 3px var(--hero-to); }
   .mobile-stats { display: flex; gap: 6px; margin-left: auto; }
 
+  /* Números da barra de cima: botões "3D" que afundam ao tocar */
   .stat-chip {
     min-height: 38px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     padding: 0 10px;
-    border: 1px solid var(--line);
-    border-radius: 99px;
+    border: 2px solid var(--line);
+    border-radius: 14px;
     background: var(--surface);
+    box-shadow: 0 3px 0 var(--line);
     color: var(--text);
     cursor: pointer;
     font: inherit;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 700;
   }
+  .stat-chip:active,
+  .settings-button:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
 
   .stat-chip strong { font-family: "Manrope", sans-serif; }
   .stat-coins > span { color: #d9a20f; }
   .stat-lives > span { color: var(--coral); }
-  .settings-button { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; color: var(--text); }
-  .settings-button.is-active { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-strong); }
+  .settings-button { width: 40px; height: 40px; border: 2px solid var(--line); border-radius: 14px; box-shadow: 0 3px 0 var(--line); font-size: 18px; color: var(--text); }
+  .settings-button.is-active { border-color: transparent; background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%); box-shadow: 0 3px 0 var(--hero-shadow); color: #ffffff; }
 
   /* ----- Barra de baixo ----- */
   .bottom-nav {
@@ -2605,10 +2592,9 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
     z-index: 14;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    padding: 6px 2px calc(6px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--line);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    border-top: 2px solid var(--line);
     background: var(--surface);
-    box-shadow: 0 -8px 24px rgba(10, 30, 70, 0.06);
   }
 
   .bottom-tab {
@@ -2629,17 +2615,23 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   }
 
   .bottom-tab-icon {
-    width: 40px;
-    height: 28px;
+    width: 48px;
+    height: 32px;
     display: grid;
     place-items: center;
     border-radius: 12px;
-    font-size: 17px;
+    font-size: 18px;
     transition: background-color 150ms ease;
   }
 
-  .bottom-tab.is-active { color: var(--primary-strong); }
-  .bottom-tab.is-active .bottom-tab-icon { background: var(--primary-soft); }
+  /* aba ativa: o ícone numa "pílula" com o degradê do EduSinal */
+  .bottom-tab.is-active { color: var(--primary); }
+  .bottom-tab.is-active .bottom-tab-icon {
+    background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+    box-shadow: 0 3px 0 var(--hero-shadow);
+    color: #ffffff;
+  }
+  .bottom-tab:active .bottom-tab-icon { transform: translateY(2px); }
 
   .bottom-badge {
     position: absolute;
@@ -2650,10 +2642,12 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
     display: grid;
     place-items: center;
     padding: 0 5px;
-    border-radius: 9px;
+    border: 2px solid var(--surface);
+    border-radius: 10px;
     background: var(--coral);
     color: #fff;
     font-size: 10px;
+    font-weight: 800;
   }
 
   /* espaço para o conteúdo não ficar atrás da barra de baixo */
