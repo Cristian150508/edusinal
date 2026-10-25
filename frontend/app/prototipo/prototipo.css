@@ -2980,18 +2980,22 @@ button.tree-leaf:hover .tree-icon { transform: translateY(-2px); }
 button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
 .tree-leaf.is-open .tree-icon { background: var(--hero-from); box-shadow: 0 6px 0 var(--hero-shadow); color: #ffffff; }
 .tree-leaf.is-done .tree-icon { background: var(--accent); box-shadow: 0 6px 0 var(--done-shadow); color: #ffffff; }
-/* o próximo da vez ganha um anel amarelo pulsando */
+/* o próximo da vez ganha um anel amarelo pulsando. O pulso só muda a
+   transparência (sem mudar de tamanho), para o ícone não piscar embaixo dele. */
 .tree-leaf.is-open .tree-icon::after {
   position: absolute;
   inset: -9px;
   border: 4px solid var(--yellow);
   border-radius: 50%;
+  pointer-events: none;
+  will-change: opacity;
   animation: ring-pulse 1.8s ease-in-out infinite;
   content: "";
 }
+.tree-icon > .bi { position: relative; z-index: 1; } /* ícone numa camada acima do anel */
 @keyframes ring-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(1.06); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
 /* número da ordem (ou cadeado) no canto da bolinha */
