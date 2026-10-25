@@ -267,16 +267,15 @@ function timeUntilNextLife() {
   return `+1 em ${minutes} min`;
 }
 
-// Escreve de novo os corações na Home sem redesenhar a tela inteira.
+// Atualiza o quadradinho de vidas da Home sem redesenhar a tela inteira.
 function updateLifeIndicator() {
   refreshLives();
-  const indicator = document.querySelector(".home-lives");
+  const indicator = document.querySelector(".tile-lives");
   if (!indicator) return;
 
-  indicator.querySelector(".lives-hearts").innerHTML = livesHeartsHtml();
-  indicator.querySelector(".lives-hearts").setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas`);
-  indicator.querySelector("strong").textContent = `${state.lives} / ${MAX_LIVES}`;
-  indicator.querySelector("small").textContent = timeUntilNextLife();
+  indicator.setAttribute("aria-label", `${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}`);
+  indicator.querySelector("strong").textContent = `${state.lives}/${MAX_LIVES}`;
+  indicator.querySelector("small").textContent = state.lives >= MAX_LIVES ? "vidas" : timeUntilNextLife();
 }
 
 // Perde uma vida por resposta errada e começa a contar a recarga.

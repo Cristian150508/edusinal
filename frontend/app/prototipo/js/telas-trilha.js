@@ -192,104 +192,152 @@ function renderTopicTree() {
     </section>`;
 }
 
-// Texto do aviso "você está aqui" no topo da Home.
-function renderHeroProgress() {
+// Destaque do topo da Home: onde o aluno está e o botão para continuar.
+function renderHomeHero() {
   const topicId = currentTopicId();
   const topic = learningTopics[topicId];
   const done = doneBranchCount(topicId);
   const total = topic.branches.length;
 
-  let summary = `${done} de ${total} exercícios concluídos.`;
-  let buttonLabel = done === 0 ? "Começar a etapa" : "Continuar de onde parou";
+  let summary = `${done} de ${total} exercícios`;
+  let buttonLabel = done === 0 ? "Começar" : "Continuar";
+  let bubble = done === 0 ? "Bora começar?" : "Bora praticar?";
   if (isLessonDone(topicId, "final")) {
-    summary = "Etapa concluída, parabéns!";
+    summary = "Etapa concluída!";
     buttonLabel = "Rever a etapa";
+    bubble = "Mandou bem!";
   } else if (done === total) {
-    summary = "Todos os exercícios feitos. A prova final está liberada!";
-    buttonLabel = "Ir para a prova final";
+    summary = "Prova final liberada!";
+    buttonLabel = "Fazer a prova";
+    bubble = "Você consegue!";
   }
+  const percent = isLessonDone(topicId, "final") ? 100 : Math.round((done / total) * 100);
   return `
-          <div class="home-hero-copy">
-            <p class="eyebrow"><span class="status-dot"></span> VOCÊ ESTÁ AQUI · ETAPA ${topic.number}</p>
-            <h2>Oi, ${escapeHtml(state.name)}! <span>${topic.title}</span></h2>
-            <p>${topic.subtitle}. ${summary}</p>
-            <button class="button button-primary" type="button" data-action="open-topic" data-topic="${topicId}">${buttonLabel} <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-          </div>`;
+    <section class="home-hero" aria-labelledby="home-hero-title">
+      <div class="home-hero-copy">
+        <p class="hero-kicker">ETAPA ${topic.number} · VOCÊ ESTÁ AQUI</p>
+        <h2 id="home-hero-title">Oi, ${escapeHtml(state.name)}!</h2>
+        <p class="hero-topic">${topic.title}</p>
+        <div class="hero-progress">
+          <div class="hero-progress-track" role="progressbar" aria-label="Progresso da etapa" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"><span style="width: ${percent}%"></span></div>
+          <small>${summary}</small>
+        </div>
+        <button class="button-3d button-3d-light" type="button" data-action="open-topic" data-topic="${topicId}">${buttonLabel} ${icon("arrow-right")}</button>
+      </div>
+      <button class="home-hero-art" type="button" data-screen="mascot" aria-label="Personalizar seu mascote">
+        <span class="hero-bubble" aria-hidden="true">${bubble}</span>
+        <span class="hero-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "")}</span>
+      </button>
+    </section>`;
 }
 
 // Etapas da trilha na Home. Só as que têm "topicId" já têm conteúdo.
 const TRAIL_STEPS = [
-  { topicId: "primeiros-sinais", number: "01", title: "Primeiros sinais", subtitle: "Saudações do dia a dia", color: "coral" },
-  { topicId: "apresentacoes", number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões", color: "yellow" },
-  { topicId: "pessoas-familia", number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida", color: "green" },
-  { topicId: null, number: "04", title: "Rotina e lugares", subtitle: "Palavras para o cotidiano", color: "blue" },
+  { topicId: "primeiros-sinais", number: "01", title: "Primeiros sinais", subtitle: "Saudações do dia a dia" },
+  { topicId: "apresentacoes", number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões" },
+  { topicId: "pessoas-familia", number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida" },
+  { topicId: null, number: "04", title: "Rotina e lugares", subtitle: "Palavras para o cotidiano" },
 ];
 
-// Uma etapa da trilha com o estado real: começar, em andamento, concluída ou em breve.
-function renderRouteStep(step) {
-  if (!step.topicId) {
-    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, em breve">${step.number}</span><span class="path-label">EM BREVE</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
-  }
-  if (!isTopicUnlocked(step.topicId)) {
-    const previous = TRAIL_STEPS[TRAIL_STEPS.indexOf(step) - 1];
-    return `<article class="route-step route-step-locked"><span class="route-node node-${step.color}" aria-label="Etapa ${step.number}, bloqueada"><i class="bi bi-lock-fill" aria-hidden="true"></i></span><span class="path-label">CONCLUA A ETAPA ${previous.number}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
-  }
-  const done = doneBranchCount(step.topicId);
-  const total = learningTopics[step.topicId].branches.length;
-  const isFinished = isLessonDone(step.topicId, "final");
-  let label = "COMECE POR AQUI";
-  if (isFinished) label = "CONCLUÍDA";
-  else if (done > 0) label = `EM ANDAMENTO · ${done}/${total}`;
-  return `<article class="route-step route-step-active${isFinished ? " is-finished" : ""}"><button class="route-node node-${step.color}" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}">${isFinished ? icon("check-lg") : step.number}</button><span class="path-label">${label}</span><h3>${step.title}</h3><p>${step.subtitle}</p></article>`;
+// Situação de uma etapa: "done", "current", "locked" ou "soon" (sem conteúdo ainda).
+function trailStepStatus(step) {
+  if (!step.topicId) return "soon";
+  if (!isTopicUnlocked(step.topicId)) return "locked";
+  if (isLessonDone(step.topicId, "final")) return "done";
+  return "current";
 }
 
-// Resumo das missões do dia na lateral da Home (o detalhe fica na aba Missões).
+// Uma etapa da trilha: bolinha grande (como no Duolingo) e o texto ao lado.
+function renderTrailStep(step) {
+  const status = trailStepStatus(step);
+  const previous = TRAIL_STEPS[TRAIL_STEPS.indexOf(step) - 1];
+  let symbol = step.number;
+  let label = "EM BREVE";
+  let ring = "";
+  let tooltip = "";
+  if (status === "locked") {
+    symbol = icon("lock-fill");
+    label = `CONCLUA A ETAPA ${previous.number}`;
+  } else if (status === "done") {
+    symbol = icon("check-lg");
+    label = "CONCLUÍDA";
+  } else if (status === "current") {
+    const done = doneBranchCount(step.topicId);
+    const total = learningTopics[step.topicId].branches.length;
+    label = done === 0 ? "COMECE POR AQUI" : `EM ANDAMENTO · ${done}/${total}`;
+    ring = ` style="--ring:${Math.round((done / total) * 360)}deg"`; // anel de progresso em volta
+    tooltip = `<span class="trail-tooltip" aria-hidden="true">${done === 0 ? "COMEÇAR" : "CONTINUAR"}</span>`;
+  }
+
+  const isOpen = status === "current" || status === "done";
+  const node = isOpen
+    ? `<button class="trail-node" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}"${ring}><span>${symbol}</span></button>`
+    : `<span class="trail-node" aria-label="Etapa ${step.number}, ${label.toLowerCase()}"><span>${symbol}</span></span>`;
+  return `<li class="trail-step is-${status}">${tooltip}${node}<div class="trail-step-copy"><small>${label}</small><h3>${step.title}</h3><p>${step.subtitle}</p></div></li>`;
+}
+
+// Missão do dia na lateral da Home, com barra de progresso (o detalhe fica na aba Missões).
 function renderHomeMission(mission) {
   const value = Math.min(mission.progress(), mission.target);
-  let status = `${value} / ${mission.target}`;
-  if (state.daily.claimed.includes(mission.id)) status = `Resgatada ${icon("check-lg")}`;
-  else if (isMissionComplete(mission)) status = `Pronta! Resgate +${mission.reward} ${icon("coin")}`;
-  return `<button class="home-task" type="button" data-screen="missions"><span class="task-check">${icon(mission.icon)}</span><span><strong>${mission.title}</strong><small>${status}</small></span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>`;
+  const isClaimed = state.daily.claimed.includes(mission.id);
+  const isReady = isMissionComplete(mission) && !isClaimed;
+  let reward = `+${mission.reward} ${icon("coin")}`;
+  if (isClaimed) reward = icon("check-circle-fill");
+  else if (isReady) reward = icon("gift-fill");
+  return `
+    <button class="home-quest${isReady ? " is-ready" : ""}${isClaimed ? " is-claimed" : ""}" type="button" data-screen="missions">
+      <span class="home-quest-icon">${icon(mission.icon)}</span>
+      <span class="home-quest-copy"><strong>${mission.title}</strong>${progressBarHtml(value, mission.target, mission.title)}<small>${isReady ? "Pronta para resgatar!" : `${value} / ${mission.target}`}</small></span>
+      <span class="home-quest-reward">${reward}</span>
+    </button>`;
+}
+
+// Meta do dia em anel (lateral da Home no computador).
+function renderDailyGoal() {
+  const done = Math.min(state.daily.exercises, DAILY_GOAL);
+  const degrees = Math.round((done / DAILY_GOAL) * 360);
+  const message = done >= DAILY_GOAL ? "Meta batida, parabéns!" : `Faltam ${DAILY_GOAL - done} para bater a meta`;
+  return `
+    <section class="home-side-card home-goal" aria-label="Meta do dia">
+      <div class="goal-ring" style="--ring:${degrees}deg" role="progressbar" aria-label="Exercícios de hoje" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${DAILY_GOAL}"><strong>${done}/${DAILY_GOAL}</strong></div>
+      <div><h2>Meta do dia</h2><p>${message}</p></div>
+    </section>`;
+}
+
+// Três números coloridos: ofensiva (abre o calendário), XP e vidas.
+function renderHomeTiles() {
+  return `
+    <section class="home-tiles" aria-label="Seus números">
+      <button class="home-tile tile-streak" type="button" data-action="open-streak" aria-label="Ofensiva: ${state.streak} dias. Abrir calendário">${icon("fire")}<strong>${state.streak}</strong><small>${state.streak === 1 ? "dia" : "dias"}</small></button>
+      <div class="home-tile tile-xp">${icon("lightning-charge-fill")}<strong>${state.xp}</strong><small>XP</small></div>
+      <div class="home-tile tile-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas, ${timeUntilNextLife()}">${icon("heart-fill")}<strong>${state.lives}/${MAX_LIVES}</strong><small>${state.lives >= MAX_LIVES ? "vidas" : timeUntilNextLife()}</small></div>
+    </section>`;
 }
 
 function renderTrail() {
   if (state.focusTopic) return renderTopicTree();
   refreshLives();
-  const hearts = livesHeartsHtml();
   return `
     <div class="home-dashboard">
       <div class="home-main-column">
-        <section class="home-hero">
-${renderHeroProgress()}
-          <button class="home-hero-art ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar seu mascote">${mascotSvg(state.mascot, "full", "")}<small>UM SINAL<br />DE CADA VEZ</small></button>
-        </section>
-
+        ${renderHomeHero()}
         <section class="home-map" aria-labelledby="path-title">
-          <div class="home-map-heading">
-            <div><p class="eyebrow">NÍVEL INICIANTE</p><h2 id="path-title">Sua trilha</h2></div>
-            <span class="section-count">UNIDADE 01 <span aria-hidden="true">·</span> ${TRAIL_STEPS.length} etapas</span>
+          <div class="home-map-banner">
+            <div><small>UNIDADE 01 · NÍVEL INICIANTE</small><h2 id="path-title">Sua trilha</h2></div>
+            <span>${TRAIL_STEPS.length} etapas</span>
           </div>
-          <div class="learning-route">${TRAIL_STEPS.map(renderRouteStep).join("")}</div>
+          <ol class="trail-route">${TRAIL_STEPS.map(renderTrailStep).join("")}</ol>
         </section>
       </div>
 
-      <aside class="home-side-column" aria-label="Resumo e tarefas">
-        <section class="home-side-card home-tasks">
-          <div class="home-side-heading"><span class="panel-icon"><i class="bi bi-bullseye" aria-hidden="true"></i></span><h2>Missões do dia</h2></div>
+      <aside class="home-side-column" aria-label="Resumo do dia">
+        ${renderHomeTiles()}
+        ${renderDailyGoal()}
+        <section class="home-side-card home-quests" aria-labelledby="home-quests-title">
+          <div class="home-side-heading"><h2 id="home-quests-title">Missões do dia</h2><button class="text-button" type="button" data-screen="missions">Ver todas</button></div>
           ${DAILY_MISSIONS.map(renderHomeMission).join("")}
-        </section>
-
-        <section class="home-side-card home-stats">
-          <div class="home-side-heading"><span class="panel-icon"><i class="bi bi-activity" aria-hidden="true"></i></span><h2>Seu ritmo</h2></div>
-          <div class="home-stat home-lives"><span>Vidas</span><div class="lives-summary"><div class="lives-hearts" aria-label="${state.lives} de ${MAX_LIVES} vidas">${hearts}</div><strong>${state.lives} / ${MAX_LIVES}</strong><small>${timeUntilNextLife()}</small></div></div>
-          <div class="home-stat"><span>Ofensiva</span><strong>${state.streak} ${state.streak === 1 ? "dia" : "dias"}</strong></div>
-          <div class="home-stat"><span>Experiência</span><strong>${state.xp} XP</strong></div>
-          <div class="home-stat"><span>Meta de hoje</span><strong>${Math.min(state.daily.exercises, DAILY_GOAL)} / ${DAILY_GOAL} exercícios</strong></div>
-          ${progressBarHtml(state.daily.exercises, DAILY_GOAL, "Progresso da meta diária")}
-          <button class="text-button" type="button" data-screen="shop">Abrir a lojinha <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
         </section>
       </aside>
     </div>
     <p class="demo-disclaimer">Pontos, sequência e conteúdo exibidos são dados demonstrativos deste protótipo.</p>`;
 }
-
