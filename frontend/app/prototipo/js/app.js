@@ -28,8 +28,9 @@ const screenRenderers = {
 // pela engrenagem, os dois na barra de cima.
 const MOBILE_TABS = ["trail", "signs", "leagues", "missions", "shop"];
 
-// Telas que acendem uma aba mesmo não sendo ela (ex.: o editor do mascote fica no Perfil).
-const PARENT_TAB = { lesson: "trail", mascot: "profile" };
+// Telas que acendem uma aba mesmo não sendo ela (a atividade fica dentro da Home).
+// O Perfil e o editor do mascote não têm aba: acendem o mascote da barra de cima.
+const PARENT_TAB = { lesson: "trail" };
 
 function renderBottomNav() {
   const activeTab = PARENT_TAB[state.screen] || state.screen;
