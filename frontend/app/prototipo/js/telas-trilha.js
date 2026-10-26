@@ -214,6 +214,7 @@ function renderTreeWarning() {
 }
 
 function renderTopicTree() {
+  trailCenterTopic = state.focusTopic; // ao voltar para a Home, a trilha mostra esta etapa
   refreshLives();
   refreshEnergy();
   const hearts = livesHeartsHtml();
@@ -282,49 +283,177 @@ function renderHomeHero() {
     </section>`;
 }
 
-// Etapas da trilha na Home. Só as que têm "topicId" já têm conteúdo.
-const TRAIL_STEPS = [
-  { topicId: "primeiros-sinais", number: "01", title: "Primeiros sinais", subtitle: "Saudações do dia a dia" },
-  { topicId: "apresentacoes", number: "02", title: "Apresentações", subtitle: "Seu nome e novas conexões" },
-  { topicId: "pessoas-familia", number: "03", title: "Pessoas e família", subtitle: "Quem faz parte da sua vida" },
-  { topicId: null, number: "04", title: "Rotina e lugares", subtitle: "Palavras para o cotidiano" },
+// Trilha da Home dividida em unidades, cada uma com 4 etapas (ids de learningTopics).
+const TRAIL_UNITS = [
+  { number: "01", title: "Primeiros passos", topics: ["alfabeto-manual", "numeros", "apresentacoes", "cumprimentos"] },
+  { number: "02", title: "Sinais do dia a dia", topics: ["em-casa", "na-escola", "no-trabalho", "na-rua"] },
 ];
 
-// Situação de uma etapa: "done", "current", "locked" ou "soon" (sem conteúdo ainda).
-function trailStepStatus(step) {
-  if (!step.topicId) return "soon";
-  if (!isTopicUnlocked(step.topicId)) return "locked";
-  if (isLessonDone(step.topicId, "final")) return "done";
+// Situação de uma etapa: "done", "current" ou "locked".
+function trailStepStatus(topicId) {
+  if (!isTopicUnlocked(topicId)) return "locked";
+  if (isLessonDone(topicId, "final")) return "done";
   return "current";
 }
 
 // Uma etapa da trilha: bolinha grande (como no Duolingo) e o texto ao lado.
-function renderTrailStep(step) {
-  const status = trailStepStatus(step);
-  const previous = TRAIL_STEPS[TRAIL_STEPS.indexOf(step) - 1];
-  let symbol = step.number;
-  let label = "EM BREVE";
+// No computador, cada etapa sobe ou desce um pouco (--wave), formando a onda.
+function renderTrailStep(topicId) {
+  const topic = learningTopics[topicId];
+  const status = trailStepStatus(topicId);
+  let symbol = topic.number;
+  let label = "";
   let ring = "";
   let tooltip = "";
   if (status === "locked") {
+    const previous = learningTopics[TOPIC_ORDER[TOPIC_ORDER.indexOf(topicId) - 1]];
     symbol = icon("lock-fill");
     label = `CONCLUA A ETAPA ${previous.number}`;
   } else if (status === "done") {
     symbol = icon("check-lg");
     label = "CONCLUÍDA";
-  } else if (status === "current") {
-    const done = doneBranchCount(step.topicId);
-    const total = learningTopics[step.topicId].branches.length;
+  } else {
+    const done = doneBranchCount(topicId);
+    const total = topic.branches.length;
     label = done === 0 ? "COMECE POR AQUI" : `EM ANDAMENTO · ${done}/${total}`;
     ring = ` style="--ring:${Math.round((done / total) * 360)}deg"`; // anel de progresso em volta
     tooltip = `<span class="trail-tooltip" aria-hidden="true">${done === 0 ? "COMEÇAR" : "CONTINUAR"}</span>`;
   }
 
-  const isOpen = status === "current" || status === "done";
-  const node = isOpen
-    ? `<button class="trail-node" type="button" data-action="open-topic" data-topic="${step.topicId}" aria-label="Abrir ${step.title}"${ring}><span>${symbol}</span></button>`
-    : `<span class="trail-node" aria-label="Etapa ${step.number}, ${label.toLowerCase()}"><span>${symbol}</span></span>`;
-  return `<li class="trail-step is-${status}">${tooltip}${node}<div class="trail-step-copy"><small>${label}</small><h3>${step.title}</h3><p>${step.subtitle}</p></div></li>`;
+  const node = status === "locked"
+    ? `<span class="trail-node" aria-label="Etapa ${topic.number}, ${label.toLowerCase()}"><span>${symbol}</span></span>`
+    : `<button class="trail-node" type="button" data-action="open-topic" data-topic="${topicId}" aria-label="Abrir ${topic.title}"${ring}><span>${symbol}</span></button>`;
+  return `<li class="trail-step is-${status}" style="--wave:${trailWaveOffset(TOPIC_ORDER.indexOf(topicId))}px">${tooltip}${node}<div class="trail-step-copy"><small>${label}</small><h3>${topic.title}</h3><p>${topic.subtitle}</p></div></li>`;
+}
+
+// Uma unidade: a faixa azul com o nome e as etapas dela.
+function renderTrailUnit(unit) {
+  const done = unit.topics.filter((topicId) => isLessonDone(topicId, "final")).length;
+  return `
+    <div class="trail-unit">
+      <div class="home-map-banner">
+        <div><small>UNIDADE ${unit.number}</small><h2 id="unit-${unit.number}-title">${unit.title}</h2></div>
+        <span>${done}/${unit.topics.length} etapas</span>
+      </div>
+      <ol class="trail-route" aria-labelledby="unit-${unit.number}-title">${unit.topics.map(renderTrailStep).join("")}</ol>
+    </div>`;
+}
+
+// ----- Trilha do computador: uma linha só, que rola para o lado -----
+// As medidas ficam aqui e vão para o CSS como variáveis (style da .trail-track).
+// A largura de cada etapa se ajusta à tela: cabe uma unidade inteira (4 etapas)
+// de cada vez, com uma margem dos dois lados. Entre uma unidade e outra fica
+// um vão de duas margens, e cada seta anda uma "página" (uma unidade).
+const TRAIL_MIN_STEP = 130;   // largura mínima de cada etapa
+const TRAIL_EDGE = 40;        // margem antes da primeira e depois da última etapa
+const TRAIL_WAVE = 24;        // quanto a bolinha sobe ou desce na onda
+const TRAIL_ROUTE_TOP = 76;   // espaço acima das bolinhas (para o balão "COMEÇAR")
+const TRAIL_NODE = 72;        // tamanho da bolinha
+let trailStepWidth = 160;     // largura atual (calculada em layoutTrail)
+
+// Onda: 0, desce, 0, sobe, 0, desce... (um seno, de etapa em etapa)
+function trailWaveOffset(position) {
+  return Math.round(Math.sin((position * Math.PI) / 2) * TRAIL_WAVE);
+}
+
+// Linha ondulada passando pelo centro das bolinhas. O pedaço depois de uma
+// etapa concluída fica turquesa. (No celular ela some: lá a linha é reta.)
+function renderTrailWave() {
+  const points = [];
+  TRAIL_UNITS.forEach((unit, unitIndex) => unit.topics.forEach(() => {
+    const position = points.length;
+    points.push({
+      x: position * trailStepWidth + trailStepWidth / 2 + unitIndex * TRAIL_EDGE * 2, // + o vão entre unidades
+      y: TRAIL_ROUTE_TOP + TRAIL_NODE / 2 + trailWaveOffset(position),
+    });
+  }));
+  const segments = points.slice(0, -1).map((_, index) =>
+    `<path class="${isLessonDone(TOPIC_ORDER[index], "final") ? "is-done" : ""}" d="${smoothSegment(points, index)}" />`);
+  const width = points[points.length - 1].x + trailStepWidth / 2;
+  const height = TRAIL_ROUTE_TOP + TRAIL_NODE + TRAIL_WAVE * 2;
+  return `<svg class="trail-wave" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" aria-hidden="true">${segments.join("")}</svg>`;
+}
+
+function renderTrailMap() {
+  const sizes = `--step-w:${trailStepWidth}px;--edge:${TRAIL_EDGE}px;--route-top:${TRAIL_ROUTE_TOP}px;--wave-size:${TRAIL_WAVE}px`;
+  return `
+    <section class="home-map" aria-label="Sua trilha">
+      <button class="trail-arrow is-left" type="button" data-action="trail-scroll" data-direction="-1" aria-label="Ver etapas anteriores">${icon("chevron-left")}</button>
+      <div class="trail-scroll">
+        <div class="trail-track" style="${sizes}">
+          ${renderTrailWave()}
+          ${TRAIL_UNITS.map(renderTrailUnit).join("")}
+        </div>
+      </div>
+      <button class="trail-arrow is-right" type="button" data-action="trail-scroll" data-direction="1" aria-label="Ver próximas etapas">${icon("chevron-right")}</button>
+    </section>`;
+}
+
+// Etapa que a trilha mostra ao abrir a Home: a última aberta ou, se nenhuma, a atual.
+let trailCenterTopic = null;
+let trailScrollLeft = 0; // para não pular de lugar quando a mesma tela é redesenhada
+
+// Mede a área da trilha, ajusta a largura das etapas e redesenha a onda.
+function layoutTrail(scroller) {
+  trailStepWidth = Math.max(TRAIL_MIN_STEP, Math.floor((scroller.clientWidth - TRAIL_EDGE * 2) / 4));
+  const track = scroller.querySelector(".trail-track");
+  track.style.setProperty("--step-w", `${trailStepWidth}px`);
+  track.querySelector(".trail-wave").outerHTML = renderTrailWave();
+  updateTrailArrows(scroller);
+}
+
+// Depois de desenhar a Home: ajusta as medidas, posiciona a trilha e liga as setas.
+function setupTrailScroll() {
+  const scroller = screenRoot.querySelector(".trail-scroll");
+  if (!scroller) return;
+  layoutTrail(scroller);
+  if (app.dataset.redraw === "on") {
+    scroller.scrollLeft = trailScrollLeft;
+  } else {
+    // abre na "página" da unidade da etapa (a última aberta ou a atual);
+    // em tela estreita, anda mais um pouco se a etapa ainda ficar escondida
+    const step = scroller.querySelector(`.trail-node[data-topic="${trailCenterTopic || currentTopicId()}"]`)?.closest(".trail-step");
+    if (step) {
+      const stepEnd = step.offsetLeft + step.offsetWidth + TRAIL_EDGE;
+      scroller.scrollLeft = Math.max(step.closest(".trail-unit").offsetLeft - TRAIL_EDGE, stepEnd - scroller.clientWidth);
+    }
+  }
+  scroller.addEventListener("scroll", () => {
+    trailScrollLeft = scroller.scrollLeft;
+    updateTrailArrows(scroller);
+  }, { passive: true });
+  updateTrailArrows(scroller);
+}
+
+// Janela mudou de tamanho: as etapas se ajustam de novo.
+window.addEventListener("resize", () => {
+  const scroller = screenRoot.querySelector(".trail-scroll");
+  if (scroller) layoutTrail(scroller);
+});
+
+// Cada seta só existe se ainda tiver etapas escondidas daquele lado.
+function updateTrailArrows(scroller) {
+  const map = scroller.closest(".home-map");
+  const hasLeft = scroller.scrollLeft > 4;
+  const hasRight = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 4;
+  map.querySelector(".trail-arrow.is-left").hidden = !hasLeft;
+  map.querySelector(".trail-arrow.is-right").hidden = !hasRight;
+  scroller.classList.toggle("has-left", hasLeft);   // pontas esmaecidas (CSS)
+  scroller.classList.toggle("has-right", hasRight);
+}
+
+// Setas: andam uma "página" (uma unidade e o vão) para o lado; em tela estreita,
+// o que cabe na tela. Se sobrar menos de uma etapa até a ponta, vão direto até
+// o fim (para não precisar de outro clique).
+function scrollTrail(direction) {
+  const scroller = screenRoot.querySelector(".trail-scroll");
+  if (!scroller) return;
+  const end = scroller.scrollWidth - scroller.clientWidth;
+  const page = Math.min(trailStepWidth * 4 + TRAIL_EDGE * 2, scroller.clientWidth - TRAIL_EDGE);
+  let target = scroller.scrollLeft + direction * page;
+  if (target > end - trailStepWidth) target = end;
+  if (target < trailStepWidth) target = 0;
+  scroller.scrollTo({ left: target, behavior: "smooth" });
 }
 
 // Missão do dia na lateral da Home, com barra de progresso (o detalhe fica na aba Missões).
@@ -375,13 +504,7 @@ function renderTrail() {
     <div class="home-dashboard">
       <div class="home-main-column">
         ${renderHomeHero()}
-        <section class="home-map" aria-labelledby="path-title">
-          <div class="home-map-banner">
-            <div><small>UNIDADE 01 · NÍVEL INICIANTE</small><h2 id="path-title">Sua trilha</h2></div>
-            <span>${TRAIL_STEPS.length} etapas</span>
-          </div>
-          <ol class="trail-route">${TRAIL_STEPS.map(renderTrailStep).join("")}</ol>
-        </section>
+        ${renderTrailMap()}
       </div>
 
       <aside class="home-side-column" aria-label="Resumo do dia">

@@ -103,6 +103,7 @@ function render() {
   settings.toggleAttribute("aria-current", state.screen === "more");
   screenRoot.innerHTML = screenRenderers[state.screen]();
   if (state.focusTopic) measureTreeLines(); // para o caminho da árvore "se desenhar"
+  else if (state.screen === "trail") setupTrailScroll(); // trilha da Home no lugar certo
   app.dataset.theme = state.theme;
   document.documentElement.dataset.theme = state.theme;          // janelas do Bootstrap ficam fora do app
   document.documentElement.setAttribute("data-bs-theme", state.theme); // tema dos componentes do Bootstrap
@@ -229,6 +230,7 @@ document.addEventListener("click", (event) => {
   // Trilha e atividade
   if (action === "open-topic") openTopic(data.topic);
   else if (action === "close-topic") closeTopic();
+  else if (action === "trail-scroll") scrollTrail(Number(data.direction));
   else if (action === "tap-branch") tapBranch(data.topic, data.branch);
   else if (action === "start-branch") startBranch(data.topic, data.branch);
   else if (action === "select-answer") selectAnswer(actionButton);
@@ -302,4 +304,5 @@ window.setInterval(() => {
 
 // ----- Início -----
 // O HTML nasce vazio; desenhamos a primeira tela aqui.
+fixOldProgress();
 render();

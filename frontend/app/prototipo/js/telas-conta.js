@@ -267,6 +267,7 @@ function startNewProfile(name, email, dailyGoal) {
     mascot: { ...DEFAULT_LOOK },
     hasFirstActivityReward: false,
     completedLessons: [],
+    trailVersion: TRAIL_VERSION,
     signsSeen: [],
     daily: emptyDay(),
     week: { key: weekKey(), xp: 0, claimed: [] },

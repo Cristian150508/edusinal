@@ -112,7 +112,8 @@ const state = {
     background: savedPrototype.equippedBackground || "",
   },
   hasFirstActivityReward: Boolean(savedPrototype.hasFirstActivityReward),
-  completedLessons: Array.isArray(savedPrototype.completedLessons) ? savedPrototype.completedLessons : [], // ex.: "primeiros-sinais:alfabeto"
+  completedLessons: Array.isArray(savedPrototype.completedLessons) ? savedPrototype.completedLessons : [], // ex.: "numeros:um-a-cinco"
+  trailVersion: savedPrototype.trailVersion || 0, // de que versão da trilha é esse progresso (ver fixOldProgress)
   signsSeen: Array.isArray(savedPrototype.signsSeen) ? savedPrototype.signsSeen : [], // sinais já vistos no dicionário
   daily: savedPrototype.daily || emptyDay(),                     // progresso de hoje (missões e meta)
   week: savedPrototype.week || { key: weekKey(), xp: 60, claimed: [] }, // XP da semana (ligas)
@@ -184,6 +185,7 @@ function persist() {
     mascot: state.mascot,
     hasFirstActivityReward: state.hasFirstActivityReward,
     completedLessons: state.completedLessons,
+    trailVersion: state.trailVersion,
     signsSeen: state.signsSeen,
     daily: state.daily,
     week: state.week,

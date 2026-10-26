@@ -681,7 +681,7 @@ textarea {
 }
 
 .home-main-column,
-.home-side-column { display: grid; gap: 18px; }
+.home-side-column { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; } /* minmax: a trilha rola em vez de alargar a coluna */
 
 /* Botão "fofo" com sombra embaixo: afunda quando é apertado */
 .button-3d {
@@ -774,7 +774,7 @@ textarea {
   border-radius: 24px;
   background: var(--surface);
 }
-.home-map { padding: 16px 16px 26px; }
+.home-map { position: relative; padding: 16px 0 12px; }
 .home-map-banner {
   display: flex;
   align-items: center;
@@ -790,27 +790,77 @@ textarea {
 .home-map-banner h2 { margin: 2px 0 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; }
 .home-map-banner > span { padding: 6px 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); font-size: 12px; font-weight: 800; white-space: nowrap; }
 
+/* Computador: as unidades lado a lado, numa linha só que rola para o lado.
+   As medidas (--step-w, --route-top, --wave-size) vêm do telas-trilha.js. */
+.trail-scroll {
+  --fade-left: 0px;
+  --fade-right: 0px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  padding-bottom: 6px;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+  /* as pontas somem aos poucos quando ainda tem etapa escondida daquele lado */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent);
+}
+.trail-scroll.has-left { --fade-left: 40px; }
+.trail-scroll.has-right { --fade-right: 40px; }
+.trail-track { --banner-h: 76px; position: relative; display: flex; width: max-content; padding: 0 var(--edge); }
+.trail-unit { width: calc(var(--step-w) * 4); flex: none; }
+.trail-unit + .trail-unit { margin-left: calc(var(--edge) * 2); } /* vão entre as unidades */
+.trail-unit .home-map-banner { height: var(--banner-h); margin: 0 8px; }
 .trail-route {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 52px 0 0;
-  padding: 0;
+  display: flex;
+  height: calc(var(--route-top) + var(--wave-size) + 72px + 88px); /* bolinha mais baixa + texto */
+  margin: 0;
+  padding: var(--route-top) 0 0;
   list-style: none;
 }
-.trail-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
-/* Linha grossa ligando uma bolinha à próxima */
-.trail-step:not(:last-child)::after {
-  position: absolute;
-  top: 33px;
-  left: 50%;
-  width: 100%;
-  height: 6px;
-  border-radius: 99px;
-  background: var(--line);
-  content: "";
+.trail-step {
+  position: relative;
+  width: var(--step-w);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 0 6px;
+  text-align: center;
+  transform: translateY(var(--wave, 0px)); /* sobe ou desce: a onda */
 }
-.trail-step.is-done:not(:last-child)::after { background: var(--accent); }
+/* Linha ondulada ligando as bolinhas (desenhada no telas-trilha.js) */
+.trail-wave { position: absolute; top: var(--banner-h); left: var(--edge); pointer-events: none; }
+.trail-wave path { fill: none; stroke: var(--line); stroke-width: 6; stroke-linecap: round; }
+.trail-wave path.is-done { stroke: var(--accent); }
+/* Setas para andar pela trilha: aparecem com o mouse em cima da trilha
+   (ou no foco do teclado), e só do lado onde ainda tem etapa escondida */
+.trail-arrow {
+  position: absolute;
+  top: calc(16px + 76px + 76px + 36px - 22px); /* na altura das bolinhas */
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.home-map:hover .trail-arrow,
+.trail-arrow:focus-visible { opacity: 1; }
+@media (hover: none) { .trail-arrow { opacity: 1; } } /* tablet: sem mouse, ficam sempre à vista */
+.trail-arrow:active { transform: translateY(4px); box-shadow: none; }
+.trail-arrow[hidden] { display: none; }
+.trail-arrow.is-left { left: 8px; }
+.trail-arrow.is-right { right: 8px; }
 
 .trail-node {
   position: relative;
@@ -877,8 +927,7 @@ button.trail-node:active { transform: translateY(6px); box-shadow: 0 0 0 4px var
 .trail-step.is-done .trail-step-copy small { color: var(--accent); }
 .trail-step-copy h3 { margin: 4px 0 2px; font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
 .trail-step-copy p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
-.trail-step.is-locked .trail-step-copy h3,
-.trail-step.is-soon .trail-step-copy h3 { color: var(--muted); }
+.trail-step.is-locked .trail-step-copy h3 { color: var(--muted); }
 /* No computador as 4 etapas ficam lado a lado: texto menor para os títulos não se encostarem */
 @media (min-width: 761px) {
   .trail-step-copy { padding: 0 4px; }
@@ -985,14 +1034,24 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   .hero-bubble { top: -14px; left: auto; right: 4px; font-size: 11px; padding: 6px 9px; }
   .button-3d { min-height: 46px; padding: 0 18px; font-size: 14px; }
 
-  .home-map { padding: 12px 12px 18px; border-radius: 20px; }
+  .home-map { border-radius: 20px; }
   .home-map-banner h2 { font-size: 20px; }
 
-  /* Trilha vira um caminho vertical, com a linha passando pelas bolinhas */
-  .trail-route { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 24px; padding: 0 4px 0 12px; }
-  .trail-step { flex-direction: row; align-items: center; gap: 16px; padding-bottom: 22px; text-align: left; }
+  /* Trilha vira um caminho vertical, uma unidade embaixo da outra, com a
+     linha reta passando pelas bolinhas (sem rolar para o lado e sem onda) */
+  .home-map { padding: 12px 12px 18px; }
+  .trail-arrow,
+  .trail-wave { display: none; }
+  .trail-scroll { overflow: visible; padding: 0; -webkit-mask-image: none; mask-image: none; }
+  .trail-track { display: block; width: auto; padding: 0; }
+  .trail-unit { width: auto; }
+  .trail-unit + .trail-unit { margin: 30px 0 0; }
+  .trail-unit .home-map-banner { height: auto; margin: 0; }
+  .trail-route { display: block; height: auto; margin-top: 24px; padding: 0 4px 0 12px; }
+  .trail-step { width: auto; flex-direction: row; align-items: center; gap: 16px; padding: 0 0 22px; text-align: left; transform: none; }
   /* a linha entra por baixo da próxima bolinha, reta, sem afinar na ponta */
-  .trail-step:not(:last-child)::after { top: 40px; bottom: -30px; left: 30px; width: 6px; height: auto; border-radius: 0; }
+  .trail-step:not(:last-child)::after { position: absolute; top: 40px; bottom: -30px; left: 30px; width: 6px; background: var(--line); content: ""; }
+  .trail-step.is-done:not(:last-child)::after { background: var(--accent); }
   .trail-node { width: 66px; height: 66px; flex: none; font-size: 20px; }
   .trail-tooltip { display: none; }
 }
@@ -1061,6 +1120,9 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 .lesson-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 20px 0 16px; }
 .lesson-kicker { margin: 0; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .lesson-body h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; line-height: 1.25; }
+/* Etiqueta da pergunta que voltou no fim (segunda chance) */
+.lesson-retry { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-bottom: -6px; padding: 5px 12px; border-radius: 99px; background: var(--yellow-soft); color: #9a7408; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+:root[data-theme="dark"] .lesson-retry { color: var(--yellow); }
 
 /* Vídeo do sinal (ou o espaço reservado, enquanto não foi gravado) */
 .sign-video {

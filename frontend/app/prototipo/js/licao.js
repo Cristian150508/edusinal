@@ -8,6 +8,8 @@
 //     1. o aluno escolhe uma resposta (pode trocar);
 //     2. toca em "Conferir": errar gasta uma vida;
 //     3. "Continuar" vai para a próxima; na última, "Concluir".
+//   Segunda chance: a pergunta errada volta uma vez no fim da atividade
+//   (menos na prova final e no Desafia-me, que têm limite de erros).
 //   O exercício é concluído se chegar ao fim com vidas. Na prova final, além
 //   disso, pode errar no máximo FINAL_MAX_MISTAKES vezes.
 
@@ -151,7 +153,8 @@ function renderLesson() {
     footerHint = `${icon("eye")} Assista ao sinal e repita com as mãos.`;
     button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="${isLast ? "finish-lesson" : "next-question"}">${isLast ? "Concluir" : "Próximo"}</button>`;
   } else {
-    body = `<h2>${questionTitle(step)}</h2>${questionBodyHtml(step)}`;
+    const retryTag = step.isRetry ? `<span class="lesson-retry">${icon("arrow-counterclockwise")} Segunda chance</span>` : "";
+    body = `${retryTag}<h2>${questionTitle(step)}</h2>${questionBodyHtml(step)}`;
     footerHint = "";
     if (isFinalExam()) footerHint = `${icon("trophy-fill")} Prova final: para passar, erre no máximo ${FINAL_MAX_MISTAKES}.`;
     if (lesson.isChallenge) footerHint = `${icon("lightning-charge-fill")} Desafio: para vencer, erre no máximo ${FINAL_MAX_MISTAKES}.`;
@@ -205,6 +208,8 @@ function checkAnswer() {
   const question = currentStep();
   const rightOption = correctOption(question);
   const isCorrect = Number(chosen.dataset.option) === rightOption;
+  const getsRetry = !isCorrect && !question.isRetry && !hasMistakeLimit();
+  if (getsRetry) lesson.steps.push({ ...question, isRetry: true }); // volta no fim, uma vez só
   if (!isCorrect) {
     lesson.mistakes += 1;
     loseLife();
@@ -223,10 +228,12 @@ function checkAnswer() {
 
   // Faixa de baixo: verde-turquesa se acertou, coral se errou
   document.getElementById("lesson-footer").classList.add(isCorrect ? "is-correct" : "is-incorrect");
-  const title = isCorrect ? CORRECT_TITLES[lesson.index % CORRECT_TITLES.length] : `Quase! A resposta certa é ${correctAnswerLabel(question)}.`;
+  let title = isCorrect ? CORRECT_TITLES[lesson.index % CORRECT_TITLES.length] : `Quase! A resposta certa é ${correctAnswerLabel(question)}.`;
+  if (isCorrect && question.isRetry) title = "Agora foi!";
+  const retryNote = getsRetry ? " Ela volta no final para você tentar de novo." : "";
   document.getElementById("answer-feedback").innerHTML = `
     <span class="feedback-icon">${icon(isCorrect ? "check-lg" : "x-lg")}</span>
-    <span><strong>${title}</strong><small>${question.explain}</small></span>`;
+    <span><strong>${title}</strong><small>${question.explain}${retryNote}</small></span>`;
   // a faixa cresce com a explicação: o conteúdo ganha espaço para não ficar embaixo dela
   const footer = document.getElementById("lesson-footer");
   document.querySelector(".lesson").style.paddingBottom = `${footer.offsetHeight + 16}px`;
