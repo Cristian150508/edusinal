@@ -1,6 +1,6 @@
 // PERFIL E CONFIGURAÇÕES
 // Perfil: mascote, nome, números da jornada e conquistas.
-// Configurações: preferências (tema, texto, animações), segurança, ajuda e conta.
+// Configurações: preferências (tema, texto, animações, meta diária), ajuda, segurança e conta.
 
 // ----- Números da jornada -----
 
@@ -156,7 +156,7 @@ function renderProfile() {
     <section class="profile-hero" aria-labelledby="profile-title">
       <button class="profile-hero-avatar ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar mascote"><span class="profile-hero-art">${mascotSvg(state.mascot, "full", "", { animated: true })}</span><span class="profile-hero-edit">${icon("palette-fill")}</span></button>
       <div class="profile-hero-copy">
-        <small>${state.isMinor ? "ALUNO MENOR DE IDADE" : "SEU PERFIL"}</small>
+        <small>SEU PERFIL</small>
         ${renderNameArea()}
         <p>Liga ${LEAGUES[state.league].name} · ${items.owned} de ${items.total} itens do mascote</p>
         ${state.editingName ? "" : `<button class="button-3d button-3d-light" type="button" data-screen="mascot">${icon("palette-fill")} Personalizar mascote</button>`}

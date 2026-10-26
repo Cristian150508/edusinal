@@ -100,7 +100,6 @@ const state = {
   name: savedPrototype.name || "Marina",
   email: savedPrototype.email || "",      // e-mail do perfil criado neste navegador (para entrar de novo)
   isRegistered: wasRegistered,
-  isMinor: savedPrototype.isMinor || false,
   dailyGoal: savedPrototype.dailyGoal || DAILY_GOAL,     // atividades por dia na meta da Home
   unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
   // Roupa e acessórios do mascote. Quem jogou antes tinha só "equippedItem"
@@ -142,7 +141,7 @@ const screenTitles = {
   missions: "Missões",
   profile: "Meu perfil",
   more: "Configurações",
-  mascot: "Personalizar mascote",
+  mascot: "Guarda-roupa",
   signup: "Criar conta",
 };
 
@@ -180,7 +179,6 @@ function persist() {
     name: state.name,
     email: state.email,
     isRegistered: state.isRegistered,
-    isMinor: state.isMinor,
     dailyGoal: state.dailyGoal,
     unlockedItems: state.unlockedItems,
     mascot: state.mascot,

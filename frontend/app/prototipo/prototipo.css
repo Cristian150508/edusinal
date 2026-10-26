@@ -310,15 +310,6 @@ a {
   letter-spacing: 0.12em;
 }
 
-.status-dot {
-  width: 7px;
-  height: 7px;
-  display: inline-block;
-  border-radius: 50%;
-  background: var(--primary);
-  vertical-align: 1px;
-}
-
 .page-intro h2 {
   margin: 0 0 10px;
   font-family: "Manrope", sans-serif;
@@ -352,24 +343,6 @@ a {
 
 .button:hover:not(:disabled) {
   transform: translateY(-1px);
-}
-
-.button-primary {
-  background: var(--primary);
-  color: #fff;
-}
-
-.button-primary:hover:not(:disabled) {
-  background: var(--primary-strong);
-}
-
-.button-primary:disabled {
-  background: var(--muted);
-  opacity: 0.7;
-}
-
-.button-primary span {
-  font-size: 17px;
 }
 
 .button-outline {
@@ -569,10 +542,6 @@ textarea {
 }
 
 /* Botão principal: fundo claro no tema escuro, então o texto fica escuro. */
-
-.app-shell[data-theme="dark"] .button-primary {
-  color: #0f1d2b;
-}
 
 @keyframes screen-in {
   from {
@@ -1242,7 +1211,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 }
 
 /* ===================================================================
-   ABAS: ligas, missões, dicionário, lojinha, perfil e "Mais"
+   ABAS: ligas, missões, dicionário, lojinha, perfil e Configurações
    Só usam as variáveis de cor do topo, então o tema escuro funciona sozinho.
    =================================================================== */
 

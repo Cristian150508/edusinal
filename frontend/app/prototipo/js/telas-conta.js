@@ -248,7 +248,6 @@ function startNewProfile(name, email, dailyGoal) {
     name,
     email,
     dailyGoal,
-    isMinor: false,
     isRegistered: true,
     xp: 0,
     coins: WELCOME_COINS,
