@@ -174,7 +174,7 @@ function renderShop() {
     <section class="shop-group" aria-labelledby="shop-mascot-title">
       <div class="mission-heading"><h2 id="shop-mascot-title">Guarda-roupa do mascote</h2><span class="mission-timer">${icon("bag-heart-fill")} ${items.owned} de ${items.total} itens</span></div>
       <div class="shop-wardrobe">
-        <span class="shop-wardrobe-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "")}</span>
+        <span class="shop-wardrobe-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "", { animated: true })}</span>
         <div><h3>Roupas, acessórios e fundos</h3><p>Vista o que já é seu. Itens novos aparecem na vitrine do dia ou vêm de conquistas.</p></div>
         <button class="button-3d button-3d-primary" type="button" data-screen="mascot">Abrir guarda-roupa ${icon("arrow-right")}</button>
       </div>

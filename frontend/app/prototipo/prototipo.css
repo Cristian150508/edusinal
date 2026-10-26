@@ -3140,7 +3140,9 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   box-shadow: 0 6px 0 var(--hero-shadow);
   cursor: pointer;
 }
-.profile-hero-avatar .mascot-svg { width: 100%; height: 100%; margin-top: 6%; border-radius: 50%; }
+/* o boneco fica numa camada que corta no círculo (o pincel, por cima, não é cortado) */
+.profile-hero-art { display: block; width: 100%; height: 100%; overflow: hidden; border-radius: 50%; }
+.profile-hero-avatar .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
 .profile-hero-avatar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--hero-shadow); }
 /* pincel no canto: mostra que dá para mudar o visual */
 .profile-hero-edit {
@@ -3278,7 +3280,7 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   color: #ffffff;
   text-align: center;
 }
-.wardrobe-stage-art { width: min(230px, 100%); aspect-ratio: 1; display: block; overflow: hidden; border: 4px solid rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 6px 0 var(--hero-shadow); }
+.wardrobe-stage-art { width: min(230px, 100%); aspect-ratio: 1; display: block; overflow: hidden; padding: 0; cursor: pointer; border: 4px solid rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 6px 0 var(--hero-shadow); }
 .wardrobe-stage-art .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
 .wardrobe-stage-info { width: 100%; display: grid; justify-items: center; gap: 8px; }
 .wardrobe-stage-info > strong { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; }

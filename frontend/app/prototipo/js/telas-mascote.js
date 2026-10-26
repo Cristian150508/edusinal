@@ -129,9 +129,11 @@ function chooseMascotItem(slot, id) {
     showToast(`${item.name} comprado: −${item.unlock.cost} moedas.`);
   }
 
+  const changed = state.mascot[slot] !== id;
   state.mascot[slot] = id;
   persist();
   render();
+  if (changed) playMascotReaction(); // roupa nova: "tive uma ideia!"
 }
 
 function chooseMascotTab(slot) {
@@ -187,7 +189,7 @@ function renderMascotEditor() {
     </div>
     <div class="mascot-editor">
       <aside class="wardrobe-stage">
-        <span class="wardrobe-stage-art ${backdropClass()}">${mascotSvg(state.mascot, "full", `Mascote de ${state.name}`)}</span>
+        <button class="wardrobe-stage-art ${backdropClass()}" type="button" data-action="mascot-react" aria-label="Tocar no mascote de ${escapeHtml(state.name)}">${mascotSvg(state.mascot, "full", "", { animated: true })}</button>
         <div class="wardrobe-stage-info">
           <strong>${escapeHtml(state.name)}</strong>
           <div class="wardrobe-progress">${progressBarHtml(items.owned, items.total, "Itens liberados")}<small>${items.owned} de ${items.total} itens</small></div>

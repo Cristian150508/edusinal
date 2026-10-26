@@ -270,7 +270,7 @@ function renderHomeHero() {
       </div>
       <button class="home-hero-art" type="button" data-screen="mascot" aria-label="Personalizar seu mascote">
         <span class="hero-bubble" aria-hidden="true">${bubble}</span>
-        <span class="hero-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "")}</span>
+        <span class="hero-mascot ${backdropClass()}">${mascotSvg(state.mascot, "full", "", { animated: true })}</span>
       </button>
     </section>`;
 }

@@ -23,9 +23,9 @@ const SHADOW_OFFSET = "translate(-4 5)";
 const MASCOT_VIEWBOX = {
   full: "-14 -30 204 204", // corpo inteiro (com espaço para chapéus)
   head: "34 -20 124 112", // só a cabeça (miniaturas de chapéu e óculos)
-  avatar: "34 -12 124 124", // cabeça e ombros no centro (foto de perfil redonda)
+  avatar: "24 -14 144 144", // cabeça e peito no centro (foto de perfil redonda)
   hat: "24 -38 144 144", // cabeça com espaço em cima (vitrine da Lojinha)
-  chest: "32 2 152 152", // peito de perto, para o broche aparecer (vitrine da Lojinha)
+  chest: "26 4 144 144", // peito de perto, para o broche aparecer (vitrine da Lojinha)
 };
 
 // Cada SVG precisa de ids únicos (por causa da camiseta listrada).
@@ -48,10 +48,11 @@ function bodyShape(shirt, uid) {
       defs = `<defs><pattern id="listras-${uid}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="${shirt.fill}"/><rect width="12" height="5" fill="${shirt.stripe}"/></pattern></defs>`;
       bodyFill = `url(#listras-${uid})`;
     }
-    const body = `<path d="M58 168 L57 114 Q59 99 76 94 Q98 88 120 94 Q146 101 156 117 Q165 136 167 168 Z" fill="${bodyFill}"/>`;
+    // formato da logo, com a barriga do lado direito um pouco menos estufada
+    const body = `<path d="M58 168 L57 114 Q59 99 76 94 Q98 88 120 94 Q141 100 148 116 Q153 135 154 168 Z" fill="${bodyFill}"/>`;
     if (isShadow) return body;
     // dobras de sombreado nas laterais, como na logo
-    const folds = `<path d="M145 112 Q158 134 160 168 L150 168 Q150 136 141 117 Z" fill="${shade || MASCOT_INK.shade}" opacity="${shirt.fill === "#ffffff" ? 1 : 0.35}"/>
+    const folds = `<path d="M138 110 Q148 130 148 168 L140 168 Q139 136 133 116 Z" fill="${shade || MASCOT_INK.shade}" opacity="${shirt.fill === "#ffffff" ? 1 : 0.35}"/>
       <path d="M66 120 Q70 146 72 168 L62 168 L61 124 Z" fill="${shade || MASCOT_INK.shade}" opacity="${shirt.fill === "#ffffff" ? 1 : 0.35}"/>`;
     return defs + body + folds;
   };
@@ -74,18 +75,28 @@ function drawShirtDetails(shirt) {
   return hood + neck + collar + extra;
 }
 
-// Braço levantado com o dedo na têmpora, como na logo.
-// Ombro (66,108) → cotovelo (28,132) → mão perto do rosto (48,72).
-function armShape(shirt) {
+// Braço em duas partes: braço (ombro → cotovelo) e antebraço com a mão
+// (cotovelo → mão), para o antebraço poder se mexer sozinho na "cutucada".
+// Pose da logo: ombro (66,108) → cotovelo (28,132) → mão perto do rosto (48,72).
+const ELBOW = "28 132";
+
+function upperArmShape(shirt) {
   return (fill, shade) => {
     const skin = fill || MASCOT_INK.skin;
     const edge = shade || MASCOT_INK.shade;
     const sleeveColor = fill || (shirt.fill === "#ffffff" ? MASCOT_INK.skin : shirt.fill);
-    return `<path d="M66 108 L28 132 L48 72" fill="none" stroke="${edge}" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M66 108 L28 132 L48 72" fill="none" stroke="${skin}" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+    return `<path d="M66 108 L28 132" fill="none" stroke="${edge}" stroke-width="24" stroke-linecap="round"/>
+      <path d="M66 108 L28 132" fill="none" stroke="${skin}" stroke-width="19" stroke-linecap="round"/>
       <path d="M66 108 L47 120" fill="none" stroke="${edge}" stroke-width="24" stroke-linecap="round"/>
       <path d="M66 108 L47 120" fill="none" stroke="${sleeveColor}" stroke-width="19" stroke-linecap="round"/>`;
   };
+}
+
+function forearmShape(fill, shade) {
+  const skin = fill || MASCOT_INK.skin;
+  const edge = shade || MASCOT_INK.shade;
+  return `<path d="M28 132 L48 72" fill="none" stroke="${edge}" stroke-width="24" stroke-linecap="round"/>
+    <path d="M28 132 L48 72" fill="none" stroke="${skin}" stroke-width="19" stroke-linecap="round"/>`;
 }
 
 function headShape(fill) {
@@ -102,12 +113,17 @@ function drawFace() {
 }
 
 // Mão fechada com o indicador apontando para a têmpora.
-function handShape(fill, shade) {
+function fingerShape(fill, shade) {
   const skin = fill || MASCOT_INK.skin;
   const edge = shade || MASCOT_INK.shade;
   return `<path d="M52 62 L65 45" stroke="${edge}" stroke-width="10" stroke-linecap="round"/>
-    <path d="M52 62 L65 45" stroke="${skin}" stroke-width="6.5" stroke-linecap="round"/>
-    <circle cx="47" cy="68" r="10.5" fill="${edge}"/>
+    <path d="M52 62 L65 45" stroke="${skin}" stroke-width="6.5" stroke-linecap="round"/>`;
+}
+
+function handShape(fill, shade) {
+  const skin = fill || MASCOT_INK.skin;
+  const edge = shade || MASCOT_INK.shade;
+  return `<circle cx="47" cy="68" r="10.5" fill="${edge}"/>
     <circle cx="47.5" cy="67.5" r="8.8" fill="${skin}"/>
     ${fill ? "" : `<path d="M41 69 Q46 72 52 69" fill="none" stroke="${edge}" stroke-width="2" stroke-linecap="round"/>`}`;
 }
@@ -180,8 +196,8 @@ function drawFaceItem(id) {
 // Broche no peito, do lado direito da camiseta.
 function drawChestItem(id) {
   if (!id) return "";
-  const x = 131;
-  const y = 126;
+  const x = 125;
+  const y = 125;
   let icon = "";
   if (id === "broche-sinal") icon = `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12">🤟</text>`;
   if (id === "estrela-coral") icon = `<path d="M${x} ${y - 7} L${x + 2.2} ${y - 2} L${x + 7} ${y - 1.8} L${x + 3.2} ${y + 1.8} L${x + 4.5} ${y + 7} L${x} ${y + 4.2} L${x - 4.5} ${y + 7} L${x - 3.2} ${y + 1.8} L${x - 7} ${y - 1.8} L${x - 2.2} ${y - 2} Z" fill="#f07a68"/>`;
@@ -190,25 +206,73 @@ function drawChestItem(id) {
   return `<circle cx="${x - 1.5}" cy="${y + 2}" r="10.5" fill="${MASCOT_INK.shadow}" opacity="0.25"/><circle cx="${x}" cy="${y}" r="10.5" fill="#ffffff"/>${icon}`;
 }
 
+// ----- Animação -----
+// Feita com as animações do próprio SVG (<animateTransform>), sem biblioteca.
+// O boneco fica sempre na pose da logo, "respirando" de leve. Ao vestir roupa
+// nova (ou tocar no boneco do guarda-roupa) ele dá duas cutucadas na cabeça e
+// os risquinhos amarelos "estalam". Só os mascotes grandes animam; com
+// "animações reduzidas" ele fica parado.
+
+const POKE = 'dur="0.8s" begin="indefinite" keyTimes="0;0.25;0.5;0.75;1" data-reaction="true"';
+
+function isMotionAllowed() {
+  const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return state.motion !== "reduced" && !prefersReduced;
+}
+
+// Toca a cutucada em todos os mascotes animados da tela.
+function playMascotReaction() {
+  document.querySelectorAll('.mascot-svg [data-reaction="true"]').forEach((animation) => {
+    if (typeof animation.beginElement === "function") animation.beginElement();
+  });
+}
+
+// Braço na pose da logo. Na cutucada, o antebraço afasta a mão da cabeça e volta, duas vezes.
+function drawArm(shirt, animated) {
+  const poke = animated
+    ? `<animateTransform attributeName="transform" type="rotate" values="0 ${ELBOW};-14 ${ELBOW};0 ${ELBOW};-14 ${ELBOW};0 ${ELBOW}" ${POKE}/>`
+    : "";
+  return `<g>
+      ${withShadow(upperArmShape(shirt))}
+      <g>${poke}
+        ${withShadow(forearmShape)}
+        ${withShadow(fingerShape)}
+        ${withShadow(handShape)}
+      </g>
+    </g>`;
+}
+
+// Risquinhos amarelos: crescem a cada cutucada (em volta do meio deles).
+function drawAnimatedSparks(animated) {
+  const pop = animated
+    ? `<animateTransform attributeName="transform" type="scale" values="1;1.35;1;1.35;1" ${POKE}/>`
+    : "";
+  return `<g transform="translate(152 35)"><g>${pop}<g transform="translate(-152 -35)">${drawSparks()}</g></g></g>`;
+}
+
 // ----- Montagem -----
 
 // look = { shirt, head, face, chest } com os ids dos itens escolhidos.
 // crop = "full" (corpo inteiro), "head" (só a cabeça), "avatar" (foto de perfil),
 // "hat" ou "chest" (recortes de perto usados na vitrine da Lojinha).
-function mascotSvg(look, crop = "full", label = "Mascote do EduSinal") {
+// options.animated: respira e dá a cutucada (só nos mascotes grandes).
+function mascotSvg(look, crop = "full", label = "Mascote do EduSinal", options = {}) {
+  const animated = Boolean(options.animated) && isMotionAllowed();
   mascotDrawCount += 1;
   const shirt = MASCOT_ITEMS.find((item) => item.id === look.shirt) || MASCOT_ITEMS.find((item) => item.id === DEFAULT_LOOK.shirt);
   const ariaLabel = label ? `role="img" aria-label="${escapeHtml(label)}"` : 'aria-hidden="true"';
-  return `<svg class="mascot-svg" viewBox="${MASCOT_VIEWBOX[crop]}" ${ariaLabel} xmlns="http://www.w3.org/2000/svg">
-    ${withShadow(bodyShape(shirt, mascotDrawCount))}
-    ${drawShirtDetails(shirt)}
-    ${drawChestItem(look.chest)}
-    ${withShadow(armShape(shirt))}
-    ${withShadow(headShape)}
-    ${drawFace()}
-    ${drawFaceItem(look.face)}
-    ${drawHeadItem(look.head)}
-    ${withShadow(handShape)}
-    ${drawSparks()}
+  const breathe = animated ? '<animateTransform attributeName="transform" type="translate" values="0 0;0 1.6;0 0" dur="3.2s" repeatCount="indefinite"/>' : "";
+  return `<svg class="mascot-svg" viewBox="${MASCOT_VIEWBOX[crop]}" ${ariaLabel} xmlns="http://www.w3.org/2000/svg"${animated ? ' data-animated="true"' : ""}>
+    <g>${breathe}
+      ${withShadow(bodyShape(shirt, mascotDrawCount))}
+      ${drawShirtDetails(shirt)}
+      ${drawChestItem(look.chest)}
+      ${withShadow(headShape)}
+      ${drawFace()}
+      ${drawFaceItem(look.face)}
+      ${drawHeadItem(look.head)}
+      ${drawArm(shirt, animated)}
+      ${drawAnimatedSparks(animated)}
+    </g>
   </svg>`;
 }

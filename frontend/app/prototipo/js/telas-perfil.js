@@ -148,7 +148,7 @@ function renderProfile() {
 
   return `
     <section class="profile-hero" aria-labelledby="profile-title">
-      <button class="profile-hero-avatar ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar mascote">${mascotSvg(state.mascot, "full", "")}<span class="profile-hero-edit">${icon("palette-fill")}</span></button>
+      <button class="profile-hero-avatar ${backdropClass()}" type="button" data-screen="mascot" aria-label="Personalizar mascote"><span class="profile-hero-art">${mascotSvg(state.mascot, "full", "", { animated: true })}</span><span class="profile-hero-edit">${icon("palette-fill")}</span></button>
       <div class="profile-hero-copy">
         <small>${state.isMinor ? "ALUNO MENOR DE IDADE" : "SEU PERFIL"}</small>
         ${renderNameArea()}
