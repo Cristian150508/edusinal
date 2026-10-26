@@ -839,15 +839,15 @@ button.trail-node:active { transform: translateY(6px); box-shadow: 0 0 0 4px var
 .trail-step.is-current .trail-node { --node-base: var(--hero-shadow); background: var(--hero-from); color: #ffffff; }
 .trail-step.is-done .trail-node { --node-base: var(--done-shadow); background: var(--accent); color: #ffffff; font-size: 30px; }
 /* Anel amarelo em volta da etapa atual: mostra quanto dela já foi feito.
-   Fica 6px mais para baixo (como a sombra 3D da bolinha), para a borda de
-   baixo da bolinha não encostar no anel. */
+   O centro dele fica 3px mais para baixo, no meio da bolinha + a base 3D,
+   para a base não encostar no anel. */
 .trail-step.is-current .trail-node::before {
   position: absolute;
-  inset: -10px -13px -16px;
+  inset: -7px -10px -13px;
   border-radius: 50%;
   background: conic-gradient(var(--yellow) var(--ring, 0deg), var(--line) 0);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
   content: "";
 }
 /* Balãozinho "COMEÇAR" pulando em cima da etapa atual */
