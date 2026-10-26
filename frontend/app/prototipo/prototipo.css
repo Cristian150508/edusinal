@@ -1527,28 +1527,32 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
 
 .shop-group { margin-top: 26px; }
 
-/* Ajudas: cartões de produto, com preço no botão dourado */
+/* Ajudas: ícone à esquerda, texto à direita e botão dourado embaixo */
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 .shop-card {
   display: grid;
-  justify-items: start;
-  gap: 6px;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  align-items: start;
+  gap: 14px;
   padding: 18px;
   border: 2px solid var(--line);
   border-radius: 20px;
   background: var(--surface);
   box-shadow: 0 4px 0 var(--line);
 }
-.shop-card-icon { width: 60px; height: 60px; display: grid; place-items: center; margin-bottom: 6px; border-radius: 18px; background: var(--coral-soft); color: var(--coral); font-size: 30px; }
+.shop-card-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 18px; background: var(--coral-soft); color: var(--coral); font-size: 30px; }
 .shop-card-protetor-ofensiva .shop-card-icon,
 .shop-card-recarga-energia .shop-card-icon { background: var(--accent-soft); color: var(--accent); }
+.shop-card-info { display: grid; justify-items: start; gap: 4px; }
 .shop-card h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
 .shop-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
-.shop-card-status { display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 8px; padding: 4px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700; }
+.shop-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 4px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700; }
 .shop-card-status .bi { color: var(--coral); }
 .shop-card-protetor-ofensiva .shop-card-status .bi,
 .shop-card-recarga-energia .shop-card-status .bi { color: var(--accent); }
 .shop-buy { width: 100%; margin-top: auto; }
+.shop-card .shop-buy { grid-column: 1 / -1; align-self: end; }
 
 /* Vitrine do dia: 3 itens do mascote, cada um mostrado já no mascote */
 .shop-showcase { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }

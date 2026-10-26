@@ -65,9 +65,11 @@ function renderPowerUp(power) {
   return `
     <article class="shop-card shop-card-${power.id}">
       <span class="shop-card-icon">${icon(power.icon)}</span>
-      <h3>${power.name}</h3>
-      <p>${power.text}</p>
-      <span class="shop-card-status">${powerUpStatus(power)}</span>
+      <div class="shop-card-info">
+        <h3>${power.name}</h3>
+        <p>${power.text}</p>
+        <span class="shop-card-status">${powerUpStatus(power)}</span>
+      </div>
       ${button}
     </article>`;
 }
