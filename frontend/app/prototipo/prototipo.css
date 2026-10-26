@@ -2540,6 +2540,7 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   transform: translate(-50%, var(--lift));
 }
 .tree-final-node {
+  position: relative;
   width: 104px;
   height: 104px;
   display: grid;
@@ -2559,6 +2560,48 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   0%, 100% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 0 rgba(237, 198, 83, 0.6); }
   50% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 16px rgba(237, 198, 83, 0); }
 }
+/* Prova feita: anel dourado em volta, selo turquesa de "feito" e um brilho
+   que passa pelo troféu de vez em quando */
+.tree-center.is-done .tree-final-node {
+  box-shadow:
+    0 7px 0 #c99a1c,                      /* base 3D */
+    0 0 0 5px var(--surface),             /* folga em volta do troféu... */
+    0 7px 0 5px var(--surface),           /* ...e da base */
+    0 4px 0 11px rgba(237, 198, 83, 0.5); /* anel, centrado no troféu + base */
+}
+.tree-center.is-done .tree-final-node::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.6) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 150% 0;
+  animation: final-shine 3.2s ease-in-out infinite;
+  content: "";
+  pointer-events: none;
+}
+@keyframes final-shine {
+  0%, 55% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+.tree-final-check {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 16px;
+}
+.tree-final-check .bi { display: block; line-height: 1; }
+.tree-final-check .bi::before { vertical-align: 0; }
+.tree-center.is-done small { color: var(--accent); font-weight: 700; }
 .tree-center h2 { margin: 12px 0 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
 .tree-center p { margin: 0; color: var(--muted); font-size: 13px; }
 .tree-center small { max-width: 180px; margin-top: 2px; color: var(--muted); font-size: 12px; }
@@ -2571,7 +2614,8 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .tree-line-mask,
   .tree-leaf,
   .tree-leaf.is-open .tree-icon::after,
-  .tree-center.is-open .tree-final-node { animation: none; }
+  .tree-center.is-open .tree-final-node,
+  .tree-center.is-done .tree-final-node::after { animation: none; }
 }
 
 @media (max-width: 760px) {
@@ -2630,6 +2674,7 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .tree-icon { width: 58px; height: 58px; font-size: 22px; }
   .tree-center { --lift: -38px; }
   .tree-final-node { width: 76px; height: 76px; font-size: 30px; }
+  .tree-final-check { width: 28px; height: 28px; font-size: 14px; }
   .tree-center h2 { margin-top: 8px; font-size: 14px; }
   .tree-bubble { top: calc(var(--my) + 46px); }
 }
@@ -2642,6 +2687,7 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .tree-order { min-width: 22px; height: 22px; font-size: 11px; }
   .tree-center { --lift: -32px; }
   .tree-final-node { width: 64px; height: 64px; font-size: 26px; }
+  .tree-final-check { top: -4px; right: -4px; width: 24px; height: 24px; border-width: 2px; font-size: 12px; }
   .tree-bubble { top: calc(var(--my) + 38px); }
 }
 @keyframes bubble-in {
