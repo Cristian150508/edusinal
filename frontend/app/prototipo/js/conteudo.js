@@ -226,8 +226,9 @@ function markLessonDone(topicId, branchId) {
 // Progresso salvo antes da mudança das atividades (25/10) usa nomes que não
 // existem mais. Aqui jogamos fora os nomes antigos e, se a prova final da
 // etapa já foi feita, marcamos todas as atividades dela como feitas também.
+// Só mexe nas etapas da trilha: o resto (como as letras "alfabeto:A") fica igual.
 function fixOldProgress() {
-  const fixed = [];
+  const fixed = state.completedLessons.filter((key) => !TOPIC_ORDER.includes(key.split(":")[0]));
   TOPIC_ORDER.forEach((topicId) => {
     const finalDone = isLessonDone(topicId, "final");
     learningTopics[topicId].branches.forEach((branch) => {
