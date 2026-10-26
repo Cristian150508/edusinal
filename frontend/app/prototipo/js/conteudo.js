@@ -223,6 +223,24 @@ function markLessonDone(topicId, branchId) {
   return true;
 }
 
+// Progresso salvo antes da mudança das atividades (25/10) usa nomes que não
+// existem mais. Aqui jogamos fora os nomes antigos e, se a prova final da
+// etapa já foi feita, marcamos todas as atividades dela como feitas também.
+function fixOldProgress() {
+  const fixed = [];
+  TOPIC_ORDER.forEach((topicId) => {
+    const finalDone = isLessonDone(topicId, "final");
+    learningTopics[topicId].branches.forEach((branch) => {
+      if (finalDone || isLessonDone(topicId, branch.id)) fixed.push(lessonKey(topicId, branch.id));
+    });
+    if (finalDone) fixed.push(lessonKey(topicId, "final"));
+  });
+  if (fixed.length === state.completedLessons.length && fixed.every((key) => state.completedLessons.includes(key))) return;
+  state.completedLessons = fixed;
+  persist();
+}
+fixOldProgress();
+
 // Passos de uma atividade: os cartões (aprender, com type "card") ou as perguntas (exercício).
 // A prova final junta as 2 primeiras perguntas de cada exercício da etapa.
 function stepsFor(topicId, branchId) {
