@@ -3,9 +3,21 @@
 // semanais na segunda-feira. O progresso vem do que o aluno faz de verdade.
 
 // progress: função que diz quanto já foi feito.
+// As duas primeiras seguem a meta diária que o aluno escolheu no cadastro
+// (1, 3 ou 5 atividades): por isso o alvo e o título são calculados na hora ("get").
 const DAILY_MISSIONS = [
-  { id: "exercicios", icon: "pencil-square", tone: "coral", title: "Conclua 2 exercícios", text: "Faça exercícios novos na árvore da etapa.", target: 2, reward: 10, progress: () => state.daily.exercises },
-  { id: "xp", icon: "stars", tone: "yellow", title: "Ganhe 40 XP", text: `Cada exercício novo vale ${XP_PER_EXERCISE} XP.`, target: 40, reward: 10, progress: () => state.daily.xp },
+  {
+    id: "exercicios", icon: "pencil-square", tone: "coral", text: "Faça atividades novas na árvore da etapa.", reward: 10,
+    get target() { return state.dailyGoal; },
+    get title() { return `Conclua ${state.dailyGoal} ${state.dailyGoal === 1 ? "atividade" : "atividades"}`; },
+    progress: () => state.daily.exercises,
+  },
+  {
+    id: "xp", icon: "stars", tone: "yellow", text: `Cada atividade nova vale ${XP_PER_EXERCISE} XP.`, reward: 10,
+    get target() { return state.dailyGoal * XP_PER_EXERCISE; },
+    get title() { return `Ganhe ${state.dailyGoal * XP_PER_EXERCISE} XP`; },
+    progress: () => state.daily.xp,
+  },
   { id: "dicionario", icon: "book-half", tone: "green", title: "Veja 3 sinais no dicionário", text: "Revisar é livre e não gasta vidas.", target: 3, reward: 5, progress: () => state.daily.signsViewed.length },
 ];
 

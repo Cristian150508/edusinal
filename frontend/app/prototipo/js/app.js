@@ -129,6 +129,8 @@ function setScreen(screen) {
       return;
     }
   }
+  if (screen === "signup" && state.screen !== "signup") resetSignup(); // cadastro novo começa da 1ª etapa
+  if (screen === "login" && state.screen !== "login") resetLogin();
   state.screen = screen;
   state.answered = false;
   state.focusTopic = null;
@@ -253,6 +255,13 @@ document.addEventListener("click", (event) => {
   else if (action === "set-theme") setTheme(data.value);
   else if (action === "set-text-size") setTextSize(data.value);
   else if (action === "set-motion") setMotion(data.value);
+  else if (action === "set-goal") setDailyGoal(data.value);
+  // Cadastro por etapas
+  else if (action === "signup-back") signupBack();
+  else if (action === "signup-goal") chooseSignupGoal(data.value);
+  else if (action === "signup-start") setScreen("trail");
+  else if (action === "login-back") loginBack();
+  else if (action === "login-start") setScreen("trail");
   else if (action === "reset-demo") resetDemo();
   else if (action === "logout") logout();
   // Calendário da ofensiva

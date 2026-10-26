@@ -2,6 +2,12 @@
 // Telas de cadastro e entrada, e a validação dos dados. Tudo demonstrativo:
 // o perfil fica só neste navegador e nenhuma senha é salva ou enviada.
 // Entrar = voltar ao perfil salvo aqui, usando o mesmo e-mail do cadastro.
+//
+// Cadastro e login são por etapas, uma pergunta por tela (como nos exercícios):
+//   cadastro: apelido → e-mail → senha → meta diária → "Tudo pronto!";
+//   login: e-mail → senha → "deixa eu ver se te conheço…" → "Me lembrei!".
+// Não pede idade: quando houver servidor, crianças vão precisar do
+// consentimento de um responsável (LGPD) e isso será tratado lá.
 
 const WELCOME_COINS = 20; // moedas de boas-vindas de um perfil novo
 
@@ -13,45 +19,220 @@ function hasStrongPassword(password) {
     && /[^A-Za-z0-9]/.test(password);
 }
 
-function renderSignup() {
-  return `
-    <section class="signup-layout" aria-labelledby="signup-title"><div class="signup-intro"><p class="eyebrow">BEM-VINDE AO EDUSINAL</p><h2>Aprender Libras pode aproximar todo mundo.</h2><p>Crie seu perfil de aluno e comece uma jornada de aprendizagem no seu ritmo.</p><div class="signup-aside"><i class="bi bi-info-circle-fill" aria-hidden="true"></i><span>Cadastro demonstrativo: o perfil fica salvo só neste navegador e nada é enviado.</span></div></div><div class="signup-form-panel"><div class="signup-title"><span class="eyebrow">CRIAR PERFIL</span><h3 id="signup-title">Dados do aluno</h3></div><form id="signup-form" novalidate><div class="form-grid"><label class="field-label" for="signup-name">Nome completo<input id="signup-name" name="name" autocomplete="name" placeholder="Seu nome" required /></label><label class="field-label" for="signup-age">Idade<input id="signup-age" name="age" type="number" inputmode="numeric" min="1" max="120" step="1" placeholder="Idade em anos" required /></label><label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required /></label><label class="field-label" for="signup-password">Senha<input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required /></label><label class="field-label signup-field-full" for="signup-confirm-password">Confirme a senha<input id="signup-confirm-password" name="passwordConfirmation" type="password" autocomplete="new-password" placeholder="Digite a senha novamente" required /></label></div><p class="field-hint">Use ao menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" id="form-error" role="alert" aria-live="polite"></p><button class="button button-primary button-full" type="submit">Criar perfil <i class="bi bi-arrow-right" aria-hidden="true"></i></button><p class="form-legal">A idade não é verificada e a senha não é salva nem enviada.</p><div class="login-register"><span>Já tem uma conta?</span><button class="text-button" type="button" data-screen="login">Entrar <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div></form></div></section>`;
+// ----- Cadastro por etapas -----
+
+const SIGNUP_STEPS = ["nickname", "email", "password", "goal"];
+const GOAL_OPTIONS = [
+  { value: 1, title: "Leve", text: "1 atividade por dia", icon: "cup-hot-fill" },
+  { value: 3, title: "Normal", text: "3 atividades por dia", icon: "lightning-charge-fill" },
+  { value: 5, title: "Puxado", text: "5 atividades por dia", icon: "fire" },
+];
+
+// Respostas enquanto o cadastro não termina (a senha nunca fica guardada).
+let signup = { step: 0, nickname: "", email: "", goal: DAILY_GOAL, done: false };
+
+function resetSignup() {
+  signup = { step: 0, nickname: "", email: "", goal: DAILY_GOAL, done: false };
 }
 
-function renderLogin() {
+// O que cada etapa pergunta e mostra.
+function signupStepHtml(stepName) {
+  if (stepName === "nickname") {
+    return {
+      question: "Como você quer ser chamado(a)?",
+      body: `<label class="field-label" for="signup-nickname">Apelido<input id="signup-nickname" name="nickname" value="${escapeHtml(signup.nickname)}" maxlength="20" autocomplete="nickname" placeholder="Ex.: Mari, Lu, Biel" /></label>
+        <p class="field-hint">${icon("shield-fill-check")} É o nome que aparece nas ligas. Não use seu nome completo.</p>`,
+    };
+  }
+  if (stepName === "email") {
+    return {
+      question: `Prazer, ${escapeHtml(signup.nickname)}! Qual é o seu e-mail?`,
+      body: `<label class="field-label" for="signup-email">E-mail<input id="signup-email" name="email" type="email" value="${escapeHtml(signup.email)}" autocomplete="email" placeholder="voce@email.com" /></label>
+        <p class="field-hint">${icon("envelope-fill")} Serve para você entrar de novo na sua conta.</p>`,
+    };
+  }
+  if (stepName === "password") {
+    return {
+      question: "Agora crie uma senha.",
+      body: `<label class="field-label" for="signup-password">Senha<input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="Crie uma senha" /></label>
+        <label class="field-label" for="signup-confirm-password">Confirme a senha<input id="signup-confirm-password" name="passwordConfirmation" type="password" autocomplete="new-password" placeholder="Digite a senha de novo" /></label>
+        <p class="field-hint">${icon("lock-fill")} Pelo menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p>`,
+    };
+  }
+  return {
+    question: "Quantas atividades você quer fazer por dia?",
+    body: `<div class="onboard-goals" role="radiogroup" aria-label="Meta diária">${GOAL_OPTIONS.map((goal) => {
+      const isActive = signup.goal === goal.value;
+      return `<button class="onboard-goal${isActive ? " is-active" : ""}" type="button" role="radio" aria-checked="${isActive}" data-action="signup-goal" data-value="${goal.value}"><span class="onboard-goal-icon">${icon(goal.icon)}</span><span><strong>${goal.title}</strong><small>${goal.text}</small></span></button>`;
+    }).join("")}</div>
+      <p class="field-hint">${icon("sliders")} Dá para mudar depois em Configurações.</p>`,
+  };
+}
+
+// Uma etapa: barra de progresso, o mascote perguntando num balão, os campos
+// e o botão grande embaixo. Usada pelo cadastro e pelo login.
+function renderOnboardStep({ formId, step, total, backAction, question, body, error = "", footerExtra = "", submitLabel }) {
+  const progress = Math.round((step / total) * 100);
   return `
-    <section class="login-layout" aria-labelledby="login-title">
-      <div class="signup-intro login-intro">
-        <p class="eyebrow">BEM-VINDE DE VOLTA</p>
-        <h2 id="login-title">Continue sua jornada no EduSinal.</h2>
-        <p>Entre com o e-mail do perfil que você criou neste navegador.</p>
-        <button class="text-button" type="button" data-screen="intro"><i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar ao início</button>
-      </div>
-      <div class="signup-form-panel login-panel">
-        <div class="signup-title"><span class="eyebrow">ACESSO</span><h3>Entrar na sua conta</h3></div>
-        <form id="login-form" novalidate>
-          <label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" autocomplete="username" placeholder="voce@email.com" required /></label>
-          <label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required /></label>
-          <p class="form-error" id="login-message" role="status" aria-live="polite"></p>
-          <button class="button button-primary button-full" type="submit">Entrar <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-        </form>
-        <p class="form-legal">Demonstração: sem servidor, a senha não é conferida. Só o e-mail precisa ser o do perfil salvo aqui.</p>
-        <div class="login-register"><span>Ainda não tem conta?</span><button class="text-button" type="button" data-screen="signup">Criar cadastro <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div>
-      </div>
+    <section class="onboard" aria-labelledby="onboard-title">
+      <header class="onboard-top">
+        <button class="lesson-close" type="button" data-action="${backAction}" aria-label="${step === 0 ? "Voltar ao início" : "Voltar uma etapa"}">${icon(step === 0 ? "x-lg" : "arrow-left")}</button>
+        <div class="onboard-progress" role="progressbar" aria-label="Etapas" aria-valuenow="${step + 1}" aria-valuemin="1" aria-valuemax="${total}"><span style="width: ${progress}%"></span></div>
+        <small>${step + 1} de ${total}</small>
+      </header>
+      <form class="onboard-body" id="${formId}" novalidate>
+        <div class="onboard-ask">
+          <span class="onboard-mascot mascot-backdrop">${mascotSvg(DEFAULT_LOOK, "avatar", "")}</span>
+          <h2 class="onboard-bubble" id="onboard-title">${question}</h2>
+        </div>
+        <div class="onboard-fields">${body}</div>
+        <p class="form-error" id="form-error" role="alert" aria-live="polite">${error}</p>
+        <div class="onboard-footer">
+          ${footerExtra}
+          <button class="button-3d button-3d-primary onboard-next" type="submit">${submitLabel}</button>
+        </div>
+      </form>
     </section>`;
 }
 
-// Confere os campos do cadastro. Devolve o texto do erro, ou "" quando está tudo certo.
-function validateSignupForm(form) {
-  const name = form.elements.name.value.trim();
-  const age = Number(form.elements.age.value);
-  const password = form.elements.password.value;
+function renderSignup() {
+  if (signup.done) return renderSignupDone();
+  const { question, body } = signupStepHtml(SIGNUP_STEPS[signup.step]);
+  return renderOnboardStep({
+    formId: "signup-form",
+    step: signup.step,
+    total: SIGNUP_STEPS.length,
+    backAction: "signup-back",
+    question,
+    body,
+    footerExtra: signup.step === 0 ? '<p class="onboard-login">Já tem uma conta? <button class="text-button" type="button" data-screen="login">Entrar</button></p>' : "",
+    submitLabel: signup.step === SIGNUP_STEPS.length - 1 ? "Criar conta" : "Continuar",
+  });
+}
 
-  if (name.length < 3) return "Informe seu nome completo (pelo menos 3 caracteres).";
-  if (!Number.isInteger(age) || age < 1 || age > 120) return "Informe uma idade válida entre 1 e 120 anos.";
-  if (!form.elements.email.value.trim() || !form.elements.email.validity.valid) return "Informe um e-mail válido.";
-  if (!hasStrongPassword(password)) return "A senha precisa ter 8 caracteres, maiúscula, minúscula, número e símbolo.";
-  if (password !== form.elements.passwordConfirmation.value) return "As senhas não conferem.";
+// Fim do cadastro: confirma que a conta foi criada (antes ia direto para a Home).
+function renderSignupDone() {
+  const goal = GOAL_OPTIONS.find((option) => option.value === state.dailyGoal) || GOAL_OPTIONS[1];
+  return `
+    <section class="onboard onboard-done" aria-labelledby="done-title">
+      <button class="welcome-mascot mascot-backdrop" type="button" data-action="mascot-react" aria-label="Mascote do EduSinal">${mascotSvg(state.mascot, "full", "", { animated: true })}</button>
+      <h2 id="done-title">Tudo pronto, ${escapeHtml(state.name)}!</h2>
+      <p>Sua conta foi criada. Você ganhou <strong>${WELCOME_COINS} moedas</strong> de boas-vindas e sua meta é <strong>${goal.text}</strong>.</p>
+      <button class="button-3d button-3d-primary onboard-next" type="button" data-action="signup-start">Começar a primeira etapa</button>
+    </section>`;
+}
+
+// Volta uma etapa (na primeira, volta para a tela inicial).
+function signupBack() {
+  if (signup.step === 0) {
+    setScreen("intro");
+    return;
+  }
+  signup.step -= 1;
+  render();
+  focusSignupField();
+}
+
+function chooseSignupGoal(value) {
+  signup.goal = Number(value);
+  render();
+}
+
+// Coloca o cursor no campo da etapa nova (cadastro e login).
+function focusSignupField() {
+  const field = document.querySelector(".onboard-fields input, .onboard-goal.is-active");
+  if (field) field.focus();
+}
+
+// ----- Login por etapas -----
+// status: "ask" (perguntando), "checking" (o mascote pensando) ou "done".
+// A conferência só acontece depois do e-mail E da senha, e o erro é o mesmo
+// para os dois casos: assim ninguém descobre quais e-mails têm conta
+// ("enumeração de contas"), o que vai importar quando houver servidor.
+
+const LOGIN_STEPS = ["email", "password"];
+const LOGIN_THINK_MS = 1600; // tempo do mascote "pensando"
+
+let login = { step: 0, email: "", status: "ask", error: "" };
+
+function resetLogin() {
+  login = { step: 0, email: "", status: "ask", error: "" };
+}
+
+function renderLogin() {
+  if (login.status === "checking") return renderLoginChecking();
+  if (login.status === "done") return renderLoginDone();
+  const isEmail = LOGIN_STEPS[login.step] === "email";
+  return renderOnboardStep({
+    formId: "login-form",
+    step: login.step,
+    total: LOGIN_STEPS.length,
+    backAction: "login-back",
+    question: isEmail ? "Oi de novo! Qual é o seu e-mail?" : "Agora a senha.",
+    body: isEmail
+      ? `<label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" value="${escapeHtml(login.email)}" autocomplete="username" placeholder="voce@email.com" /></label>`
+      : `<label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" /></label>
+        <p class="field-hint">${icon("info-circle")} Demonstração: sem servidor, a senha não é conferida.</p>`,
+    error: login.error,
+    footerExtra: isEmail ? '<p class="onboard-login">Ainda não tem conta? <button class="text-button" type="button" data-screen="signup">Criar conta</button></p>' : "",
+    submitLabel: isEmail ? "Continuar" : "Entrar",
+  });
+}
+
+// O mascote cutucando a cabeça, tentando lembrar.
+function renderLoginChecking() {
+  return `
+    <section class="onboard onboard-done" aria-live="polite">
+      <span class="welcome-mascot mascot-backdrop">${mascotSvg(DEFAULT_LOOK, "full", "", { animated: true })}</span>
+      <h2>Hmm… deixa eu ver se esse e-mail é familiar<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span></h2>
+    </section>`;
+}
+
+function renderLoginDone() {
+  const streak = state.streak > 0
+    ? `Sua ofensiva está em <strong>${state.streak} ${state.streak === 1 ? "dia" : "dias"}</strong>. Bora manter?`
+    : "Que tal começar uma ofensiva nova hoje?";
+  return `
+    <section class="onboard onboard-done" aria-labelledby="login-done-title">
+      <button class="welcome-mascot mascot-backdrop" type="button" data-action="mascot-react" aria-label="Mascote de ${escapeHtml(state.name)}">${mascotSvg(state.mascot, "full", "", { animated: true })}</button>
+      <p class="onboard-kicker">Me lembrei! :D</p>
+      <h2 id="login-done-title">Bem-vindo(a) de volta, ${escapeHtml(state.name)}!</h2>
+      <p>${streak}</p>
+      <button class="button-3d button-3d-primary onboard-next" type="button" data-action="login-start">Continuar de onde parei</button>
+    </section>`;
+}
+
+function loginBack() {
+  if (login.step === 0) {
+    setScreen("intro");
+    return;
+  }
+  login.step -= 1;
+  login.error = "";
+  render();
+  focusSignupField();
+}
+
+// O e-mail e a senha batem com o perfil salvo neste navegador?
+function isKnownLogin(email) {
+  if (!hasSavedProfile()) return false;
+  return !state.email || state.email === email; // perfis antigos ainda não guardavam o e-mail
+}
+
+// Confere a etapa atual do cadastro. Devolve o texto do erro, ou "" quando está tudo certo.
+function validateSignupStep(form) {
+  const stepName = SIGNUP_STEPS[signup.step];
+  if (stepName === "nickname") {
+    const nickname = form.elements.nickname.value.trim();
+    if (nickname.length < 2) return "O apelido precisa ter pelo menos 2 letras.";
+    if (!/^[\p{L}\p{N} ]+$/u.test(nickname)) return "Use só letras, números e espaços no apelido.";
+  }
+  if (stepName === "email" && (!form.elements.email.value.trim() || !form.elements.email.validity.valid)) return "Informe um e-mail válido.";
+  if (stepName === "password") {
+    const password = form.elements.password.value;
+    if (!hasStrongPassword(password)) return "A senha precisa ter 8 caracteres, maiúscula, minúscula, número e símbolo.";
+    if (password !== form.elements.passwordConfirmation.value) return "As senhas não conferem.";
+  }
   return "";
 }
 
@@ -62,11 +243,12 @@ function hasSavedProfile() {
 }
 
 // Perfil novo começa do zero. Só as preferências de tela (tema, texto, animações) continuam.
-function startNewProfile(name, email, isMinor) {
+function startNewProfile(name, email, dailyGoal) {
   Object.assign(state, {
     name,
     email,
-    isMinor,
+    dailyGoal,
+    isMinor: false,
     isRegistered: true,
     xp: 0,
     coins: WELCOME_COINS,
@@ -94,40 +276,68 @@ function startNewProfile(name, email, isMinor) {
 }
 
 function handleLoginSubmit(form) {
-  const message = document.getElementById("login-message");
-  const email = form.elements.email.value.trim().toLowerCase();
-
+  const isEmail = LOGIN_STEPS[login.step] === "email";
   let error = "";
-  if (!email || !form.elements.email.validity.valid) error = "Informe um e-mail válido.";
-  else if (!form.elements.password.value) error = "Digite sua senha.";
-  else if (!hasSavedProfile()) error = "Ainda não há um perfil neste navegador. Crie um cadastro para começar.";
-  else if (state.email && state.email !== email) error = "Esse e-mail não é o do perfil salvo neste navegador.";
-
-  message.textContent = error;
+  if (isEmail && (!form.elements.email.value.trim() || !form.elements.email.validity.valid)) error = "Informe um e-mail válido.";
+  if (!isEmail && !form.elements.password.value) error = "Digite sua senha.";
+  document.getElementById("form-error").textContent = error;
   if (error) return;
 
-  if (!state.email) state.email = email; // perfis antigos ainda não guardavam o e-mail
-  state.isRegistered = true;
-  persist();
-  setScreen("trail");
-  showToast(`Bem-vinde de volta, ${state.name}!`);
+  if (isEmail) {
+    login.email = form.elements.email.value.trim().toLowerCase();
+    login.step = 1;
+    login.error = "";
+    render();
+    focusSignupField();
+    return;
+  }
+
+  // senha preenchida: o mascote "pensa" um pouquinho e responde
+  login.status = "checking";
+  render();
+  playMascotReaction();
+  setTimeout(playMascotReaction, 800);
+  setTimeout(() => {
+    if (state.screen !== "login") return; // a pessoa saiu da tela no meio
+    if (!isKnownLogin(login.email)) {
+      login = { step: 0, email: login.email, status: "ask", error: "Não consegui lembrar de você… Confere o e-mail e a senha, ou crie uma conta." };
+      render();
+      focusSignupField();
+      return;
+    }
+    if (!state.email) state.email = login.email;
+    state.isRegistered = true;
+    persist();
+    login.status = "done";
+    render();
+    playMascotReaction();
+  }, LOGIN_THINK_MS);
 }
 
+// "Continuar" de cada etapa: guarda a resposta e vai para a próxima.
+// Na última, cria o perfil e mostra o "Tudo pronto!".
 function handleSignupSubmit(form) {
   const errorBox = document.getElementById("form-error");
-  const error = validateSignupForm(form);
+  const error = validateSignupStep(form);
   errorBox.textContent = error;
   if (error) return;
 
-  const name = form.elements.name.value.trim().split(" ")[0];
-  const email = form.elements.email.value.trim().toLowerCase();
-  const isMinor = Number(form.elements.age.value) < 18;
-  const create = () => {
-    startNewProfile(name, email, isMinor);
-    setScreen("trail");
-    showToast(`Perfil criado! Você ganhou ${WELCOME_COINS} moedas de boas-vindas.`);
-  };
+  const stepName = SIGNUP_STEPS[signup.step];
+  if (stepName === "nickname") signup.nickname = form.elements.nickname.value.trim().replace(/\s+/g, " ");
+  if (stepName === "email") signup.email = form.elements.email.value.trim().toLowerCase();
+  if (signup.step < SIGNUP_STEPS.length - 1) {
+    signup.step += 1;
+    render();
+    focusSignupField();
+    return;
+  }
 
+  const create = () => {
+    startNewProfile(signup.nickname, signup.email, signup.goal);
+    signup.done = true;
+    render();
+    playMascotReaction(); // comemoração: cutucada na cabeça
+  };
   if (!hasSavedProfile()) {
     create();
     return;

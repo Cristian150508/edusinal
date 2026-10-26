@@ -60,6 +60,12 @@ function setTextSize(size) {
   render();
 }
 
+function setDailyGoal(goal) {
+  state.dailyGoal = Number(goal);
+  persist();
+  render();
+}
+
 function setMotion(motion) {
   state.motion = motion;
   persist();
@@ -231,6 +237,7 @@ function renderMore() {
         ${renderSettingRow("palette-fill", "blue", "Tema", "Cores claras ou escuras.", renderChoice("set-theme", state.theme, "Tema", [["light", "Claro", "sun-fill"], ["dark", "Escuro", "moon-fill"]]))}
         ${renderSettingRow("type", "teal", "Tamanho do texto", "Deixa tudo um pouco maior.", renderChoice("set-text-size", state.textSize, "Tamanho do texto", [["normal", "Normal", "fonts"], ["large", "Grande", "zoom-in"]]))}
         ${renderSettingRow("stars", "yellow", "Animações", "Reduz movimentos na tela.", renderChoice("set-motion", state.motion, "Animações", [["normal", "Ligadas", "play-fill"], ["reduced", "Reduzidas", "pause-fill"]]))}
+        ${renderSettingRow("bullseye", "coral", "Meta diária", "Atividades por dia na meta da Home.", renderChoice("set-goal", String(state.dailyGoal), "Meta diária", [["1", "1", "cup-hot-fill"], ["3", "3", "lightning-charge-fill"], ["5", "5", "fire"]]))}
       </div>
     </section>
 
@@ -255,6 +262,6 @@ function renderMore() {
     <section class="settings-about" aria-label="Sobre o EduSinal">
       <img src="icones/icone-192.png" alt="" width="56" height="56" />
       <div><strong>EduSinal</strong><p>Aprender Libras de forma visual e no seu ritmo, com trilha, exercícios e dicionário.</p></div>
-      <a class="text-button" href="../../landing/index.html">Conhecer o projeto ${icon("box-arrow-up-right")}</a>
+      <a class="text-button" href="../../landing/index.html?v=2">Conhecer o projeto ${icon("box-arrow-up-right")}</a>
     </section>`;
 }

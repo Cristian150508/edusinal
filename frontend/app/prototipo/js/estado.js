@@ -10,7 +10,7 @@ const MAX_LIVES = 3;
 const LIFE_RECHARGE_MS = 30 * 60 * 1000; // uma vida volta a cada 30 minutos
 const MAX_ENERGY = 5;                          // atividades seguidas com a energia cheia
 const ENERGY_RECHARGE_MS = 3 * 60 * 60 * 1000; // um ponto de energia volta a cada 3 horas
-const DAILY_GOAL = 3;                     // exercícios por dia na meta da Home
+const DAILY_GOAL = 3;                     // meta do dia padrão (o aluno escolhe 1, 3 ou 5 no cadastro)
 const XP_PER_EXERCISE = 20;
 
 // ----- Datas -----
@@ -101,6 +101,7 @@ const state = {
   email: savedPrototype.email || "",      // e-mail do perfil criado neste navegador (para entrar de novo)
   isRegistered: wasRegistered,
   isMinor: savedPrototype.isMinor || false,
+  dailyGoal: savedPrototype.dailyGoal || DAILY_GOAL,     // atividades por dia na meta da Home
   unlockedItems: Array.isArray(savedPrototype.unlockedItems) ? savedPrototype.unlockedItems : [],
   // Roupa e acessórios do mascote. Quem jogou antes tinha só "equippedItem"
   // (broche) e "equippedBackground"; eles viram o broche e o fundo.
@@ -180,6 +181,7 @@ function persist() {
     email: state.email,
     isRegistered: state.isRegistered,
     isMinor: state.isMinor,
+    dailyGoal: state.dailyGoal,
     unlockedItems: state.unlockedItems,
     mascot: state.mascot,
     hasFirstActivityReward: state.hasFirstActivityReward,

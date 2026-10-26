@@ -23,7 +23,7 @@ function renderIntro() {
           <button class="button-3d button-3d-primary" type="button" data-screen="signup">Começar agora</button>
           <button class="button-3d button-3d-outline" type="button" data-screen="login">Já tenho conta</button>
         </div>
-        <a class="welcome-link" href="../../landing/index.html">${icon("info-circle")} Conhecer o projeto</a>
+        <a class="welcome-link" href="../../landing/index.html?v=2">${icon("info-circle")} Conhecer o projeto</a>
       </div>
     </section>
     <section class="welcome-points" aria-label="Sobre o EduSinal">
@@ -344,12 +344,13 @@ function renderHomeMission(mission) {
 
 // Meta do dia em anel (lateral da Home no computador).
 function renderDailyGoal() {
-  const done = Math.min(state.daily.exercises, DAILY_GOAL);
-  const degrees = Math.round((done / DAILY_GOAL) * 360);
-  const message = done >= DAILY_GOAL ? "Meta batida, parabéns!" : `Faltam ${DAILY_GOAL - done} para bater a meta`;
+  const goal = state.dailyGoal;
+  const done = Math.min(state.daily.exercises, goal);
+  const degrees = Math.round((done / goal) * 360);
+  const message = done >= goal ? "Meta batida, parabéns!" : `Faltam ${goal - done} para bater a meta`;
   return `
     <section class="home-side-card home-goal" aria-label="Meta do dia">
-      <div class="goal-ring" style="--ring:${degrees}deg" role="progressbar" aria-label="Exercícios de hoje" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${DAILY_GOAL}"><strong>${done}/${DAILY_GOAL}</strong></div>
+      <div class="goal-ring" style="--ring:${degrees}deg" role="progressbar" aria-label="Exercícios de hoje" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${goal}"><strong>${done}/${goal}</strong></div>
       <div><h2>Meta do dia</h2><p>${message}</p></div>
     </section>`;
 }
