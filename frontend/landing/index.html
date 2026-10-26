@@ -6,107 +6,164 @@
   <meta name="theme-color" content="#f1f6fb" />
   <meta name="description" content="Aprenda Libras com uma trilha visual, atividades curtas e um mascote para personalizar no EduSinal." />
   <title>EduSinal | Aprenda Libras para se conectar</title>
+  <link rel="icon" href="../app/prototipo/icones/icone-192.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="landing.css?v=3" />
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="landing.css?v=4" />
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="EduSinal, início">
-      <img src="../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="" />
+      <img src="../app/prototipo/icones/icone-192.png" alt="" width="40" height="40" />
       <span>Edu<span>Sinal</span></span>
     </a>
     <nav class="main-nav" aria-label="Navegação principal">
       <a href="#como-funciona">Como funciona</a>
       <a href="#recursos">Recursos</a>
-      <a href="#para-todos">Para estudantes</a>
+      <a href="#seguranca">Segurança</a>
     </nav>
-    <a class="header-cta" href="../app/prototipo/index.html?tela=cadastro">Criar conta <span aria-hidden="true">↗</span></a>
+    <div class="header-actions">
+      <a class="btn btn-outline btn-small" href="../app/prototipo/index.html?tela=login">Entrar</a>
+      <a class="btn btn-primary btn-small" href="../app/prototipo/index.html?tela=cadastro">Começar</a>
+    </div>
   </header>
 
   <main>
+    <!-- Topo: faixa em degradê com o mascote animado (tocar nele faz ele cutucar a cabeça) -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true">✳</span> APRENDIZAGEM VISUAL EM LIBRAS</p>
-        <h1 id="hero-title">Mais sinais.<br /><span>Mais conexões.</span></h1>
-        <p class="hero-description">Uma jornada para aprender Libras no seu ritmo, praticar um pouco a cada dia e se comunicar com mais gente.</p>
+        <p class="kicker">APRENDIZAGEM VISUAL EM LIBRAS</p>
+        <h1 id="hero-title">Mais sinais.<br />Mais conexões.</h1>
+        <p class="hero-text">Uma jornada para aprender Libras no seu ritmo, praticar um pouco a cada dia e se comunicar com mais gente.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="../app/prototipo/index.html?tela=home">Começar a aprender <span aria-hidden="true">→</span></a>
-          <a class="quiet-link" href="#como-funciona">Conhecer o EduSinal <span aria-hidden="true">↓</span></a>
+          <a class="btn btn-light" href="../app/prototipo/index.html?tela=cadastro">Começar agora <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <a class="btn btn-ghost" href="#como-funciona">Ver como funciona</a>
         </div>
-        <p class="hero-note"><span class="note-dot"></span> Para quem quer aprender Libras, no próprio ritmo.</p>
       </div>
+      <div class="hero-art">
+        <span class="hero-bubble">Oi! Bora aprender?</span>
+        <button class="hero-mascot" id="hero-mascot" type="button" aria-label="Mascote do EduSinal"></button>
+        <span class="hero-chip chip-streak"><i class="bi bi-fire" aria-hidden="true"></i> 5 dias</span>
+        <span class="hero-chip chip-xp"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> +20 XP</span>
+        <span class="hero-chip chip-coins"><i class="bi bi-coin" aria-hidden="true"></i> 85</span>
+      </div>
+    </section>
 
-      <div class="learning-preview" aria-label="Prévia visual da trilha de aprendizagem">
-        <div class="preview-topline"><span class="preview-brand"><img src="../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="" /> Sua jornada</span><span class="preview-level">NÍVEL 01</span></div>
-        <div class="preview-course"><div><span class="preview-overline">TRILHA DE LIBRAS</span><h2>Primeiras conversas</h2></div><span class="preview-progress">01 <span>/ 04</span></span></div>
-        <div class="preview-path">
-          <div class="preview-step is-current"><span class="step-marker marker-coral">01</span><div><strong>Saudações</strong><small>Uma atividade rápida</small></div><span class="step-state">COMEÇAR</span></div>
-          <div class="preview-step"><span class="step-marker marker-yellow">02</span><div><strong>Apresentações</strong><small>Aprenda no seu tempo</small></div><span class="step-lock" aria-label="Etapa seguinte">· · ·</span></div>
-          <div class="preview-step"><span class="step-marker marker-green">03</span><div><strong>Pessoas e família</strong><small>Novos sinais para usar</small></div><span class="step-lock" aria-label="Etapa seguinte">· · ·</span></div>
+    <!-- Como funciona: os três passos de cada etapa -->
+    <section class="section" id="como-funciona" aria-labelledby="steps-title">
+      <div class="section-head">
+        <p class="kicker kicker-dark">COMO FUNCIONA</p>
+        <h2 id="steps-title">Um passo de cada vez</h2>
+        <p>A trilha é dividida em etapas. Cada etapa é uma árvore de atividades curtas, que vão abrindo em ordem.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-medal medal-blue">1</span>
+          <h3>Aprenda</h3>
+          <p>Cartões com o vídeo do sinal, o nome e uma dica de uso. Sem certo ou errado.</p>
+        </li>
+        <li class="step">
+          <span class="step-medal medal-teal">2</span>
+          <h3>Pratique</h3>
+          <p>Exercícios rápidos: vídeo para palavra, palavra para vídeo, situações e verdadeiro ou falso.</p>
+        </li>
+        <li class="step">
+          <span class="step-medal medal-gold"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
+          <h3>Mostre o que sabe</h3>
+          <p>No fim de cada etapa, a prova final libera a próxima. Pode errar no máximo uma.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Recursos: o que já existe no protótipo -->
+    <section class="section" id="recursos" aria-labelledby="features-title">
+      <div class="section-head">
+        <p class="kicker kicker-dark">RECURSOS</p>
+        <h2 id="features-title">Tudo o que ajuda a continuar</h2>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <span class="feature-icon icon-blue"><i class="bi bi-book-half" aria-hidden="true"></i></span>
+          <h3>Dicionário e alfabeto</h3>
+          <p>Consulte sinais por tema quando quiser. O alfabeto manual tem uma trilha própria, letra por letra, e o desafio "Desafia-me".</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon icon-coral"><i class="bi bi-fire" aria-hidden="true"></i></span>
+          <h3>Ofensiva e missões</h3>
+          <p>Metas do dia e da semana, um calendário com os dias praticados e protetores para não perder a sequência.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon icon-gold"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
+          <h3>Ligas semanais</h3>
+          <p>Bronze, prata, ouro, safira e diamante. No ranking aparecem só apelidos e avatares.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon icon-teal"><i class="bi bi-battery-charging" aria-hidden="true"></i></span>
+          <h3>Ritmo saudável</h3>
+          <p>A energia limita quantas atividades novas você faz seguidas. Aprender aos poucos funciona melhor.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon icon-blue"><i class="bi bi-palette-fill" aria-hidden="true"></i></span>
+          <h3>Mascote do seu jeito</h3>
+          <p>Roupas, chapéus, óculos e fundos. A vitrine da lojinha muda todo dia.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon icon-coral"><i class="bi bi-phone-fill" aria-hidden="true"></i></span>
+          <h3>No celular e no computador</h3>
+          <p>Funciona no navegador e pode ser instalado como aplicativo na tela inicial do celular.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Segurança -->
+    <section class="section" id="seguranca" aria-labelledby="safety-title">
+      <div class="safety">
+        <div class="safety-copy">
+          <span class="safety-icon"><i class="bi bi-shield-fill-check" aria-hidden="true"></i></span>
+          <h2 id="safety-title">Seguro para todas as idades</h2>
+          <p>O EduSinal foi pensado para estudantes, inclusive crianças e adolescentes.</p>
         </div>
-        <div class="preview-footer"><span class="preview-hand" aria-hidden="true">👋</span><span>Pequenos passos contam.</span><span class="preview-spark" aria-hidden="true">✦</span></div>
-        <span class="preview-sticker" aria-hidden="true">Oi!</span>
-      </div>
-      <span class="hero-side-note" aria-hidden="true">EDUSINAL · APRENDER É SE CONECTAR</span>
-    </section>
-
-    <section class="approach" id="como-funciona" aria-labelledby="approach-title">
-      <div class="approach-heading"><p class="eyebrow">APRENDER COM LEVEZA</p><h2 id="approach-title">Um passo de cada vez.<br /><span>Uma nova conversa de cada vez.</span></h2></div>
-      <div class="approach-copy"><p>O EduSinal organiza o aprendizado em uma trilha visual: você explora um tema, pratica com atividades e acompanha seu caminho.</p><a class="text-link" href="../app/prototipo/index.html?tela=home">Ver a trilha de aprendizagem <span aria-hidden="true">→</span></a></div>
-    </section>
-
-    <section class="resources" id="recursos" aria-labelledby="resources-title">
-      <div class="section-heading">
-        <div><p class="eyebrow">RECURSOS PREVISTOS PARA A PLATAFORMA</p><h2 id="resources-title">Recursos que aproximam</h2></div>
-        <a class="text-link" href="../app/prototipo/index.html?tela=home">Quero começar <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="resource-grid">
-        <article class="resource-item resource-dictionary">
-          <span class="resource-mark" aria-hidden="true">⌕</span><span class="resource-index">01 / CONSULTA</span>
-          <h3>Dicionário visual</h3><p>Encontre sinais por tema e consulte vídeos curtos no contexto em que vai usar.</p>
-          <span class="resource-status">VÍDEOS DE SINAIS</span>
-        </article>
-        <article class="resource-item resource-classes">
-          <span class="resource-mark" aria-hidden="true">▶</span><span class="resource-index">02 / CONTEÚDO</span>
-          <h3>Aulas em vídeo</h3><p>Acompanhe explicações visuais com intérpretes e materiais de apoio.</p>
-          <span class="resource-status">AULAS ACESSÍVEIS</span>
-        </article>
-        <article class="resource-item resource-activities">
-          <span class="resource-mark" aria-hidden="true">✓</span><span class="resource-index">03 / PRÁTICA</span>
-          <h3>Atividades e quizzes</h3><p>Revise o que aprendeu com desafios rápidos e feedback durante a prática.</p>
-          <span class="resource-status">PRATICAR UM POUCO</span>
-        </article>
-        <article class="resource-item resource-levels">
-          <span class="resource-mark" aria-hidden="true">↗</span><span class="resource-index">04 / PROGRESSO</span>
-          <h3>Módulos por nível</h3><p>Avance por assuntos organizados do primeiro contato à conversação.</p>
-          <span class="resource-status">DO INÍCIO EM DIANTE</span>
-        </article>
-        <article class="resource-item resource-motivation">
-          <span class="resource-mark" aria-hidden="true">◉</span><span class="resource-index">05 / MOTIVAÇÃO</span>
-          <h3>Missões, ligas e mascote</h3><p>Metas do dia, ranking semanal só com apelidos e um personagem para vestir do seu jeito.</p>
-          <span class="resource-status">SEM CHAT · SEM PERFIL ABERTO</span>
-        </article>
-      </div>
-      <p class="resource-footnote"><span aria-hidden="true">✳</span> O conteúdo em Libras deve ser produzido ou revisado por profissionais e pessoas fluentes na língua e na cultura surda.</p>
-    </section>
-
-    <section class="roles" id="para-todos" aria-labelledby="roles-title">
-      <div class="roles-intro"><p class="eyebrow">FEITO PARA QUEM ESTÁ APRENDENDO</p><h2 id="roles-title">Aprender, praticar<br />e revisar.</h2><p>Um espaço seguro para estudantes: nas ligas aparecem só apelidos e avatares.</p><a class="button button-light" href="../app/prototipo/index.html?tela=cadastro">Criar meu perfil <span aria-hidden="true">→</span></a></div>
-      <div class="role-list">
-        <div class="role-row"><span class="role-number">01</span><div><h3>Aprender</h3><p>Etapas com exercícios em ordem e uma prova final para fechar cada uma.</p></div><span class="role-arrow" aria-hidden="true">↗</span></div>
-        <div class="role-row"><span class="role-number">02</span><div><h3>Praticar</h3><p>Missões do dia, ofensiva e ligas para manter o ritmo.</p></div><span class="role-arrow" aria-hidden="true">↗</span></div>
-        <div class="role-row"><span class="role-number">03</span><div><h3>Revisar</h3><p>Dicionário livre para consultar sinais quando quiser, sem gastar vidas.</p></div><span class="role-arrow" aria-hidden="true">↗</span></div>
+        <ul class="safety-list">
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Não existe chat nem mensagens entre alunos.</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Nas ligas aparecem só apelidos e avatares.</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Não há compras com dinheiro real: as moedas são do jogo.</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> O conteúdo em Libras será produzido ou revisado por pessoas surdas fluentes.</li>
+        </ul>
       </div>
     </section>
 
-    <section class="closing-cta" aria-labelledby="closing-title">
-      <div><p class="eyebrow">SUA PRÓXIMA CONVERSA COMEÇA AQUI</p><h2 id="closing-title">Vamos aprender Libras?</h2></div>
-      <a class="button button-primary" href="../app/prototipo/index.html?tela=cadastro">Criar meu cadastro <span aria-hidden="true">→</span></a>
+    <!-- Chamada final -->
+    <section class="closing" aria-labelledby="closing-title">
+      <div>
+        <h2 id="closing-title">Vamos aprender Libras?</h2>
+        <p>Crie sua conta e comece pela primeira etapa: cumprimentos do dia a dia.</p>
+      </div>
+      <div class="closing-actions">
+        <a class="btn btn-light" href="../app/prototipo/index.html?tela=cadastro">Criar minha conta</a>
+        <a class="btn btn-ghost" href="../app/prototipo/index.html?tela=login">Já tenho conta</a>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer"><a class="brand footer-brand" href="index.html"><img src="../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="" /><span>Edu<span>Sinal</span></span></a><span>Educação que aproxima.</span><a href="../app/prototipo/index.html">Abrir área de aprendizagem <span aria-hidden="true">↗</span></a></footer>
+  <footer class="site-footer">
+    <a class="brand" href="index.html"><img src="../app/prototipo/icones/icone-192.png" alt="" width="32" height="32" /><span>Edu<span>Sinal</span></span></a>
+    <span>Educação que aproxima. Protótipo de TCC.</span>
+    <a href="../app/prototipo/index.html">Abrir o app <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
+  </footer>
+
+  <!-- O mascote é o mesmo desenho do app (em SVG), com a cutucada ao tocar -->
+  <script>
+    const state = { motion: "normal" };
+    const escapeHtml = (text) => text;
+  </script>
+  <script src="../app/prototipo/js/telas-mascote.js"></script>
+  <script src="../app/prototipo/js/mascote-desenho.js"></script>
+  <script>
+    const mascotButton = document.getElementById("hero-mascot");
+    mascotButton.innerHTML = mascotSvg(DEFAULT_LOOK, "full", "", { animated: true });
+    mascotButton.addEventListener("click", playMascotReaction);
+  </script>
 </body>
 </html>
