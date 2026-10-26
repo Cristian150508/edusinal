@@ -4,24 +4,30 @@
 // Cada função "render..." devolve o HTML de uma tela.
 
 function renderIntro() {
+  const points = [
+    ["signpost-split-fill", "blue", "Aprenda no seu ritmo", "Uma trilha visual, com etapas curtas para aprender e praticar."],
+    ["trophy-fill", "yellow", "Pratique todo dia", "Missões, ofensiva e ligas para manter o ritmo, sem pressa."],
+    ["shield-fill-check", "teal", "Seguro para todas as idades", "Sem chat entre alunos e sem compras com dinheiro real."],
+  ];
   return `
-    <section class="intro-screen" aria-labelledby="intro-title">
-      <div class="intro-copy">
-        <p class="eyebrow"><span class="status-dot"></span> APRENDIZAGEM VISUAL EM LIBRAS</p>
-        <h2 id="intro-title">Aprender Libras é abrir espaço para novas conexões.</h2>
-        <p>O EduSinal reúne uma trilha de aprendizagem, exercícios para praticar e um dicionário para consultar quando quiser.</p>
-        <div class="intro-actions">
-          <button class="button button-primary" type="button" data-screen="signup">Criar minha conta <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-          <button class="text-button" type="button" data-screen="login">Já tenho cadastro <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-          <a class="quiet-link" href="../../landing/index.html">Conhecer o projeto <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
-        </div>
+    <section class="welcome" aria-labelledby="intro-title">
+      <div class="welcome-stage">
+        <span class="welcome-bubble">Oi! Vamos aprender Libras?</span>
+        <button class="welcome-mascot mascot-backdrop" type="button" data-action="mascot-react" aria-label="Mascote do EduSinal">${mascotSvg(DEFAULT_LOOK, "full", "", { animated: true })}</button>
       </div>
-      <div class="intro-art"><img src="../../assets/images/Mascote%20Libras%20em%20Azul%20vibrante.png" alt="Mascote do EduSinal" /></div>
+      <div class="welcome-copy">
+        <p class="welcome-brand">Edu<span>Sinal</span></p>
+        <h2 id="intro-title">Aprender Libras é abrir espaço para novas conexões.</h2>
+        <p>Uma trilha de aprendizagem, exercícios para praticar e um dicionário para consultar quando quiser.</p>
+        <div class="welcome-actions">
+          <button class="button-3d button-3d-primary" type="button" data-screen="signup">Começar agora</button>
+          <button class="button-3d button-3d-outline" type="button" data-screen="login">Já tenho conta</button>
+        </div>
+        <a class="welcome-link" href="../../landing/index.html">${icon("info-circle")} Conhecer o projeto</a>
+      </div>
     </section>
-    <section class="intro-points" aria-label="Sobre o EduSinal">
-      <div><strong>Aprenda no seu ritmo</strong><span>Uma trilha visual com etapas para praticar.</span></div>
-      <div><strong>Acompanhe seu caminho</strong><span>Veja atividades e progresso em um só lugar.</span></div>
-      <div><strong>Seguro para todas as idades</strong><span>Sem chat entre alunos e sem compras com dinheiro real.</span></div>
+    <section class="welcome-points" aria-label="Sobre o EduSinal">
+      ${points.map(([iconName, color, title, text]) => `<div class="welcome-point"><span class="welcome-point-icon is-${color}">${icon(iconName)}</span><div><strong>${title}</strong><span>${text}</span></div></div>`).join("")}
     </section>`;
 }
 

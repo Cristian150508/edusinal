@@ -287,85 +287,6 @@ a {
   display: none;
 }
 
-.intro-screen {
-  min-height: min(570px, calc(100vh - 170px));
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
-  align-items: center;
-  gap: 40px;
-  padding: 44px clamp(8px, 4vw, 56px);
-  background: linear-gradient(115deg, var(--surface) 0%, var(--surface-soft) 100%);
-}
-
-.intro-copy {
-  max-width: 640px;
-}
-
-.intro-copy h2 {
-  max-width: 620px;
-  margin: 16px 0;
-  font-family: "Manrope", sans-serif;
-  font-size: 46px;
-  font-weight: 800;
-  line-height: 1.12;
-}
-
-.intro-copy > p:not(.eyebrow) {
-  max-width: 540px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.7;
-}
-
-.intro-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 18px;
-  margin-top: 26px;
-}
-
-.intro-art {
-  display: flex;
-  min-height: 260px;
-  align-items: center;
-  justify-content: center;
-}
-
-.intro-art img {
-  width: min(100%, 350px);
-  max-height: 350px;
-  object-fit: contain;
-}
-
-.intro-points {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
-}
-
-.intro-points > div {
-  display: grid;
-  align-content: start;
-  gap: 7px;
-  padding: 22px 24px;
-}
-
-.intro-points > div + div {
-  border-left: 1px solid var(--line);
-}
-
-.intro-points strong {
-  font-size: 14px;
-}
-
-.intro-points span {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
 .login-layout {
   width: min(900px, 100%);
   min-height: min(610px, calc(100vh - 165px));
@@ -849,39 +770,6 @@ textarea {
 
   .screen-root {
     padding: 22px 17px 25px;
-  }
-
-  .intro-screen {
-    min-height: 0;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-    padding: 32px 20px;
-  }
-
-  .intro-copy h2 {
-    font-size: 34px;
-  }
-
-  .intro-art {
-    min-height: 0;
-  }
-
-  .intro-art img {
-    width: min(100%, 220px);
-    max-height: 220px;
-  }
-
-  .intro-points {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .intro-points > div {
-    padding: 16px 18px;
-  }
-
-  .intro-points > div + div {
-    border-top: 1px solid var(--line);
-    border-left: 0;
   }
 
   .login-layout {
@@ -3382,4 +3270,79 @@ button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0
   .streak-hero h2 strong { font-size: 28px; }
   .streak-content { padding: 14px; }
   .calendar-card { padding: 10px; }
+}
+
+/* ===================================================================
+   BOAS-VINDAS (antes de entrar)
+   =================================================================== */
+/* Mascote animado num círculo em degradê, com balão; ao lado, texto e botões */
+.welcome {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(20px, 5vh, 56px) clamp(8px, 3vw, 32px);
+}
+.welcome-stage { position: relative; display: grid; justify-items: center; padding-top: 34px; }
+.welcome-mascot {
+  width: min(340px, 100%);
+  aspect-ratio: 1;
+  display: block;
+  overflow: hidden;
+  padding: 0;
+  border: 6px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 10px 0 var(--hero-shadow);
+  cursor: pointer;
+}
+.welcome-mascot .mascot-svg { width: 100%; height: 100%; margin-top: 6%; }
+.welcome-bubble {
+  position: absolute;
+  top: 0;
+  right: 4%;
+  z-index: 1;
+  padding: 10px 16px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  font-family: "Manrope", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+}
+.welcome-bubble::after { content: ""; position: absolute; bottom: -9px; left: 26px; width: 16px; height: 16px; border-right: 2px solid var(--line); border-bottom: 2px solid var(--line); background: var(--surface); transform: rotate(45deg); }
+.welcome-brand { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; color: var(--primary); }
+.welcome-brand span { color: var(--accent); }
+.welcome-copy h2 { margin: 10px 0 14px; font-family: "Manrope", sans-serif; font-size: clamp(30px, 3.6vw, 44px); font-weight: 800; line-height: 1.12; }
+.welcome-copy > p:not(.welcome-brand) { margin: 0; max-width: 520px; color: var(--muted); font-size: 17px; line-height: 1.6; }
+.welcome-actions { display: grid; gap: 12px; max-width: 380px; margin-top: 28px; }
+.welcome-actions .button-3d { width: 100%; min-height: 54px; font-size: 16px; }
+.welcome-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; color: var(--primary); font-size: 15px; font-weight: 700; text-decoration: none; }
+.welcome-link:hover { text-decoration: underline; }
+
+/* Três cartões 3D embaixo */
+.welcome-points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 1040px; margin: 8px auto 0; padding: 0 clamp(8px, 3vw, 32px); }
+.welcome-point { display: flex; align-items: flex-start; gap: 14px; padding: 18px; border: 2px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 4px 0 var(--line); }
+.welcome-point > div { display: grid; gap: 4px; }
+.welcome-point strong { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
+.welcome-point span:not(.welcome-point-icon) { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.welcome-point-icon { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 14px; font-size: 21px; }
+.welcome-point-icon.is-blue { background: var(--primary-soft); color: var(--primary); }
+.welcome-point-icon.is-yellow { background: var(--yellow-soft); color: #b58a12; }
+.welcome-point-icon.is-teal { background: var(--accent-soft); color: var(--accent); }
+
+@media (max-width: 760px) {
+  /* celular: mascote em cima, botões grandes ocupando a largura */
+  .welcome { grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 8px 0 0; text-align: center; }
+  .welcome-stage { padding-top: 44px; }
+  .welcome-mascot { width: min(220px, 62vw); border-width: 5px; box-shadow: 0 7px 0 var(--hero-shadow); }
+  .welcome-bubble { right: 50%; transform: translateX(50%); font-size: 14px; white-space: nowrap; }
+  .welcome-bubble::after { left: calc(50% - 8px); }
+  .welcome-copy h2 { font-size: 28px; }
+  .welcome-copy > p:not(.welcome-brand) { margin: 0 auto; font-size: 16px; }
+  .welcome-actions { max-width: none; margin-top: 22px; }
+  .welcome-points { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 24px; padding: 0; }
+  .welcome-point { padding: 14px; text-align: left; }
 }
