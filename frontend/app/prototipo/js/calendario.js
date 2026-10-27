@@ -3,7 +3,7 @@
 // Mostra o mês com os dias em que o aluno praticou (fogo) e os dias salvos
 // pelo protetor de ofensiva (escudo). Dá para voltar aos meses anteriores.
 
-const WEEKDAY_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"]; // começa na segunda
+const WEEKDAY_LABELS = ["D", "S", "T", "Q", "Q", "S", "S"]; // começa no domingo, como no Brasil
 const MONTH_NAMES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
 // Mês mostrado: 0 = este mês, -1 = mês passado, e assim por diante.
@@ -48,7 +48,7 @@ function renderStreakCalendar() {
   const today = new Date();
   const firstDay = new Date(today.getFullYear(), today.getMonth() + calendarMonthOffset, 1);
   const daysInMonth = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0).getDate();
-  const emptyCells = (firstDay.getDay() + 6) % 7; // quantos dias antes da 1ª segunda
+  const emptyCells = firstDay.getDay(); // quantos dias antes do dia 1 (domingo = 0)
 
   const cells = Array.from({ length: emptyCells }, () => '<span class="calendar-cell is-empty" aria-hidden="true"></span>');
   let practicedCount = 0;
