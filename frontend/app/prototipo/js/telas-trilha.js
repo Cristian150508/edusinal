@@ -433,7 +433,12 @@ function offsetInTrack(element, side) {
 }
 
 // Mede a área da trilha, ajusta a largura das etapas e redesenha a onda.
+// Também zera a rolagem que não vale no layout atual: a trilha do PC só rola
+// para o lado e a do celular só para baixo (sem isso, ao mudar o tamanho da
+// janela, a rolagem de um ficava "presa" no outro e cortava a faixa).
 function layoutTrail(scroller) {
+  if (isMobileLayout()) scroller.scrollLeft = 0;
+  else scroller.scrollTop = 0;
   trailStepWidth = Math.max(TRAIL_MIN_STEP, Math.floor((scroller.clientWidth - TRAIL_EDGE * 2) / 4));
   const track = scroller.querySelector(".trail-track");
   track.style.setProperty("--step-w", `${trailStepWidth}px`);
@@ -448,8 +453,8 @@ function setupTrailScroll() {
   layoutTrail(scroller);
   const step = scroller.querySelector(`.trail-node[data-topic="${trailCenterTopic || currentTopicId()}"]`)?.closest(".trail-step");
   if (app.dataset.redraw === "on") {
-    scroller.scrollLeft = trailScrollLeft;
-    scroller.scrollTop = trailScrollTop;
+    if (isMobileLayout()) scroller.scrollTop = trailScrollTop;
+    else scroller.scrollLeft = trailScrollLeft;
   } else if (step && isMobileLayout()) {
     // celular: a etapa (a última aberta ou a atual) fica no meio do quadro
     scroller.scrollTop = offsetInTrack(step, "top") + TRAIL_MOBILE_NODE / 2 - scroller.clientHeight / 2;

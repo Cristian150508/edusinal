@@ -85,6 +85,16 @@ function renderNavigation() {
 // Última tela desenhada. Se for a mesma, as animações de entrada não se repetem.
 let lastDrawnView = "";
 
+// Altura das barras do celular, medida de verdade: a de cima e o espaço que a
+// página reserva embaixo para a barra de baixo. A Home usa esse valor para
+// caber exatamente na tela (ver prototipo.css). No computador a de cima some.
+function updateBarsHeight() {
+  const top = document.querySelector(".mobile-topbar").getBoundingClientRect().height;
+  const bottom = parseFloat(getComputedStyle(document.querySelector(".workspace")).paddingBottom) || 0;
+  app.style.setProperty("--bars-height", `${top + bottom}px`);
+}
+window.addEventListener("resize", updateBarsHeight);
+
 // Desenha de novo a tela atual com os dados do momento.
 function render() {
   refreshCalendar();
@@ -102,6 +112,7 @@ function render() {
   settings.classList.toggle("is-active", state.screen === "more");
   settings.toggleAttribute("aria-current", state.screen === "more");
   screenRoot.innerHTML = screenRenderers[state.screen]();
+  updateBarsHeight();
   if (state.focusTopic) measureTreeLines(); // para o caminho da árvore "se desenhar"
   else if (state.screen === "trail") setupTrailScroll(); // trilha da Home no lugar certo
   app.dataset.theme = state.theme;
