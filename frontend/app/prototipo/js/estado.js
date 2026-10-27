@@ -147,14 +147,16 @@ const screenTitles = {
 };
 
 // Itens do menu lateral: [tela, nome, ícone do Bootstrap Icons]
+// [tela, nome, ícone, cor da área]. A cor é a mesma em todo lugar (menu do PC,
+// barra de baixo do celular): as cores ficam em css/base.css (.tone-...).
 const navigationItems = [
-  ["trail", "Home", "house-door-fill"],
-  ["signs", "Dicionário", "book-half"],
-  ["leagues", "Ligas", "trophy-fill"],
-  ["missions", "Missões", "bullseye"],
-  ["shop", "Lojinha", "shop"],
-  ["profile", "Perfil", "person-fill"],
-  ["more", "Configurações", "gear-fill"],
+  ["trail", "Home", "house-door-fill", "blue"],
+  ["signs", "Dicionário", "book-fill", "teal"],
+  ["leagues", "Ligas", "trophy-fill", "yellow"],
+  ["missions", "Missões", "flag-fill", "coral"],
+  ["shop", "Lojinha", "bag-fill", "yellow"],
+  ["profile", "Perfil", "person-fill", "blue"],
+  ["more", "Configurações", "gear-fill", "gray"],
 ];
 
 // Salva no navegador só o que precisa continuar na próxima visita.

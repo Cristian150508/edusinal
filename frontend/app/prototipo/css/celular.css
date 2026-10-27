@@ -121,6 +121,7 @@
     display: grid;
     place-items: center;
     border-radius: 12px;
+    color: var(--tone, inherit); /* cada aba com a cor da sua área */
     font-size: 18px;
     transition: background-color 150ms ease;
   }

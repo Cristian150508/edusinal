@@ -50,10 +50,6 @@
 }
 .settings-row + .settings-row { border-top: 2px solid var(--line); }
 .settings-row-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; font-size: 20px; }
-.settings-row-icon.is-blue { background: var(--primary-soft); color: var(--primary); }
-.settings-row-icon.is-teal { background: var(--accent-soft); color: var(--accent); }
-.settings-row-icon.is-yellow { background: var(--yellow-soft); color: #b58a12; }
-.settings-row-icon.is-coral { background: var(--coral-soft); color: var(--coral); }
 .settings-row-text strong { display: block; font-size: 15px; }
 .settings-row-text small { color: var(--muted); font-size: 13px; }
 .settings-danger { color: var(--coral); }

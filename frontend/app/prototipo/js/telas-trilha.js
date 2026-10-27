@@ -23,11 +23,11 @@ function renderIntro() {
           <button class="button-3d button-3d-primary" type="button" data-screen="signup">Começar agora</button>
           <button class="button-3d button-3d-outline" type="button" data-screen="login">Já tenho conta</button>
         </div>
-        <a class="welcome-link" href="../../landing/index.html?v=2">${icon("info-circle")} Conhecer o projeto</a>
+        <a class="welcome-link" href="../../landing/index.html?v=2">${icon("info-circle-fill")} Conhecer o projeto</a>
       </div>
     </section>
     <section class="welcome-points" aria-label="Sobre o EduSinal">
-      ${points.map(([iconName, color, title, text]) => `<div class="welcome-point"><span class="welcome-point-icon is-${color}">${icon(iconName)}</span><div><strong>${title}</strong><span>${text}</span></div></div>`).join("")}
+      ${points.map(([iconName, color, title, text]) => `<div class="welcome-point"><span class="welcome-point-icon tone-${color}">${icon(iconName)}</span><div><strong>${title}</strong><span>${text}</span></div></div>`).join("")}
     </section>`;
 }
 
@@ -513,7 +513,7 @@ function renderHomeMission(mission) {
   else if (isReady) reward = icon("gift-fill");
   return `
     <button class="home-quest${isReady ? " is-ready" : ""}${isClaimed ? " is-claimed" : ""}" type="button" data-screen="missions">
-      <span class="home-quest-icon">${icon(mission.icon)}</span>
+      <span class="home-quest-icon tone-${mission.tone}">${icon(mission.icon)}</span>
       <span class="home-quest-copy"><strong>${mission.title}</strong>${progressBarHtml(value, mission.target, mission.title)}<small>${isReady ? "Pronta para resgatar!" : `${value} / ${mission.target}`}</small></span>
       <span class="home-quest-reward">${reward}</span>
     </button>`;

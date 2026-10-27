@@ -172,7 +172,7 @@ function renderLogin() {
     body: isEmail
       ? `<label class="field-label" for="login-email">E-mail<input id="login-email" name="email" type="email" value="${escapeHtml(login.email)}" autocomplete="username" placeholder="voce@email.com" /></label>`
       : `<label class="field-label" for="login-password">Senha<input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" /></label>
-        <p class="field-hint">${icon("info-circle")} Demonstração: sem servidor, a senha não é conferida.</p>`,
+        <p class="field-hint">${icon("info-circle-fill")} Demonstração: sem servidor, a senha não é conferida.</p>`,
     error: login.error,
     footerExtra: isEmail ? '<p class="onboard-login">Ainda não tem conta? <button class="text-button" type="button" data-screen="signup">Criar conta</button></p>' : "",
     submitLabel: isEmail ? "Continuar" : "Entrar",

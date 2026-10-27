@@ -150,7 +150,7 @@ function renderLesson() {
   let button;
   if (isCardStep(step)) {
     body = `<h2>${step.title || "Sinal novo"}</h2>${signVideoHtml(step.sign)}<p class="learn-word">${escapeHtml(step.label || step.sign)}</p><p class="learn-tip">${step.tip}</p>`;
-    footerHint = `${icon("eye")} Assista ao sinal e repita com as mãos.`;
+    footerHint = `${icon("eye-fill")} Assista ao sinal e repita com as mãos.`;
     button = `<button class="button-3d button-3d-primary lesson-next" id="lesson-continue" type="button" data-action="${isLast ? "finish-lesson" : "next-question"}">${isLast ? "Concluir" : "Próximo"}</button>`;
   } else {
     const retryTag = step.isRetry ? `<span class="lesson-retry">${icon("arrow-counterclockwise")} Segunda chance</span>` : "";
@@ -162,7 +162,7 @@ function renderLesson() {
   }
 
   const status = isLearning()
-    ? `<span class="lesson-badge">${icon("book-half")} Aprender</span>`
+    ? `<span class="lesson-badge">${icon("book-fill")} Aprender</span>`
     : `<span class="lesson-lives" aria-label="${state.lives} de ${MAX_LIVES} vidas">${icon("heart-fill")}<strong>${state.lives}</strong></span>`;
 
   return `

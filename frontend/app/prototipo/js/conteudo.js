@@ -43,7 +43,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-vogais", kind: "practice", icon: "pencil-square", label: "Pratique: vogais", hint: "5 exercícios",
+        id: "pratica-vogais", kind: "practice", icon: "pencil-fill", label: "Pratique: vogais", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Letra A", options: ["E", "A", "O"], answer: 1, explain: "Essa é a letra A do alfabeto manual." },
           { type: "palavra-video", sign: "Letra I", options: ["Letra U", "Letra I", "Letra E"], answer: 1, explain: "Esse é o sinal da letra I." },
@@ -62,7 +62,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-consoantes", kind: "practice", icon: "pencil-square", label: "Pratique: consoantes", hint: "5 exercícios",
+        id: "pratica-consoantes", kind: "practice", icon: "pencil-fill", label: "Pratique: consoantes", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Letra B", options: ["Letra D", "Letra B", "Letra C"], answer: 1, explain: "Esse é o sinal da letra B." },
           { type: "video-palavra", sign: "Letra L", options: ["L", "C", "B"], answer: 0, explain: "Essa é a letra L do alfabeto manual." },
@@ -100,7 +100,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-um-a-cinco", kind: "practice", icon: "pencil-square", label: "Pratique: 1 a 5", hint: "5 exercícios",
+        id: "pratica-um-a-cinco", kind: "practice", icon: "pencil-fill", label: "Pratique: 1 a 5", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "3", options: ["2", "3", "5"], answer: 1, explain: "Esse é o sinal do número 3." },
           { type: "palavra-video", sign: "5", options: ["5", "4", "1"], answer: 0, explain: "Esse é o sinal do número 5." },
@@ -120,7 +120,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-seis-a-dez", kind: "practice", icon: "pencil-square", label: "Pratique: 6 a 10", hint: "5 exercícios",
+        id: "pratica-seis-a-dez", kind: "practice", icon: "pencil-fill", label: "Pratique: 6 a 10", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "7", options: ["9", "6", "7"], answer: 2, explain: "Esse é o sinal do número 7." },
           { type: "video-palavra", sign: "10", options: ["10", "8", "6"], answer: 0, explain: "Esse é o sinal do número 10." },
@@ -156,7 +156,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-nome", kind: "practice", icon: "pencil-square", label: "Pratique: meu nome", hint: "5 exercícios",
+        id: "pratica-nome", kind: "practice", icon: "pencil-fill", label: "Pratique: meu nome", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Nome", options: ["Prazer", "Nome", "Sinal-nome"], answer: 1, explain: "Esse é o sinal de “nome”." },
           { type: "situacao", q: "Você ainda não tem um sinal para o seu nome. Como se apresenta?", options: ["Soletrando o nome com o alfabeto manual", "Escrevendo no ar com o dedo", "Não dá para se apresentar"], answer: 0, explain: "Antes de ter um sinal-nome, a pessoa soletra o próprio nome com a datilologia." },
@@ -174,7 +174,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-idade-lugar", kind: "practice", icon: "pencil-square", label: "Pratique: idade e lugar", hint: "5 exercícios",
+        id: "pratica-idade-lugar", kind: "practice", icon: "pencil-fill", label: "Pratique: idade e lugar", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Cidade", options: ["Morar", "Idade", "Cidade"], answer: 2, explain: "Esse é o sinal de “cidade”." },
           { type: "video-palavra", sign: "Morar", options: ["Morar", "Cidade", "Nome"], answer: 0, explain: "Esse é o sinal de “morar”." },
@@ -202,7 +202,7 @@ const learningTopics = {
     subtitle: "Oi, tchau e saudações",
     branches: [
       {
-        id: "cumprimentos", kind: "learn", icon: "emoji-smile", label: "Oi e tchau", hint: "Aprender · 3 sinais",
+        id: "cumprimentos", kind: "learn", icon: "emoji-smile-fill", label: "Oi e tchau", hint: "Aprender · 3 sinais",
         cards: [
           { sign: "Oi", tip: "Para cumprimentar alguém, em qualquer hora do dia." },
           { sign: "Tchau", tip: "Para se despedir. Faça o sinal onde a pessoa possa ver." },
@@ -210,7 +210,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-cumprimentos", kind: "practice", icon: "pencil-square", label: "Pratique: oi e tchau", hint: "5 exercícios",
+        id: "pratica-cumprimentos", kind: "practice", icon: "pencil-fill", label: "Pratique: oi e tchau", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Oi", options: ["Tchau", "Oi", "Tudo bem?"], answer: 1, explain: "Esse é o sinal de “oi”, para cumprimentar." },
           { type: "palavra-video", sign: "Tchau", options: ["Tudo bem?", "Oi", "Tchau"], answer: 2, explain: "“Tchau” é a despedida do dia a dia." },
@@ -228,7 +228,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-saudacoes", kind: "practice", icon: "pencil-square", label: "Pratique: saudações", hint: "5 exercícios",
+        id: "pratica-saudacoes", kind: "practice", icon: "pencil-fill", label: "Pratique: saudações", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Boa tarde", options: ["Boa tarde", "Bom dia", "Boa noite"], answer: 0, explain: "Esse é o sinal de “boa tarde”." },
           { type: "situacao", q: "Você chega na escola às 7h e encontra a turma. Qual saudação combina?", options: ["Boa noite", "Bom dia", "Boa tarde"], answer: 1, explain: "Até o meio-dia, a saudação é “bom dia”." },
@@ -265,7 +265,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-familia", kind: "practice", icon: "pencil-square", label: "Pratique: família", hint: "5 exercícios",
+        id: "pratica-familia", kind: "practice", icon: "pencil-fill", label: "Pratique: família", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Mãe", options: ["Pai", "Irmã", "Mãe"], answer: 2, explain: "Esse é o sinal de “mãe”." },
           { type: "palavra-video", sign: "Irmã", options: ["Irmã", "Irmão", "Pai"], answer: 0, explain: "Esse é o sinal de “irmã”." },
@@ -284,7 +284,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-rotina-casa", kind: "practice", icon: "pencil-square", label: "Pratique: rotina", hint: "5 exercícios",
+        id: "pratica-rotina-casa", kind: "practice", icon: "pencil-fill", label: "Pratique: rotina", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Comer", options: ["Dormir", "Comer", "Casa"], answer: 1, explain: "Esse é o sinal de “comer”." },
           { type: "video-palavra", sign: "Dormir", options: ["Banho", "Comer", "Dormir"], answer: 2, explain: "Esse é o sinal de “dormir”." },
@@ -321,7 +321,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-sala", kind: "practice", icon: "pencil-square", label: "Pratique: sala de aula", hint: "5 exercícios",
+        id: "pratica-sala", kind: "practice", icon: "pencil-fill", label: "Pratique: sala de aula", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Professor", options: ["Aluno", "Professor", "Escola"], answer: 1, explain: "Esse é o sinal de “professor”." },
           { type: "palavra-video", sign: "Livro", options: ["Livro", "Escola", "Aluno"], answer: 0, explain: "Esse é o sinal de “livro”." },
@@ -340,7 +340,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-estudar", kind: "practice", icon: "pencil-square", label: "Pratique: estudar", hint: "5 exercícios",
+        id: "pratica-estudar", kind: "practice", icon: "pencil-fill", label: "Pratique: estudar", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Aprender", options: ["Prova", "Estudar", "Aprender"], answer: 2, explain: "Esse é o sinal de “aprender”." },
           { type: "video-palavra", sign: "Entender", options: ["Entender", "Aprender", "Prova"], answer: 0, explain: "Esse é o sinal de “entender”." },
@@ -377,7 +377,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-colegas", kind: "practice", icon: "pencil-square", label: "Pratique: colegas", hint: "5 exercícios",
+        id: "pratica-colegas", kind: "practice", icon: "pencil-fill", label: "Pratique: colegas", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Colega", options: ["Chefe", "Colega", "Reunião"], answer: 1, explain: "Esse é o sinal de “colega”." },
           { type: "palavra-video", sign: "Trabalhar", options: ["Trabalhar", "Reunião", "Colega"], answer: 0, explain: "Esse é o sinal de “trabalhar”." },
@@ -396,7 +396,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-horarios", kind: "practice", icon: "pencil-square", label: "Pratique: horários", hint: "5 exercícios",
+        id: "pratica-horarios", kind: "practice", icon: "pencil-fill", label: "Pratique: horários", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Amanhã", options: ["Hoje", "Hora", "Amanhã"], answer: 2, explain: "Esse é o sinal de “amanhã”." },
           { type: "video-palavra", sign: "Ajudar", options: ["Ajudar", "Amanhã", "Hora"], answer: 0, explain: "Esse é o sinal de “ajudar”." },
@@ -433,7 +433,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-lugares", kind: "practice", icon: "pencil-square", label: "Pratique: lugares", hint: "5 exercícios",
+        id: "pratica-lugares", kind: "practice", icon: "pencil-fill", label: "Pratique: lugares", hint: "5 exercícios",
         questions: [
           { type: "video-palavra", sign: "Ônibus", options: ["Mercado", "Ônibus", "Rua"], answer: 1, explain: "Esse é o sinal de “ônibus”." },
           { type: "palavra-video", sign: "Hospital", options: ["Hospital", "Ônibus", "Mercado"], answer: 0, explain: "Esse é o sinal de “hospital”." },
@@ -452,7 +452,7 @@ const learningTopics = {
         ],
       },
       {
-        id: "pratica-direcoes", kind: "practice", icon: "pencil-square", label: "Pratique: direções", hint: "5 exercícios",
+        id: "pratica-direcoes", kind: "practice", icon: "pencil-fill", label: "Pratique: direções", hint: "5 exercícios",
         questions: [
           { type: "palavra-video", sign: "Longe", options: ["Perto", "Longe", "Aqui"], answer: 1, explain: "Esse é o sinal de “longe”." },
           { type: "video-palavra", sign: "Onde?", options: ["Onde?", "Aqui", "Perto"], answer: 0, explain: "Esse é o sinal de “onde?”." },

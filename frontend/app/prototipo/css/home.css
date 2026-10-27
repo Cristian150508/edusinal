@@ -331,7 +331,7 @@ button.home-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transpar
   font: inherit;
   text-align: left;
 }
-.home-quest-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--surface-soft); color: var(--primary); font-size: 18px; }
+.home-quest-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; font-size: 18px; }
 .home-quest-copy { min-width: 0; }
 .home-quest-copy strong { display: block; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .home-quest-copy small { color: var(--muted); font-size: 12px; }

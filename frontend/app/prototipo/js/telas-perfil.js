@@ -17,10 +17,10 @@ function finishedTopicsCount() {
 // progress: função que diz quanto já foi feito; target: quanto precisa.
 const ACHIEVEMENTS = [
   { id: "primeiro", icon: "hand-thumbs-up-fill", title: "Primeiro sinal", text: "Conclua seu primeiro exercício.", target: 1, progress: exerciseCount },
-  { id: "cinco", icon: "pencil-square", title: "Mão na massa", text: "Conclua 5 exercícios.", target: 5, progress: exerciseCount },
+  { id: "cinco", icon: "pencil-fill", title: "Mão na massa", text: "Conclua 5 exercícios.", target: 5, progress: exerciseCount },
   { id: "etapa", icon: "award-fill", title: "Etapa vencida", text: "Passe em uma prova final.", target: 1, progress: finishedTopicsCount },
   { id: "ofensiva", icon: "fire", title: "Em chamas", text: "Chegue a 7 dias de ofensiva.", target: 7, progress: () => state.streak },
-  { id: "explorador", icon: "book-half", title: "Explorador", text: "Veja 10 sinais diferentes no dicionário.", target: 10, progress: () => state.signsSeen.length },
+  { id: "explorador", icon: "book-fill", title: "Explorador", text: "Veja 10 sinais diferentes no dicionário.", target: 10, progress: () => state.signsSeen.length },
   { id: "colecionador", icon: "bag-heart-fill", title: "Colecionador", text: "Tenha 3 itens para o mascote (comprados ou ganhos).", target: 3, progress: () => state.unlockedItems.length },
   { id: "liga", icon: "trophy-fill", title: "Subindo", text: "Chegue à liga Prata.", target: 1, progress: () => state.league },
 ];
@@ -132,7 +132,7 @@ function renderAchievement(achievement) {
 
 // Quadradinho de número: ícone colorido, valor e nome.
 function renderProfileTile([iconName, value, label, color]) {
-  const content = `<span class="profile-tile-icon is-${color}">${icon(iconName)}</span><span><strong>${value}</strong><small>${label}</small></span>`;
+  const content = `<span class="profile-tile-icon tone-${color}">${icon(iconName)}</span><span><strong>${value}</strong><small>${label}</small></span>`;
   // a ofensiva abre o calendário dos dias praticados
   if (iconName === "fire") return `<button class="profile-tile is-button" type="button" data-action="open-streak" aria-label="Ofensiva: ${value} ${label}. Abrir calendário">${content}</button>`;
   return `<div class="profile-tile">${content}</div>`;
@@ -144,11 +144,11 @@ function renderProfile() {
   const tiles = [
     ["fire", state.streak, state.streak === 1 ? "dia de ofensiva" : "dias de ofensiva", "coral"],
     ["lightning-charge-fill", state.xp, "XP total", "yellow"],
-    ["trophy-fill", LEAGUES[state.league].name, "Liga atual", "blue"],
+    ["trophy-fill", LEAGUES[state.league].name, "Liga atual", "yellow"],
     ["coin", state.coins, "Moedas", "yellow"],
-    ["pencil-square", exerciseCount(), "Exercícios", "blue"],
+    ["pencil-fill", exerciseCount(), "Exercícios", "blue"],
     ["award-fill", finishedTopicsCount(), "Etapas concluídas", "teal"],
-    ["book-half", state.signsSeen.length, "Sinais vistos", "teal"],
+    ["book-fill", state.signsSeen.length, "Sinais vistos", "teal"],
     ["shield-fill-check", state.streakFreezes, "Protetores", "coral"],
   ];
 
@@ -189,7 +189,7 @@ function renderChoice(action, current, label, options) {
 function renderSettingRow(iconName, color, title, text, control) {
   return `
     <div class="settings-row">
-      <span class="settings-row-icon is-${color}">${icon(iconName)}</span>
+      <span class="settings-row-icon tone-${color}">${icon(iconName)}</span>
       <div class="settings-row-text"><strong>${title}</strong><small>${text}</small></div>
       ${control}
     </div>`;
@@ -237,7 +237,7 @@ function renderMore() {
         ${renderSettingRow("palette-fill", "blue", "Tema", "Cores claras ou escuras.", renderChoice("set-theme", state.theme, "Tema", [["light", "Claro", "sun-fill"], ["dark", "Escuro", "moon-fill"]]))}
         ${renderSettingRow("type", "teal", "Tamanho do texto", "Deixa tudo um pouco maior.", renderChoice("set-text-size", state.textSize, "Tamanho do texto", [["normal", "Normal", "fonts"], ["large", "Grande", "zoom-in"]]))}
         ${renderSettingRow("stars", "yellow", "Animações", "Reduz movimentos na tela.", renderChoice("set-motion", state.motion, "Animações", [["normal", "Ligadas", "play-fill"], ["reduced", "Reduzidas", "pause-fill"]]))}
-        ${renderSettingRow("bullseye", "coral", "Meta diária", "Atividades por dia na meta da Home.", renderChoice("set-goal", String(state.dailyGoal), "Meta diária", [["1", "1", "cup-hot-fill"], ["3", "3", "lightning-charge-fill"], ["5", "5", "fire"]]))}
+        ${renderSettingRow("flag-fill", "coral", "Meta diária", "Atividades por dia na meta da Home.", renderChoice("set-goal", String(state.dailyGoal), "Meta diária", [["1", "1", "cup-hot-fill"], ["3", "3", "lightning-charge-fill"], ["5", "5", "fire"]]))}
       </div>
     </section>
 

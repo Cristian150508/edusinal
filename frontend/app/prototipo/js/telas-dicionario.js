@@ -334,14 +334,14 @@ function renderAlphabet() {
 
 function renderWordDetail(word) {
   if (!word) {
-    return `<aside class="word-detail word-detail-empty">${icon("hand-index-thumb")}<p>Escolha uma palavra para ver o sinal.</p></aside>`;
+    return `<aside class="word-detail word-detail-empty">${icon("hand-index-thumb-fill")}<p>Escolha uma palavra para ver o sinal.</p></aside>`;
   }
   return `
     <aside class="word-detail" aria-live="polite">
       ${signVideoHtml(word.word, "small")}
       <p class="word-detail-kicker">${categoryLabel(word.category).toUpperCase()}</p>
       <h2>${word.word}</h2>
-      <p class="word-example">${icon("chat-quote")} “${word.example}”</p>
+      <p class="word-example">${icon("chat-quote-fill")} “${word.example}”</p>
       <p class="word-note">O vídeo deste sinal será gravado e revisado por pessoas surdas fluentes em Libras.</p>
     </aside>`;
 }
@@ -372,6 +372,11 @@ function renderDictionaryResults() {
     <div class="dictionary-layout"><div class="word-grid">${cards}</div>${renderWordDetail(selected)}</div>`;
 }
 
+// Quantos sinais do dicionário o aluno já abriu (só os que ainda existem na lista).
+function seenWordsCount() {
+  return DICTIONARY_WORDS.filter((word) => state.signsSeen.includes(word.id)).length;
+}
+
 function renderSigns() {
   const chips = DICTIONARY_CATEGORIES.map((category) => {
     const isActive = !state.dictionaryQuery && state.dictionaryCategory === category.id;
@@ -379,7 +384,15 @@ function renderSigns() {
   }).join("");
 
   return `
-    <section class="page-intro"><div><p class="eyebrow">DICIONÁRIO DE LIBRAS</p><h2>Dicionário</h2><p>Consulte sinais quando quiser. Revisar é livre e não gasta vidas.</p></div><span class="demo-pill">${state.signsSeen.length} SINAIS VISTOS</span></section>
+    <section class="dictionary-hero" aria-labelledby="dictionary-title">
+      <span class="dictionary-hero-icon">${icon("book-fill")}</span>
+      <div class="dictionary-hero-copy">
+        <small>DICIONÁRIO DE LIBRAS</small>
+        <h2 id="dictionary-title">Dicionário</h2>
+        <p>Consulte sinais quando quiser. Revisar é livre e não gasta vidas.</p>
+      </div>
+      <span class="dictionary-hero-stat"><strong>${seenWordsCount()}/${DICTIONARY_WORDS.length}</strong> sinais vistos</span>
+    </section>
     <div class="dictionary-tools">
       <label class="dictionary-search-box">${icon("search")}<input class="dictionary-search" id="dictionary-search" type="search" placeholder="Buscar palavra, ex.: obrigado" aria-label="Buscar palavra no dicionário" value="${escapeHtml(state.dictionaryQuery)}" autocomplete="off" /></label>
       <div class="dictionary-categories" role="group" aria-label="Categorias do dicionário">${chips}</div>

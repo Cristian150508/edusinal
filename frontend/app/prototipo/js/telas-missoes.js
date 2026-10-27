@@ -7,7 +7,7 @@
 // (1, 3 ou 5 atividades): por isso o alvo e o título são calculados na hora ("get").
 const DAILY_MISSIONS = [
   {
-    id: "exercicios", icon: "pencil-square", tone: "coral", text: "Faça atividades novas na árvore da etapa.", reward: 10,
+    id: "exercicios", icon: "pencil-fill", tone: "coral", text: "Faça atividades novas na árvore da etapa.", reward: 10,
     get target() { return state.dailyGoal; },
     get title() { return `Conclua ${state.dailyGoal} ${state.dailyGoal === 1 ? "atividade" : "atividades"}`; },
     progress: () => state.daily.exercises,
@@ -18,11 +18,11 @@ const DAILY_MISSIONS = [
     get title() { return `Ganhe ${state.dailyGoal * XP_PER_EXERCISE} XP`; },
     progress: () => state.daily.xp,
   },
-  { id: "dicionario", icon: "book-half", tone: "green", title: "Veja 3 sinais no dicionário", text: "Revisar é livre e não gasta vidas.", target: 3, reward: 5, progress: () => state.daily.signsViewed.length },
+  { id: "dicionario", icon: "book-fill", tone: "teal", title: "Veja 3 sinais no dicionário", text: "Revisar é livre e não gasta vidas.", target: 3, reward: 5, progress: () => state.daily.signsViewed.length },
 ];
 
 const WEEKLY_MISSIONS = [
-  { id: "xp-semana", icon: "trophy-fill", tone: "blue", title: "Ganhe 200 XP na semana", text: "O mesmo XP que conta para a liga.", target: 200, reward: 30, progress: () => state.week.xp },
+  { id: "xp-semana", icon: "trophy-fill", tone: "yellow", title: "Ganhe 200 XP na semana", text: "O mesmo XP que conta para a liga.", target: 200, reward: 30, progress: () => state.week.xp },
   { id: "ofensiva", icon: "fire", tone: "coral", title: "Chegue a 5 dias de ofensiva", text: "Pratique um pouco todos os dias.", target: 5, reward: 20, progress: () => state.streak },
 ];
 
@@ -77,7 +77,7 @@ function renderMissionRow(mission, scope) {
 
   return `
     <article class="mission-row${isReady ? " is-ready" : ""}${isClaimed ? " is-claimed" : ""}">
-      <span class="mission-mark mission-mark-${mission.tone}">${icon(mission.icon)}</span>
+      <span class="mission-mark tone-${mission.tone}">${icon(mission.icon)}</span>
       <div class="mission-copy">
         <h3>${mission.title}</h3>
         <p>${mission.text}</p>
@@ -123,7 +123,7 @@ function renderMissions() {
       <div class="mission-list">${DAILY_MISSIONS.map((mission) => renderMissionRow(mission, "daily")).join("")}</div>
     </section>
     <section class="mission-group" aria-labelledby="weekly-missions-title">
-      <div class="mission-heading"><h2 id="weekly-missions-title">Missões da semana</h2><span class="mission-timer">${icon("calendar-week")} Renovam na segunda</span></div>
+      <div class="mission-heading"><h2 id="weekly-missions-title">Missões da semana</h2><span class="mission-timer">${icon("calendar-week-fill")} Renovam na segunda</span></div>
       <div class="mission-list">${WEEKLY_MISSIONS.map((mission) => renderMissionRow(mission, "weekly")).join("")}</div>
     </section>
     <button class="button-3d button-3d-primary missions-practice" type="button" data-action="open-topic" data-topic="${currentTopicId()}">Praticar agora ${icon("arrow-right")}</button>`;

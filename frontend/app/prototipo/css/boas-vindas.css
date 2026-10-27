@@ -58,9 +58,6 @@
 .welcome-point strong { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
 .welcome-point span:not(.welcome-point-icon) { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .welcome-point-icon { width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 14px; font-size: 21px; }
-.welcome-point-icon.is-blue { background: var(--primary-soft); color: var(--primary); }
-.welcome-point-icon.is-yellow { background: var(--yellow-soft); color: #b58a12; }
-.welcome-point-icon.is-teal { background: var(--accent-soft); color: var(--accent); }
 
 @media (max-width: 760px) {
   /* celular: mascote em cima, botões grandes ocupando a largura */

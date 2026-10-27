@@ -177,17 +177,43 @@ a {
   place-items: center;
   overflow: hidden;
   border-radius: 11px;
-  background: var(--primary-soft);
-  color: var(--primary-strong);
   font-size: 17px;
   line-height: 1;
 }
-.nav-icon-1,
-.nav-icon-6 { background: var(--coral-soft); color: var(--coral); }
-.nav-icon-2,
-.nav-icon-7 { background: var(--accent-soft); color: var(--accent); }
-.nav-icon-3,
-.nav-icon-5 { background: var(--yellow-soft); color: #9f7b18; }
+
+/* ----- Ícones do EduSinal -----
+   1. Ícone de COISA (área, item, conquista) é cheio ("-fill"); ícone de AÇÃO
+      (setas, lupa, fechar, conferir) é de traço.
+   2. Cada área tem uma cor, a mesma em todo lugar: Home azul, Dicionário
+      turquesa, Ligas e Lojinha amarelo, Missões coral, Configurações cinza.
+      As classes .tone-... só escolhem a cor; quem usa decide onde ela entra.
+   3. O ícone fica num "chip" com o fundo clarinho da cor e uma sombrinha
+      embaixo, em 3D, como os botões. */
+.tone-blue { --tone: var(--primary); --tone-soft: var(--primary-soft); }
+.tone-teal { --tone: var(--accent); --tone-soft: var(--accent-soft); }
+.tone-yellow { --tone: #a07c14; --tone-soft: var(--yellow-soft); }
+.tone-coral { --tone: var(--coral); --tone-soft: var(--coral-soft); }
+.tone-gray { --tone: var(--muted); --tone-soft: var(--surface-soft); }
+:root[data-theme="dark"] .tone-yellow { --tone: var(--yellow); } /* no escuro, amarelo vivo para ler bem */
+
+.nav-icon,
+.settings-row-icon,
+.profile-tile-icon,
+.welcome-point-icon,
+.mission-mark,
+.home-quest-icon {
+  background: var(--tone-soft, var(--primary-soft));
+  color: var(--tone, var(--primary));
+}
+.nav-icon,
+.settings-row-icon,
+.profile-tile-icon,
+.welcome-point-icon,
+.mission-mark,
+.home-quest-icon,
+.shop-card-icon { box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08); }
+:root[data-theme="dark"] :is(.nav-icon, .settings-row-icon, .profile-tile-icon, .welcome-point-icon, .mission-mark, .home-quest-icon, .shop-card-icon) { box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.28); }
+
 .nav-item.is-active .nav-icon { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
 /* Perfil: o rosto do mascote do aluno no lugar do ícone */
 .nav-icon.is-avatar .mascot-svg { width: 100%; height: 100%; }

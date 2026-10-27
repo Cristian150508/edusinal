@@ -36,10 +36,10 @@ function renderBottomNav() {
   const activeTab = PARENT_TAB[state.screen] || state.screen;
   const ready = readyMissionsCount();
   document.getElementById("bottom-nav").innerHTML = MOBILE_TABS.map((screen) => {
-    const [, label, iconName] = navigationItems.find(([id]) => id === screen);
+    const [, label, iconName, tone] = navigationItems.find(([id]) => id === screen);
     const isActive = activeTab === screen;
     const badge = screen === "missions" && ready > 0 ? `<span class="bottom-badge" aria-label="${ready} para resgatar">${ready}</span>` : "";
-    return `<button class="bottom-tab${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}><span class="bottom-tab-icon">${icon(iconName)}</span><span>${label}</span>${badge}</button>`;
+    return `<button class="bottom-tab${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}><span class="bottom-tab-icon tone-${tone}">${icon(iconName)}</span><span>${label}</span>${badge}</button>`;
   }).join("");
 }
 
@@ -68,11 +68,11 @@ function renderMobileAvatar() {
 function renderNavigation() {
   const activeScreen = state.screen === "mascot" ? "profile" : state.screen; // o editor do mascote fica no Perfil
   const ready = readyMissionsCount();
-  const items = navigationItems.map(([screen, label, iconName], index) => {
+  const items = navigationItems.map(([screen, label, iconName, tone]) => {
     const isActive = activeScreen === screen;
     const symbol = screen === "profile"
       ? `<span class="nav-icon is-avatar ${backdropClass()}">${mascotSvg(state.mascot, "avatar", "")}</span>`
-      : `<span class="nav-icon nav-icon-${index + 1}">${icon(iconName)}</span>`;
+      : `<span class="nav-icon tone-${tone}">${icon(iconName)}</span>`;
     const badge = screen === "missions" && ready > 0 ? `<span class="nav-badge" aria-label="${ready} para resgatar">${ready}</span>` : "";
     return `
     <button class="nav-item${isActive ? " is-active" : ""}" type="button" data-screen="${screen}"${isActive ? ' aria-current="page"' : ""}>

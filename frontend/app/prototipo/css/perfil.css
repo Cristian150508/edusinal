@@ -90,10 +90,6 @@
 .profile-tile strong { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; line-height: 1.2; }
 .profile-tile small { color: var(--muted); font-size: 12px; }
 .profile-tile-icon { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 14px; font-size: 20px; }
-.profile-tile-icon.is-coral { background: var(--coral-soft); color: var(--coral); }
-.profile-tile-icon.is-yellow { background: var(--yellow-soft); color: #b58a12; }
-.profile-tile-icon.is-blue { background: var(--primary-soft); color: var(--primary); }
-.profile-tile-icon.is-teal { background: var(--accent-soft); color: var(--accent); }
 
 /* Conquistas: medalha redonda (dourada quando conquistada) */
 .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
