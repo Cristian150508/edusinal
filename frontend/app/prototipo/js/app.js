@@ -87,7 +87,7 @@ let lastDrawnView = "";
 
 // Altura das barras do celular, medida de verdade: a de cima e o espaço que a
 // página reserva embaixo para a barra de baixo. A Home usa esse valor para
-// caber exatamente na tela (ver prototipo.css). No computador a de cima some.
+// caber exatamente na tela (ver css/home.css). No computador a de cima some.
 function updateBarsHeight() {
   const top = document.querySelector(".mobile-topbar").getBoundingClientRect().height;
   const bottom = parseFloat(getComputedStyle(document.querySelector(".workspace")).paddingBottom) || 0;

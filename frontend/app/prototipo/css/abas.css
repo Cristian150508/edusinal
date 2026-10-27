@@ -1,0 +1,644 @@
+/* Abas: ligas, missões, lojinha e dicionário (com o alfabeto).
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+/* ===================================================================
+   ABAS: ligas, missões, dicionário, lojinha, perfil e Configurações
+   Só usam as variáveis de cor do topo, então o tema escuro funciona sozinho.
+   =================================================================== */
+
+/* ----- Peças comuns ----- */
+.app-shell[data-current-screen="leagues"] .section-heading,
+.app-shell[data-current-screen="missions"] .section-heading { margin-top: 26px; }
+
+.safety-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.safety-note > .bi { flex: none; color: var(--accent); font-size: 22px; }
+
+/* ----- Ligas ----- */
+.league-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--league-color, var(--primary));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--league-color, var(--primary)) 70%, #000);
+  color: #fff;
+  font-size: 22px;
+}
+.league-badge-large { width: 84px; height: 84px; border-radius: 24px; box-shadow: 0 6px 0 color-mix(in srgb, var(--league-color) 70%, #000); font-size: 42px; }
+
+.league-bronze { --league-color: #b87645; }
+.league-prata { --league-color: #8d9aab; }
+.league-ouro { --league-color: #d9a925; }
+.league-safira { --league-color: #1f6fb8; }
+.league-diamante { --league-color: #19a7a1; }
+
+/* Topo: faixa em degradê com o troféu da liga, as regras e o relógio */
+.league-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.league-hero .league-badge-large { flex: none; border: 3px solid rgba(255, 255, 255, 0.85); }
+.league-hero-copy { flex: 1; min-width: 0; }
+.league-hero-copy small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.league-hero-copy h2 { margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 30px; font-weight: 800; }
+.league-hero-copy p { margin: 0; font-size: 14px; opacity: 0.95; }
+.league-timer { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+/* Escada das 5 ligas, ligadas por uma linha (como a trilha da Home) */
+.league-ladder {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.league-step { position: relative; display: grid; justify-items: center; gap: 8px; color: var(--muted); font-size: 13px; font-weight: 700; }
+.league-step:not(:last-child)::after {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  z-index: 0;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line);
+  content: "";
+}
+.league-step.is-passed:not(:last-child)::after { background: var(--accent); }
+.league-step .league-badge { position: relative; z-index: 1; width: 52px; height: 52px; border-radius: 16px; font-size: 24px; }
+.league-step.is-locked .league-badge { background: var(--surface-soft); box-shadow: 0 4px 0 var(--line); color: var(--muted); font-size: 18px; }
+.league-step.is-current { color: var(--text); }
+.league-step.is-current .league-badge { width: 60px; height: 60px; margin-top: -4px; outline: 3px solid var(--yellow); outline-offset: 4px; font-size: 28px; }
+
+/* Sua situação na semana */
+.league-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 24px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.league-status.zone-promotion { border-color: var(--accent); box-shadow: 0 4px 0 var(--accent); }
+.league-status.zone-demotion { border-color: var(--coral); box-shadow: 0 4px 0 var(--coral); }
+.league-status p { margin: 0 0 4px; font-size: 15px; line-height: 1.5; }
+.league-status small { color: var(--muted); font-size: 12px; }
+.league-status-place { width: 72px; height: 72px; display: grid; place-content: center; justify-items: center; border-radius: 50%; background: var(--primary-soft); color: var(--primary); }
+.league-status.zone-promotion .league-status-place { background: var(--accent-soft); color: var(--accent); }
+.league-status.zone-demotion .league-status-place { background: var(--coral-soft); color: var(--coral); }
+.league-status-place strong { font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 800; line-height: 1; }
+.league-status-place span { font-size: 11px; font-weight: 700; }
+
+/* Ranking: cartões 3D, medalhas no pódio e o aluno com o mascote */
+.ranking-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ranking-row {
+  display: grid;
+  grid-template-columns: 34px 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+}
+.ranking-row.is-me { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 3px 0 var(--primary); }
+.ranking-position { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; text-align: center; }
+.ranking-row.zone-demotion .ranking-position { color: var(--coral); }
+.ranking-medal { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: #ffffff; font-size: 14px; }
+.medal-1 { background: #e3b52c; box-shadow: 0 3px 0 #b58a12; }
+.medal-2 { background: #a4afbd; box-shadow: 0 3px 0 #7b8696; }
+.medal-3 { background: #c4854f; box-shadow: 0 3px 0 #96603a; }
+.ranking-row strong { overflow: hidden; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-points { color: var(--muted); font-size: 14px; font-weight: 800; }
+.ranking-you { margin-left: 6px; padding: 2px 8px; border-radius: 99px; background: var(--primary); color: #fff; font-size: 11px; }
+.ranking-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  font-family: "Manrope", sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+}
+.ranking-avatar.is-me { border: 2px solid var(--surface); box-shadow: 0 0 0 2px var(--primary); }
+.ranking-avatar .mascot-svg { width: 100%; height: 100%; }
+.avatar-tone-0 { background: var(--coral-soft); }
+.avatar-tone-1 { background: var(--yellow-soft); }
+.avatar-tone-2 { background: var(--primary-soft); }
+.avatar-tone-3 { background: var(--accent-soft); }
+
+/* Etiquetas entre as zonas */
+.ranking-divider {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ranking-divider.zone-promotion { background: var(--accent-soft); color: var(--accent); }
+.ranking-divider.zone-demotion { background: var(--coral-soft); color: var(--coral); }
+
+@media (max-width: 760px) {
+  .league-hero { flex-wrap: wrap; gap: 14px; padding: 18px; border-radius: 20px; }
+  .league-hero .league-badge-large { width: 64px; height: 64px; border-radius: 18px; font-size: 32px; }
+  .league-hero-copy h2 { font-size: 24px; }
+  .league-timer { width: 100%; justify-content: center; }
+  .league-step { font-size: 11px; }
+  .league-step .league-badge { width: 44px; height: 44px; border-radius: 14px; font-size: 20px; }
+  .league-step.is-current .league-badge { width: 50px; height: 50px; font-size: 24px; }
+  .league-step:not(:last-child)::after { top: 20px; height: 5px; }
+}
+
+/* ----- Missões ----- */
+/* Topo: faixa em degradê com o presente e o resumo do dia */
+.missions-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.missions-hero-gift {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  background: var(--yellow);
+  box-shadow: 0 6px 0 #c99a1c;
+  color: #6b4f00;
+  font-size: 40px;
+}
+.missions-hero-gift.is-ready { animation: gift-bounce 1.6s ease-in-out infinite; }
+.missions-hero-copy { flex: 1; min-width: 0; }
+.missions-hero-copy small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.missions-hero-copy h2 { margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 30px; font-weight: 800; }
+.missions-hero-copy p { margin: 0; font-size: 14px; opacity: 0.95; }
+.missions-hero-stats { display: grid; gap: 8px; flex: none; }
+.missions-hero-stats span { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.2); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.missions-hero-stats strong { display: inline-flex; align-items: center; gap: 4px; font-family: "Manrope", sans-serif; font-size: 15px; }
+
+.mission-group { margin-top: 26px; }
+.mission-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.mission-heading h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; }
+.mission-timer { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--muted); font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+/* Cada missão: cartão 3D, ícone colorido e barra grossa amarela */
+.mission-list { display: grid; gap: 12px; }
+.mission-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.mission-row.is-ready { border-color: var(--yellow); box-shadow: 0 4px 0 #c99a1c; }
+.mission-row.is-claimed { opacity: 0.65; }
+.mission-copy h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
+.mission-copy p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.mission-progress { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.mission-progress strong { min-width: 64px; font-family: "Manrope", sans-serif; font-size: 14px; font-weight: 800; text-align: right; white-space: nowrap; }
+.mission-bar { flex: 1; height: 16px; overflow: hidden; border-radius: 99px; background: var(--surface-soft); }
+.mission-bar span { display: block; height: 100%; border-radius: inherit; background: var(--yellow); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.08); }
+.mission-row.is-claimed .mission-bar span { background: var(--accent); }
+
+.mission-mark { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; font-size: 24px; }
+.mission-mark-coral { background: var(--coral-soft); color: var(--coral); }
+.mission-mark-yellow { background: var(--yellow-soft); color: #b58a12; }
+.mission-mark-green { background: var(--accent-soft); color: var(--accent); }
+.mission-mark-blue { background: var(--primary-soft); color: var(--primary); }
+
+.mission-reward,
+.mission-claimed {
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 800;
+}
+.mission-reward { background: var(--yellow-soft); color: #8a6a10; }
+:root[data-theme="dark"] .mission-reward { color: var(--yellow); } /* no escuro o fundo é escuro: texto amarelo */
+.mission-claimed { background: var(--accent-soft); color: var(--accent); }
+.button-3d-gold { background: var(--yellow); box-shadow: 0 4px 0 #c99a1c; color: #5a4300; }
+.mission-claim { min-width: 150px; min-height: 44px; padding: 0 16px; font-size: 13px; }
+.mission-claim > .bi { animation: gift-bounce 1.6s ease-in-out infinite; }
+.missions-practice { margin-top: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .missions-hero-gift.is-ready,
+  .mission-claim > .bi { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .missions-hero { flex-wrap: wrap; gap: 14px; padding: 18px; border-radius: 20px; }
+  .missions-hero-gift { width: 64px; height: 64px; border-radius: 18px; font-size: 30px; }
+  .missions-hero-copy h2 { font-size: 24px; }
+  .missions-hero-stats { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .missions-hero-stats span { justify-content: center; }
+  .mission-heading h2 { font-size: 19px; }
+  .mission-row { grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 14px; }
+  .mission-mark { width: 44px; height: 44px; border-radius: 14px; font-size: 20px; }
+  .mission-row > :last-child { grid-column: 1 / -1; width: 100%; }
+  .missions-practice { width: 100%; }
+}
+
+/* ----- Lojinha ----- */
+/* Topo: faixa em degradê com a moeda dourada e o saldo */
+.shop-hero {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.shop-hero-coin {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 6px 0 #c99a1c;
+  color: #6b4f00;
+  font-size: 40px;
+}
+.shop-hero-copy { flex: 1; min-width: 0; }
+.shop-hero-copy small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.shop-hero-copy h2 { margin: 2px 0 4px; font-family: "Manrope", sans-serif; font-size: 30px; font-weight: 800; }
+.shop-hero-copy p { margin: 0; font-size: 14px; opacity: 0.95; }
+.shop-hero-balance { flex: none; display: grid; justify-items: center; padding: 10px 18px; border-radius: 18px; background: rgba(255, 255, 255, 0.2); font-size: 12px; font-weight: 700; }
+.shop-hero-balance strong { font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 800; line-height: 1.1; }
+
+.shop-group { margin-top: 26px; }
+
+/* Ajudas: ícone à esquerda, texto à direita e botão dourado embaixo */
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.shop-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  align-items: start;
+  gap: 14px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.shop-card-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 18px; background: var(--coral-soft); color: var(--coral); font-size: 30px; }
+.shop-card-protetor-ofensiva .shop-card-icon,
+.shop-card-recarga-energia .shop-card-icon { background: var(--accent-soft); color: var(--accent); }
+.shop-card-info { display: grid; justify-items: start; gap: 4px; }
+.shop-card h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.shop-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.shop-card-status { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 4px 12px; border-radius: 99px; background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700; }
+.shop-card-status .bi { color: var(--coral); }
+.shop-card-protetor-ofensiva .shop-card-status .bi,
+.shop-card-recarga-energia .shop-card-status .bi { color: var(--accent); }
+.shop-buy { width: 100%; margin-top: auto; }
+.shop-card .shop-buy { grid-column: 1 / -1; align-self: end; }
+
+/* Vitrine do dia: 3 itens do mascote, cada um mostrado já no mascote */
+.shop-showcase { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.shop-item { justify-items: center; text-align: center; }
+.shop-item-art { width: 112px; height: 112px; display: block; overflow: hidden; border-radius: 50%; }
+.shop-item-art .mascot-svg { width: 100%; height: 100%; }
+.shop-item-art.is-full .mascot-svg { margin-top: 8%; }
+.shop-item-info { display: grid; justify-items: center; gap: 2px; margin-bottom: 6px; }
+.shop-item-slot { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.shop-item-owned { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-size: 12px; font-weight: 700; }
+
+/* Guarda-roupa: o mascote do aluno e o botão para o editor */
+.shop-wardrobe {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.shop-wardrobe-mascot { width: 88px; height: 88px; display: block; overflow: hidden; border-radius: 50%; }
+.shop-wardrobe-mascot .mascot-svg { width: 100%; height: 100%; margin-top: 8%; }
+.shop-wardrobe h3 { margin: 0 0 4px; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.shop-wardrobe p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+@media (max-width: 760px) {
+  .shop-hero { flex-wrap: wrap; gap: 14px; padding: 18px; border-radius: 20px; }
+  .shop-hero-coin { width: 64px; height: 64px; font-size: 30px; }
+  .shop-hero-copy h2 { font-size: 24px; }
+  .shop-hero-balance { width: 100%; grid-auto-flow: column; justify-content: center; align-items: baseline; gap: 6px; }
+  .shop-hero-balance strong { font-size: 22px; }
+  .shop-grid { grid-template-columns: minmax(0, 1fr); }
+  /* vitrine no celular: um item por linha, desenho à esquerda e botão embaixo */
+  .shop-showcase { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .shop-item { grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-items: center; column-gap: 14px; padding: 14px; text-align: left; }
+  .shop-item-art { width: 72px; height: 72px; }
+  .shop-item-info { justify-items: start; margin: 0; }
+  .shop-item .shop-buy { grid-column: 1 / -1; margin-top: 6px; }
+  .shop-wardrobe { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: 14px; }
+  .shop-wardrobe-mascot { width: 68px; height: 68px; }
+  .shop-wardrobe .button-3d { grid-column: 1 / -1; width: 100%; }
+  /* na Lojinha o saldo já aparece grande no topo: tira as moedas da barra de cima */
+  .app-shell[data-current-screen="shop"] .stat-coins { display: none; }
+}
+
+/* ----- Dicionário ----- */
+.dictionary-tools { display: grid; gap: 14px; margin-bottom: 22px; }
+
+/* Busca com a lupa dentro do campo */
+.dictionary-search-box {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  color: var(--muted);
+  font-size: 18px;
+}
+.dictionary-search-box:focus-within { border-color: var(--primary); box-shadow: 0 3px 0 var(--primary); }
+.dictionary-search {
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+.dictionary-categories { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Botões de escolha em pílula (categorias e abas do mascote) */
+.category-chip {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 99px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+.category-chip:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+.category-chip.is-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 3px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+
+/* Palavras: cartões com o "play" e o painel do sinal escolhido ao lado */
+.dictionary-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  align-items: start;
+  gap: 18px;
+}
+.word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.word-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.word-card:hover { background: var(--surface-soft); }
+.word-card:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.word-card.is-selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 4px 0 var(--primary); }
+.word-card-play { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--primary-soft); color: var(--primary); font-size: 20px; }
+.word-card.is-selected .word-card-play { background: var(--hero-from); color: #ffffff; }
+.word-card-text { min-width: 0; display: grid; gap: 1px; }
+.word-card strong { font-family: "Manrope", sans-serif; font-size: 16px; font-weight: 800; }
+.word-card small { color: var(--muted); font-size: 12px; }
+.word-card .word-seen { position: absolute; top: 8px; right: 10px; color: var(--accent); font-size: 11px; font-weight: 800; }
+
+.word-detail {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.word-detail .sign-video { margin-bottom: 8px; }
+.word-detail-kicker { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; }
+.word-detail h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; }
+.word-detail p { margin: 0; font-size: 14px; line-height: 1.5; }
+.word-example { display: flex; gap: 8px; }
+.word-example .bi { color: var(--accent); }
+.word-detail .word-note { color: var(--muted); font-size: 12px; }
+.word-detail-empty { justify-items: center; padding: 28px 16px; color: var(--muted); text-align: center; }
+.word-detail-empty > .bi { color: var(--primary); font-size: 32px; }
+.dictionary-empty { display: flex; justify-content: center; gap: 8px; padding: 30px 0; color: var(--muted); text-align: center; }
+
+/* Alfabeto manual: faixa com o progresso, grade de letras e painel da letra */
+.alphabet-track { display: grid; gap: 16px; }
+.alphabet-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+.alphabet-banner small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.alphabet-banner h2 { margin: 2px 0 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; }
+.alphabet-progress { width: min(240px, 40%); display: flex; align-items: center; gap: 10px; }
+.alphabet-progress .hero-progress-track { flex: 1; height: 12px; }
+.alphabet-progress strong { font-family: "Manrope", sans-serif; font-size: 15px; }
+
+/* Desafia-me: cartão 3D acima da grade (dourado quando tem prêmio) */
+.challenge-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 4px 0 var(--line);
+}
+.challenge-card.has-reward { border-color: var(--yellow); box-shadow: 0 4px 0 #c99a1c; }
+.challenge-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-soft); box-shadow: 0 4px 0 var(--line); color: var(--muted); font-size: 26px; }
+.challenge-card:not(.is-locked) .challenge-icon { border: 3px solid #ffffff; background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); box-shadow: 0 4px 0 #c99a1c; color: #ffffff; }
+.challenge-copy h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.challenge-copy p { margin: 2px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.challenge-prizes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.challenge-prize { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; background: var(--yellow-soft); color: #8a6a0c; font-size: 12px; font-weight: 800; }
+.challenge-prize .bi { color: #d9a20f; }
+.challenge-prize.is-done { background: var(--accent-soft); color: var(--accent); }
+.challenge-prize.is-done .bi { color: var(--accent); }
+.challenge-prize.is-locked { background: var(--surface-soft); color: var(--muted); }
+.challenge-prize.is-locked .bi { color: var(--muted); }
+.challenge-button { white-space: nowrap; }
+
+.alphabet-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); align-items: start; gap: 18px; }
+.letter-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.letter-tile {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+  box-shadow: 0 4px 0 var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: "Manrope", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+}
+.letter-tile:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+.letter-tile.is-done { border-color: transparent; background: var(--accent); box-shadow: 0 4px 0 var(--done-shadow); color: #ffffff; }
+.letter-tile.is-next { border-color: transparent; background: var(--hero-from); box-shadow: 0 4px 0 var(--hero-shadow); color: #ffffff; }
+.letter-tile.is-next::after { position: absolute; inset: -7px; border: 3px solid var(--yellow); border-radius: 20px; animation: ring-pulse 1.8s ease-in-out infinite; content: ""; pointer-events: none; }
+.letter-tile.is-selected { outline: 3px solid var(--primary); outline-offset: 3px; }
+.letter-tile.is-next.is-selected { outline: 0; }
+.letter-tile .letter-mark { position: absolute; top: 5px; right: 6px; font-size: 11px; }
+.letter-tile.is-locked .letter-mark { color: var(--muted); }
+
+.letter-panel {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  text-align: center;
+}
+.letter-panel .sign-video { margin-bottom: 4px; }
+.letter-panel-kicker { margin: 0; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; }
+.letter-panel h3 { margin: 0; font-family: "Manrope", sans-serif; font-size: 26px; font-weight: 800; }
+.letter-panel p { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.letter-panel .button-3d { width: 100%; }
+.letter-panel-warning { color: var(--coral); font-size: 12px; font-weight: 700; }
+.letter-panel-trophy { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: var(--yellow); box-shadow: 0 5px 0 #c99a1c; color: #6b4f00; font-size: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-tile.is-next::after { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .alphabet-banner { padding: 12px 16px; }
+  .alphabet-banner h2 { font-size: 18px; }
+  .alphabet-layout { grid-template-columns: minmax(0, 1fr); }
+  /* no celular, o painel da letra vem antes da grade, compacto: vídeo pequeno ao lado do texto */
+  .letter-panel {
+    position: static;
+    order: -1;
+    grid-template-columns: 96px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 2px;
+    text-align: left;
+  }
+  .letter-panel .sign-video { grid-row: 1 / span 3; width: 96px; margin: 0; }
+  .letter-panel h3 { font-size: 20px; }
+  .letter-panel p:not(.letter-panel-kicker) { display: none; }
+  .letter-panel .button-3d,
+  .letter-panel-warning { grid-column: 1 / -1; margin-top: 10px; }
+  .challenge-card { grid-template-columns: auto minmax(0, 1fr); gap: 12px 14px; padding: 14px; }
+  .challenge-icon { width: 48px; height: 48px; font-size: 22px; }
+  .challenge-button { grid-column: 1 / -1; width: 100%; }
+  .letter-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+  .letter-tile { border-radius: 14px; font-size: 20px; }
+  .word-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .word-card { padding: 10px; gap: 10px; }
+  .word-card-play { width: 32px; height: 32px; font-size: 17px; }
+}
+
+/* ----- Perfil ----- */
+.name-form { display: grid; gap: 10px; margin-bottom: 10px; }
+.name-form-actions { display: flex; align-items: center; gap: 14px; }
+
+/* ----- Celular ----- */
+@media (max-width: 760px) {
+  .league-status { grid-template-columns: auto minmax(0, 1fr); }
+  .league-status .button-3d { grid-column: 1 / -1; }
+  .ranking-row { grid-template-columns: 32px 36px minmax(0, 1fr) auto; gap: 10px; padding: 8px 12px; }
+  .ranking-avatar { width: 36px; height: 36px; font-size: 15px; }
+
+  .dictionary-layout { grid-template-columns: minmax(0, 1fr); }
+  .word-detail { position: static; order: -1; }
+}

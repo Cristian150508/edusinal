@@ -1,0 +1,396 @@
+/* Árvore de exercícios (modo foco) e o aviso de energia ou vidas acabando.
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+/* Aviso da árvore quando acabam a energia ou as vidas */
+.tree-warning {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--coral-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tree-warning > span { color: var(--coral); }
+.tree-warning.is-energy { background: var(--accent-soft); }
+.tree-warning.is-energy .bi { color: var(--accent); }
+.tree-warning .text-button { min-height: 0; padding: 0; font-size: 13px; text-decoration: underline; }
+/* com o aviso, a árvore fica um pouco mais baixa para continuar cabendo na tela */
+.tree-warning + .tree-canvas { height: clamp(380px, calc(100vh / var(--zoom) - 190px), 560px); }
+
+/* ===================================================================
+   ÁRVORE DE EXERCÍCIOS (modo foco)
+   Computador: espiral com a prova final (troféu) no centro.
+   Celular: caminho ondulado só com os ícones; tocar abre um balão.
+   Mesmo visual da Home: bolinhas "3D" com sombra embaixo.
+   =================================================================== */
+.topic-tree {
+  width: min(900px, 100%);
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr); /* nada empurra a largura para fora da tela */
+}
+
+/* ----- Animação de entrada (Home → árvore) -----
+   O destaque da Home vira a faixa da etapa e a bolinha da etapa vira o troféu
+   (View Transitions, ver withTopicTransition em app.js). Depois os exercícios
+   saem do troféu, um de cada vez, até o lugar deles, e o caminho aparece. */
+::view-transition-group(topic-banner),
+::view-transition-group(topic-node) {
+  animation-duration: 560ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 320ms; }
+.is-transitioning .app-shell,
+.is-transitioning .sidebar { transition: none; }
+/* o destaque (alto) encolhe até a faixa (baixa) recortado, sem esticar o texto */
+::view-transition-group(topic-banner) { overflow: clip; border-radius: 20px; }
+::view-transition-old(topic-banner),
+::view-transition-new(topic-banner) { height: 100%; object-fit: cover; object-position: center; }
+/* Cada pedaço do caminho se risca logo depois que os exercícios chegam */
+.tree-line-mask {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 24;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  /* "backwards": a medida só vale durante a animação; depois a linha fica inteira */
+  animation: line-draw 300ms calc(860ms + var(--i) * 170ms) ease-out backwards;
+}
+@keyframes line-draw {
+  from { stroke-dasharray: var(--len) var(--len); stroke-dashoffset: var(--len); }
+  to { stroke-dasharray: var(--len) var(--len); stroke-dashoffset: 0; }
+}
+
+/* Faixa colorida única: voltar (esquerda), etapa (meio), progresso e vidas (direita) */
+.topic-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+.topic-heading .back-button {
+  justify-self: start;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  color: #ffffff;
+  font-size: 18px;
+}
+.topic-heading .back-button:hover { text-decoration: none; background: rgba(255, 255, 255, 0.28); }
+.topic-heading .back-button:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+.topic-title { min-width: 0; text-align: center; }
+.topic-title small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.topic-title h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; line-height: 1.2; }
+.topic-status { justify-self: end; width: min(220px, 100%); display: grid; gap: 4px; }
+.topic-progress { display: flex; align-items: center; gap: 8px; }
+.topic-progress .hero-progress-track { flex: 1; height: 12px; }
+.topic-progress strong { font-family: "Manrope", sans-serif; font-size: 14px; }
+.topic-lives { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.topic-lives .life-heart { font-size: 14px; color: rgba(255, 255, 255, 0.35); }
+.topic-lives .life-heart.is-full { color: #ff8f7d; }
+.topic-lives small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+/* Energia: uma bateria com um tracinho por ponto */
+.topic-energy { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.topic-energy small { font-size: 11px; font-weight: 700; opacity: 0.9; white-space: nowrap; }
+.energy-battery { position: relative; display: inline-flex; gap: 2px; margin-right: 3px; padding: 2px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 5px; }
+.energy-battery::after { content: ""; position: absolute; top: 50%; right: -5px; width: 3px; height: 6px; border-radius: 0 2px 2px 0; background: rgba(255, 255, 255, 0.85); transform: translateY(-50%); }
+.energy-cell { width: 7px; height: 8px; border-radius: 2px; background: rgba(255, 255, 255, 0.22); }
+.energy-cell.is-full { background: #7ff0c8; }
+
+/* Área da árvore: a altura acompanha a tela, para tudo caber sem rolar */
+.tree-canvas {
+  position: relative;
+  height: clamp(380px, calc(100vh / var(--zoom) - 130px), 560px); /* mais alto que isso, o oval estica e as distâncias ficam desiguais */
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.tree-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tree-lines > path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+/* caminho ainda não feito: bolinhas; feito: linha turquesa cheia */
+.tree-lines > path:not(.is-done) { stroke: var(--line); stroke-width: 7; stroke-dasharray: 0.1 16; }
+.tree-lines-wave,
+.tree-bubble { display: none; }
+
+/* Exercício: o centro da bolinha fica em cima do ponto do caminho */
+.tree-leaf {
+  --lift: -38px;
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  z-index: 1;
+  width: 170px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: center;
+  transform: translate(-50%, var(--lift));
+  animation: leaf-in 520ms calc(380ms + var(--i) * 90ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+/* sai do centro (onde fica o troféu) e vai até a sua posição na espiral */
+@keyframes leaf-in {
+  from { top: var(--origin-y, 50%); left: var(--origin-x, 50%); opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+}
+button.tree-leaf { cursor: pointer; }
+
+.tree-icon {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  box-shadow: 0 6px 0 var(--line);
+  color: var(--muted);
+  font-size: 28px;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+button.tree-leaf:hover .tree-icon { transform: translateY(-2px); }
+button.tree-leaf:active .tree-icon { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+.tree-leaf.is-open .tree-icon { background: var(--hero-from); box-shadow: 0 6px 0 var(--hero-shadow); color: #ffffff; }
+.tree-leaf.is-done .tree-icon { background: var(--accent); box-shadow: 0 6px 0 var(--done-shadow); color: #ffffff; }
+/* o próximo da vez ganha um anel amarelo pulsando. O pulso só muda a
+   transparência (sem mudar de tamanho), para o ícone não piscar embaixo dele. */
+.tree-leaf.is-open .tree-icon::after {
+  position: absolute;
+  inset: -9px;
+  border: 4px solid var(--yellow);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: opacity;
+  animation: ring-pulse 1.8s ease-in-out infinite;
+  content: "";
+}
+.tree-icon > .bi { position: relative; z-index: 1; } /* ícone numa camada acima do anel */
+@keyframes ring-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* número da ordem (ou cadeado) no canto da bolinha */
+.tree-order {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 1;
+  min-width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  border: 3px solid var(--surface);
+  border-radius: 13px;
+  background: var(--hero-from);
+  color: #ffffff;
+  font-family: "Manrope", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tree-leaf.is-done .tree-order { background: var(--done-shadow); }
+.tree-leaf.is-locked .tree-order { background: var(--muted); }
+
+/* Texto em cima da bolinha (exercícios da parte de cima do oval) */
+.tree-leaf.label-top { --lift: calc(-100% + 38px); }
+.tree-leaf.label-top .tree-icon { order: 2; margin-top: 6px; }
+.tree-leaf strong { margin-top: 4px; font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 800; }
+.tree-leaf small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.tree-leaf.is-locked strong { color: var(--muted); }
+
+/* Prova final: troféu no centro. Trancada, só serve para voltar à trilha. */
+.tree-center {
+  --lift: -52px;
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  z-index: 1;
+  width: 190px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transform: translate(-50%, var(--lift));
+}
+.tree-final-node {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  box-shadow: 0 7px 0 var(--line);
+  color: var(--muted);
+  font-size: 42px;
+  transition: transform 80ms ease;
+}
+.tree-center:active .tree-final-node { transform: translateY(5px); }
+.tree-center.is-open .tree-final-node,
+.tree-center.is-done .tree-final-node { background: var(--yellow); box-shadow: 0 7px 0 #c99a1c; color: #6b4f00; }
+.tree-center.is-open .tree-final-node { animation: final-pulse 1.8s ease-in-out infinite; }
+@keyframes final-pulse {
+  0%, 100% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 0 rgba(237, 198, 83, 0.6); }
+  50% { box-shadow: 0 7px 0 #c99a1c, 0 0 0 16px rgba(237, 198, 83, 0); }
+}
+/* Prova feita: anel dourado em volta, selo turquesa de "feito" e um brilho
+   que passa pelo troféu de vez em quando */
+.tree-center.is-done .tree-final-node {
+  box-shadow:
+    0 7px 0 #c99a1c,                      /* base 3D */
+    0 0 0 5px var(--surface),             /* folga em volta do troféu... */
+    0 7px 0 5px var(--surface),           /* ...e da base */
+    0 4px 0 11px rgba(237, 198, 83, 0.5); /* anel, centrado no troféu + base */
+}
+.tree-center.is-done .tree-final-node::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.6) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 150% 0;
+  animation: final-shine 3.2s ease-in-out infinite;
+  content: "";
+  pointer-events: none;
+}
+@keyframes final-shine {
+  0%, 55% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+.tree-final-check {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 16px;
+}
+.tree-final-check .bi { display: block; line-height: 1; }
+.tree-final-check .bi::before { vertical-align: 0; }
+.tree-center.is-done small { color: var(--accent); font-weight: 700; }
+.tree-center h2 { margin: 12px 0 0; font-family: "Manrope", sans-serif; font-size: 18px; font-weight: 800; }
+.tree-center p { margin: 0; color: var(--muted); font-size: 13px; }
+.tree-center small { max-width: 180px; margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+/* Redesenho da mesma árvore (ex.: tocar num exercício): sem repetir a entrada */
+.app-shell[data-redraw="on"] .tree-line-mask,
+.app-shell[data-redraw="on"] .tree-leaf { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-line-mask,
+  .tree-leaf,
+  .tree-leaf.is-open .tree-icon::after,
+  .tree-center.is-open .tree-final-node,
+  .tree-center.is-done .tree-final-node::after { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .topic-heading { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; padding: 10px 12px; }
+  .topic-heading .back-button { width: 40px; height: 40px; }
+  .topic-title h2 { font-size: 18px; }
+  .topic-status { width: 104px; }
+  .topic-lives small,
+  .topic-energy small { display: none; } /* no celular, só os corações e a bateria */
+
+  .tree-canvas { --origin-y: 84%; height: max(330px, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / var(--zoom) - 130px)); border-radius: 20px; }
+  .tree-warning + .tree-canvas { height: max(300px, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / var(--zoom) - 200px)); }
+  .tree-lines-spiral { display: none; }
+  .tree-lines-wave { display: block; }
+
+  /* Só a bolinha: o título fica no balão (e no aria-label, para leitores de tela) */
+  .tree-leaf,
+  .tree-leaf.label-top { --lift: -50%; top: var(--my); left: var(--mx); width: auto; }
+  .tree-leaf strong,
+  .tree-leaf small { display: none; }
+  .tree-icon { width: 72px; height: 72px; font-size: 26px; }
+  .tree-leaf.is-selected .tree-icon { outline: 4px solid var(--yellow); outline-offset: 6px; }
+
+  .tree-center { --lift: -48px; top: var(--my); left: var(--mx); width: 150px; }
+  .tree-final-node { width: 96px; height: 96px; font-size: 38px; }
+  .tree-center.is-selected .tree-final-node { outline: 4px solid var(--yellow); outline-offset: 6px; }
+  .tree-center h2 { font-size: 16px; }
+  .tree-center p,
+  .tree-center small { display: none; }
+
+  /* Balão com título e botão, embaixo da bolinha tocada (o da prova fica em cima) */
+  .tree-bubble {
+    position: absolute;
+    z-index: 4;
+    top: calc(var(--my) + 58px);
+    left: clamp(132px, var(--mx), calc(100% - 132px));
+    width: 252px;
+    display: grid;
+    gap: 6px;
+    padding: 16px;
+    border: 2px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    box-shadow: 0 4px 0 var(--line);
+    text-align: center;
+    transform: translateX(-50%);
+    animation: bubble-in 160ms ease-out both;
+  }
+  .tree-bubble.is-above { top: auto; bottom: calc(100% - var(--my) + 64px); }
+  .tree-bubble strong { font-family: "Manrope", sans-serif; font-size: 17px; font-weight: 800; }
+  .tree-bubble p { margin: 0 0 6px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .tree-bubble .button-3d { width: 100%; }
+}
+/* Celular com tela baixa: bolinhas menores para o caminho inteiro caber */
+@media (max-width: 760px) and (max-height: 700px) {
+  .tree-icon { width: 58px; height: 58px; font-size: 22px; }
+  .tree-center { --lift: -38px; }
+  .tree-final-node { width: 76px; height: 76px; font-size: 30px; }
+  .tree-final-check { width: 28px; height: 28px; font-size: 14px; }
+  .tree-center h2 { margin-top: 8px; font-size: 14px; }
+  .tree-bubble { top: calc(var(--my) + 46px); }
+}
+/* Celular estreito: o título pode quebrar em duas linhas, então a árvore desconta um pouco mais */
+@media (max-width: 360px) {
+  .tree-canvas { height: max(330px, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) / var(--zoom) - 152px)); }
+}
+@media (max-width: 760px) and (max-height: 600px) {
+  .tree-icon { width: 48px; height: 48px; font-size: 18px; }
+  .tree-order { min-width: 22px; height: 22px; font-size: 11px; }
+  .tree-center { --lift: -32px; }
+  .tree-final-node { width: 64px; height: 64px; font-size: 26px; }
+  .tree-final-check { top: -4px; right: -4px; width: 24px; height: 24px; border-width: 2px; font-size: 12px; }
+  .tree-bubble { top: calc(var(--my) + 38px); }
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

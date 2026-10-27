@@ -1,0 +1,184 @@
+/* Bootstrap: cores do Bootstrap ligadas às do EduSinal, avisos (Toast) e janelas (Modal).
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+/* ===================================================================
+   BOOTSTRAP + BOOTSTRAP ICONS
+   O Bootstrap é carregado antes deste arquivo. Aqui (1) ligamos as cores
+   do Bootstrap às do EduSinal e (2) desfazemos estilos globais dele que
+   mudariam o visual que já tínhamos. Componentes usados: Toast (avisos),
+   Modal (confirmações) e os ícones.
+   =================================================================== */
+:root,
+:root[data-bs-theme] {
+  --bs-body-font-family: "DM Sans", sans-serif;
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--text);
+  --bs-emphasis-color: var(--text);
+  --bs-secondary-color: var(--muted);
+  --bs-border-color: var(--line);
+  --bs-primary: #1f6fb8;
+  --bs-primary-rgb: 31, 111, 184;
+  --bs-link-color-rgb: 20, 84, 142;
+  --bs-link-hover-color-rgb: 31, 111, 184;
+  --bs-heading-color: inherit;
+  --bs-border-radius: 12px;
+  --bs-border-radius-lg: 16px;
+  --bs-focus-ring-color: rgba(31, 111, 184, 0.3);
+}
+
+:root[data-bs-theme="dark"] {
+  --bs-link-color-rgb: 166, 211, 247;
+  --bs-link-hover-color-rgb: 111, 180, 238;
+}
+
+/* Títulos voltam ao peso e tamanho padrão do navegador (o Bootstrap afina e aumenta) */
+h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; }
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+
+/* Ícones: alinhados ao texto */
+.bi { display: inline-block; line-height: 1; vertical-align: -0.125em; }
+.button .bi,
+.text-button .bi,
+.back-button .bi { font-size: 1.1em; }
+.stat-chip .bi { font-size: 0.95em; }
+.stat-streak .bi { color: #f0743a; }
+.stat-coins .bi,
+.mission-reward .bi { color: #d9a20f; }
+.stat-energy .bi { color: var(--accent); }
+.life-heart.is-full,
+.stat-lives .bi,
+.tree-warning .bi { color: var(--coral); }
+.mission-claimed .bi { color: var(--accent); }
+
+/* Botão vermelho da janela de confirmação */
+.button-danger { background: var(--coral); color: #fff; }
+.button-danger:hover { filter: brightness(0.95); }
+:root[data-theme="dark"] .button-danger { color: #2a120d; } /* no escuro o coral é claro: texto escuro para ler bem */
+
+/* ----- Toast: avisos no canto (em cima da barra de baixo no celular) ----- */
+.app-toast-area {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1090;
+}
+
+.app-toast {
+  --bs-toast-bg: var(--text);
+  --bs-toast-color: var(--surface);
+  --bs-toast-border-width: 0;
+  --bs-toast-border-radius: 14px;
+  --bs-toast-max-width: 390px;
+  --bs-toast-font-size: 14px;
+  box-shadow: var(--shadow);
+}
+
+.app-toast .toast-body { padding: 12px 14px; line-height: 1.45; }
+:root[data-theme="dark"] .app-toast .btn-close-white { filter: none; } /* no escuro o aviso é claro: X escuro */
+
+/* ----- Modal: janela de confirmação ----- */
+.modal-content {
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.modal-header,
+.modal-footer { border-color: var(--line); }
+.modal-title { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; }
+.modal-body { font-size: 15px; line-height: 1.55; }
+.modal-footer { gap: 8px; }
+.modal-footer > .button { margin: 0; }
+
+/* Calendário da ofensiva (janela do foguinho) */
+.streak-modal-content { position: relative; overflow: hidden; border-radius: 24px; }
+.streak-close { position: absolute; top: 16px; right: 16px; z-index: 1; }
+
+/* Topo: faixa em degradê com o foguinho 3D e o número de dias */
+.streak-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 56px 24px 24px;
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  color: #ffffff;
+}
+.streak-flame {
+  width: 72px;
+  height: 72px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 5px 0 var(--hero-shadow);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 34px;
+}
+.streak-flame.is-lit { background: linear-gradient(160deg, #ffb057 0%, #f0743a 100%); color: #ffffff; }
+.streak-hero small { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; opacity: 0.85; }
+.streak-hero h2 { margin: 0; font-family: "Manrope", sans-serif; font-size: 22px; font-weight: 800; }
+.streak-hero h2 strong { font-size: 34px; }
+.streak-hero p { margin: 2px 0 0; font-size: 14px; opacity: 0.95; }
+
+.streak-content { display: grid; gap: 14px; padding: 18px; }
+
+/* Mês: cartão 3D com os dias */
+.calendar-card { padding: 14px; border: 2px solid var(--line); border-radius: 20px; box-shadow: 0 4px 0 var(--line); }
+.calendar-month { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.calendar-month strong { font-family: "Manrope", sans-serif; font-size: 17px; font-weight: 800; }
+.calendar-nav {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  color: var(--text);
+  cursor: pointer;
+}
+.calendar-nav:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+.calendar-nav:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+/* sem espaço entre as colunas, para a faixa dos dias seguidos ficar contínua */
+.calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 6px; }
+.calendar-weekday { padding-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 800; text-align: center; }
+.calendar-cell { display: grid; place-items: center; }
+.calendar-cell.has-left { background: linear-gradient(90deg, var(--coral-soft) 50%, transparent 50%); }
+.calendar-cell.has-right { background: linear-gradient(90deg, transparent 50%, var(--coral-soft) 50%); }
+.calendar-cell.has-left.has-right { background: var(--coral-soft); }
+.calendar-day { width: min(40px, 100%); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; color: var(--text); font-size: 14px; font-weight: 700; }
+.calendar-day.is-future { color: var(--muted); opacity: 0.5; }
+.calendar-day.is-today { box-shadow: inset 0 0 0 3px var(--hero-from); }
+.calendar-day.is-practiced { background: linear-gradient(160deg, #ffb057 0%, #f0743a 100%); color: #ffffff; font-weight: 800; }
+.calendar-day.is-frozen { background: var(--accent); color: #ffffff; font-size: 15px; }
+.calendar-day.is-practiced.is-today,
+.calendar-day.is-frozen.is-today { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--hero-from); }
+
+/* Totais do mês: quadradinhos 3D */
+.calendar-totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.calendar-total { display: flex; align-items: center; gap: 10px; padding: 12px; border: 2px solid var(--line); border-radius: 16px; box-shadow: 0 4px 0 var(--line); }
+.calendar-total > span:last-child { display: grid; min-width: 0; }
+.calendar-total strong { font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; line-height: 1.1; }
+.calendar-total small { color: var(--muted); font-size: 12px; line-height: 1.3; }
+.calendar-total-icon { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 18px; }
+.calendar-total-icon.is-fire { background: var(--coral-soft); color: #f0743a; }
+.calendar-total-icon.is-shield { background: var(--accent-soft); color: var(--accent); }
+
+.calendar-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; color: var(--muted); font-size: 13px; font-weight: 700; }
+.calendar-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.calendar-legend .calendar-day { width: 24px; font-size: 11px; }
+
+@media (max-width: 760px) {
+  .sidebar { display: none; } /* no celular: barra de baixo + engrenagem */
+  .app-toast-area { right: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); left: 16px; }
+  .app-toast { --bs-toast-max-width: none; width: 100%; }
+  .app-shell:is([data-current-screen="lesson"], [data-focus="on"]) ~ .app-toast-area { bottom: calc(16px + env(safe-area-inset-bottom)); }
+}

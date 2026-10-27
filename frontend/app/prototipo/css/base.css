@@ -1,0 +1,691 @@
+/* Base: cores (tema claro e escuro), textos, botões, menu lateral e o
+   esqueleto das telas. Carrega primeiro: os outros arquivos usam as cores daqui.
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+:root {
+  color-scheme: light;
+  /* Paleta da identidade visual: azul, turquesa e branco (coral e amarelo só em detalhes). */
+  --bg: #f1f6fb;
+  --surface: #ffffff;
+  --surface-soft: #e6f0fa;
+  --surface-alt: #f6f9fc;
+  --text: #1d2f45;
+  --muted: #566b81;
+  --line: #dde7f0;
+  --primary: #1f6fb8;
+  --primary-strong: #14548e;
+  --primary-soft: #d6e7f7;
+  --coral: #ee7967;
+  --coral-soft: #f8dfd8;
+  --yellow: #edc653;
+  --yellow-soft: #f8edc9;
+  --accent: #19a7a1;
+  --accent-soft: #d3f0ee;
+  --banner: #dcebf8;
+  --hero-from: #1f6fb8;  /* destaque colorido da Home (degradê azul → turquesa) */
+  --hero-to: #19a7a1;
+  --hero-shadow: #14548e; /* "sombra 3D" embaixo dos botões e bolinhas */
+  --done-shadow: #127a75;
+  --warm: #f1e8da;
+  --shadow: 0 18px 50px rgba(24, 52, 86, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 20;
+  top: 10px;
+  left: 10px;
+  padding: 10px 14px;
+  transform: translateY(-150%);
+  border-radius: 5px;
+  background: var(--text);
+  color: var(--surface);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ----- Menu lateral (computador) -----
+   Item ativo: "pílula" com o degradê azul → turquesa do EduSinal. */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 14px 16px;
+  border-right: 2px solid var(--line);
+  background: var(--surface);
+}
+
+.brand {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 8px;
+  font-family: "Manrope", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+}
+.brand img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; }
+.brand-accent { color: var(--primary); }
+
+.sidebar-label {
+  margin: 34px 10px 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.side-nav { display: grid; gap: 6px; }
+
+.nav-item {
+  position: relative;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.nav-item:hover { background: var(--surface-soft); color: var(--text); }
+.nav-item:active { transform: translateY(2px); }
+.nav-item.is-active {
+  background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: 0 4px 0 var(--hero-shadow);
+  color: #ffffff;
+}
+
+.nav-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 11px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 17px;
+  line-height: 1;
+}
+.nav-icon-1,
+.nav-icon-6 { background: var(--coral-soft); color: var(--coral); }
+.nav-icon-2,
+.nav-icon-7 { background: var(--accent-soft); color: var(--accent); }
+.nav-icon-3,
+.nav-icon-5 { background: var(--yellow-soft); color: #9f7b18; }
+.nav-item.is-active .nav-icon { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+/* Perfil: o rosto do mascote do aluno no lugar do ícone */
+.nav-icon.is-avatar .mascot-svg { width: 100%; height: 100%; }
+.nav-item.is-active .nav-icon.is-avatar { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7); }
+.nav-badge {
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--coral);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.sidebar-bottom { display: grid; gap: 12px; margin-top: auto; }
+.sidebar-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.sidebar-note .sidebar-note-mark { /* mais específico que a regra geral .bi, que desfazia o centro */
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--coral);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.workspace {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-title-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.settings-button {
+  display: none;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.screen-root {
+  width: min(1180px, 100%);
+  flex: 1;
+  margin: 0 auto;
+  padding: 34px clamp(22px, 4vw, 58px) 30px;
+  animation: screen-in 260ms ease-out both;
+}
+
+.screen-root:focus {
+  outline: none;
+}
+
+.app-shell[data-current-screen="intro"],
+.app-shell[data-current-screen="login"],
+.app-shell[data-current-screen="signup"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.app-shell[data-current-screen="intro"] .sidebar,
+.app-shell[data-current-screen="login"] .sidebar,
+.app-shell[data-current-screen="signup"] .sidebar {
+  display: none;
+}
+
+.app-shell[data-current-screen="intro"] .settings-button,
+.app-shell[data-current-screen="login"] .settings-button,
+.app-shell[data-current-screen="signup"] .settings-button {
+  display: none;
+}
+
+.lives-hearts {
+  display: flex;
+  gap: 3px;
+}
+
+.life-heart {
+  color: var(--line);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.life-heart.is-full {
+  color: var(--coral);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--primary-strong);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.page-intro h2 {
+  margin: 0 0 10px;
+  font-family: "Manrope", sans-serif;
+  font-size: 33px;
+  line-height: 1.16;
+  font-weight: 800;
+}
+
+.page-intro p:not(.eyebrow) {
+  max-width: 495px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.button {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: transform 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button-outline {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--primary-strong);
+}
+
+.button-outline:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.section-heading {
+  min-height: 48px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.section-heading .eyebrow {
+  margin-bottom: 5px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.progress-track {
+  height: 7px;
+  margin: 17px 0 7px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-alt);
+}
+
+.progress-track span {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.text-button,
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary-strong);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.text-button:hover,
+.back-button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text-button span {
+  font-size: 15px;
+}
+
+.demo-disclaimer {
+  margin: 17px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.app-footer {
+  min-height: 51px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 0 clamp(22px, 4vw, 58px);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.footer-dot {
+  padding: 0 5px;
+  color: var(--coral);
+}
+
+.page-intro {
+  min-height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 19px;
+}
+
+.page-intro h2 {
+  font-size: 29px;
+}
+
+.demo-pill {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+textarea::placeholder,
+.field-label input::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+input[type="radio"] {
+  accent-color: var(--primary);
+}
+
+.field-label {
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.field-label > span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.field-label input,
+textarea {
+  width: 100%;
+  min-height: 41px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+}
+
+textarea {
+  min-height: 83px;
+  padding: 10px 11px;
+  resize: vertical;
+}
+
+/* Depois de conferir: certa em verde-turquesa, errada em coral (sem o contorno de "escolhida") */
+
+.form-error {
+  min-height: 17px;
+  margin: 4px 0 7px;
+  color: #ad3d33;
+  font-size: 10px;
+}
+
+:root[data-theme="dark"],
+.app-shell[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1d2b;
+  --surface: #172a3d;
+  --surface-soft: #1d3a56;
+  --surface-alt: #14283a;
+  --text: #e8f1fa;
+  --muted: #9fb3c6;
+  --line: #2b4259;
+  --primary: #6fb4ee;
+  --primary-strong: #a6d3f7;
+  --primary-soft: #1e3d5c;
+  --coral: #ff9782;
+  --coral-soft: #513a36;
+  --yellow: #e5bd52;
+  --yellow-soft: #4d442b;
+  --accent: #4cc9c3;
+  --accent-soft: #1b4a4c;
+  --banner: #1a3550;
+  --hero-from: #1b4f86;
+  --hero-to: #127772;
+  --hero-shadow: #0f3157;
+  --done-shadow: #0b4d4a;
+  --warm: #3a352c;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Botão principal: fundo claro no tema escuro, então o texto fica escuro. */
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1040px) {
+  .app-shell {
+    grid-template-columns: 218px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    display: block;
+  }
+
+  .settings-button {
+    flex: 0 0 auto;
+    display: inline-flex;
+  }
+
+  .screen-root {
+    padding: 22px 17px 25px;
+  }
+
+  .page-intro {
+    min-height: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0 13px;
+  }
+
+  .page-intro h2 {
+    font-size: 25px;
+  }
+
+  .app-footer {
+    margin: 0 17px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .settings-button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .screen-root {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .section-heading h2 {
+    font-size: 19px;
+  }
+
+  .app-footer {
+    min-height: 45px;
+    margin: 0 13px;
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Modo foco: ao abrir uma matéria, as áreas laterais recuam e as lições viram uma árvore. */
+
+@media (min-width: 761px) {
+  .app-shell {
+    transition: grid-template-columns 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .app-shell[data-focus="on"],
+  .app-shell[data-current-screen="lesson"] {
+    grid-template-columns: 0 minmax(0, 1fr);
+  }
+
+  .app-shell[data-focus="on"] .sidebar,
+  .app-shell[data-current-screen="lesson"] .sidebar {
+    overflow: hidden;
+    padding-right: 0;
+    padding-left: 0;
+    border-right-color: transparent;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sidebar {
+    transition: opacity 220ms ease, padding 380ms ease;
+  }
+
+  /* Modo foco no computador: sem rodapé e com margens menores, para a árvore crescer */
+  .app-shell[data-focus="on"] .app-footer,
+  .app-shell[data-current-screen="lesson"] .app-footer { display: none; }
+  .app-shell[data-current-screen="lesson"] .screen-root { padding-top: 20px; padding-bottom: 0; }
+  .app-shell[data-focus="on"] .screen-root { padding-top: 20px; padding-bottom: 20px; }
+}
+
+.app-shell[data-focus="on"] .demo-disclaimer {
+  display: none;
+}
+
+/* Preferências de acessibilidade escolhidas nas Configurações */
+/* Texto grande: aumenta só o conteúdo da tela. As barras de cima e de baixo do
+   celular ficam do tamanho normal, senão não cabem na largura e a tela vaza
+   para o lado. */
+.app-shell { --zoom: 1; }
+.app-shell[data-text-size="large"] { --zoom: 1.15; }
+.screen-root { zoom: var(--zoom); }
+/* Alturas que dependem do tamanho da tela (árvore, vídeo da atividade) usam
+   "100vh / var(--zoom)": com o zoom, a tela "cabe" menos pixels de conteúdo. */
+
+.app-shell[data-motion="reduced"] *,
+.app-shell[data-motion="reduced"] *::before,
+.app-shell[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

@@ -1,0 +1,217 @@
+/* Celular: barra de cima, barra de baixo e ajustes gerais de tamanho.
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+/* ===================================================================
+   CELULAR
+   Segue o padrão do Duolingo: barra de cima com ofensiva, moedas e
+   vidas; barra de baixo com as abas; atividade e modo foco em tela cheia.
+   "env(safe-area-inset-*)" deixa espaço para o "notch" e a barra do iPhone.
+   =================================================================== */
+.mobile-topbar,
+.bottom-nav { display: none; }
+
+@media (max-width: 760px) {
+  /* ----- Barra de cima ----- */
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(8px + env(safe-area-inset-top)) 16px 10px;
+    border-bottom: 2px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    -webkit-backdrop-filter: blur(12px); /* Safari mais antigo (iPhone) */
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    font-family: "Manrope", sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .mobile-avatar {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--line);
+    cursor: pointer;
+  }
+
+  .mobile-avatar .mascot-svg { width: 100%; height: 100%; }
+  .mobile-avatar.is-active { box-shadow: 0 0 0 3px var(--hero-to); }
+  .mobile-stats { display: flex; gap: 6px; margin-left: auto; }
+
+  /* Números da barra de cima: botões "3D" que afundam ao tocar */
+  .stat-chip {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 10px;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: 0 3px 0 var(--line);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .stat-chip:active,
+  .settings-button:active { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+
+  .stat-chip strong { font-family: "Manrope", sans-serif; }
+  .stat-coins > span { color: #d9a20f; }
+  .stat-lives > span { color: var(--coral); }
+  .settings-button { width: 40px; height: 40px; border: 2px solid var(--line); border-radius: 14px; box-shadow: 0 3px 0 var(--line); font-size: 18px; color: var(--text); }
+  .settings-button.is-active { border-color: transparent; background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%); box-shadow: 0 3px 0 var(--hero-shadow); color: #ffffff; }
+
+  /* ----- Barra de baixo ----- */
+  .bottom-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 14;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    border-top: 2px solid var(--line);
+    background: var(--surface);
+  }
+
+  .bottom-tab {
+    position: relative;
+    min-height: 54px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .bottom-tab-icon {
+    width: 48px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 18px;
+    transition: background-color 150ms ease;
+  }
+
+  /* aba ativa: o ícone numa "pílula" com o degradê do EduSinal */
+  .bottom-tab.is-active { color: var(--primary); }
+  .bottom-tab.is-active .bottom-tab-icon {
+    background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+    box-shadow: 0 3px 0 var(--hero-shadow);
+    color: #ffffff;
+  }
+  .bottom-tab:active .bottom-tab-icon { transform: translateY(2px); }
+
+  .bottom-badge {
+    position: absolute;
+    top: 2px;
+    left: calc(50% + 8px);
+    min-width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    padding: 0 5px;
+    border: 2px solid var(--surface);
+    border-radius: 10px;
+    background: var(--coral);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  /* espaço para o conteúdo não ficar atrás da barra de baixo */
+  .workspace { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  /* Sem barras na apresentação, no login, no cadastro, na atividade e no modo foco */
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) :is(.mobile-topbar, .bottom-nav, .app-footer) { display: none; }
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"], [data-current-screen="lesson"], [data-focus="on"]) .workspace { padding-bottom: env(safe-area-inset-bottom); }
+  .app-shell:is([data-current-screen="intro"], [data-current-screen="login"], [data-current-screen="signup"]) .app-footer { display: flex; }
+  .app-footer { display: none; }
+
+  /* ----- Tamanhos de texto e de toque (mínimo de 12px e 44px) ----- */
+  .screen-root { padding: 18px 16px 24px; }
+  .eyebrow { font-size: 11px; }
+  .demo-disclaimer { font-size: 11px; }
+  .button { min-height: 46px; padding: 0 16px; font-size: 14px; }
+  .text-button,
+  .back-button { min-height: 40px; font-size: 13px; }
+  .page-intro { flex-direction: row; align-items: flex-start; gap: 12px; padding: 4px 0 14px; }
+  .page-intro > div { flex: 1; min-width: 0; }
+  .page-intro h2 { font-size: 26px; }
+  .page-intro p:not(.eyebrow) { font-size: 14px; }
+  .page-intro > .demo-pill { margin-top: 22px; font-size: 10px; }
+  .section-heading h2 { font-size: 20px; }
+  input,
+  select,
+  textarea,
+  .dictionary-search { font-size: 16px; } /* 16px evita o zoom automático do iPhone */
+
+  /* Categorias e abas em uma linha só, rolando para o lado */
+  .dictionary-categories {
+    flex-wrap: nowrap;
+    margin: 0 -16px;
+    padding: 2px 16px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .dictionary-categories::-webkit-scrollbar { display: none; }
+  .category-chip { flex: 0 0 auto; }
+
+  /* ----- Atividade em tela cheia, com o botão sempre embaixo ----- */
+  .app-shell:is([data-current-screen="lesson"], [data-current-screen="signup"], [data-current-screen="login"]) .screen-root { padding-top: calc(12px + env(safe-area-inset-top)); }
+
+  /* ----- Telas das abas ----- */
+  .ranking-row strong { font-size: 14px; }
+  .league-status p { font-size: 14px; }
+
+  /* Editor do mascote: o personagem fica preso no topo enquanto você rola as opções */
+
+  /* Cadastro e login: campos grandes e fáceis de tocar */
+  .field-label { font-size: 14px; }
+  .field-label input { min-height: 50px; font-size: 16px; }
+  .field-hint { font-size: 12px; }
+}
+
+/* Celular comum: com 4 números na barra de cima, o nome "EduSinal" não cabe
+   (o mascote no canto já faz o papel de logo) */
+@media (max-width: 440px) {
+  .mobile-brand { display: none; }
+}
+
+@media (max-width: 360px) {
+  .bottom-tab { font-size: 10px; letter-spacing: -0.01em; }
+  .bottom-tab-icon { width: 34px; }
+  .stat-chip { padding: 0 8px; font-size: 13px; }
+}

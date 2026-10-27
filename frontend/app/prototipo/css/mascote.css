@@ -1,0 +1,15 @@
+/* Mascote: o desenho em SVG e as cores de fundo.
+   (A ordem dos arquivos no index.html importa: veja o comentário lá.) */
+
+/* ===================================================================
+   MASCOTE PERSONALIZÁVEL (desenho em SVG + editor)
+   =================================================================== */
+.mascot-svg { display: block; width: 100%; height: 100%; }
+
+/* Fundo atrás do mascote: o azul da logo é o padrão; os outros vêm da lojinha.
+   São cores fortes porque o personagem é branco, como na logo. */
+.mascot-backdrop { background: linear-gradient(160deg, #3a8dff 0%, #1767e6 100%); }
+.mascot-backdrop.bg-fundo-ceu { background: linear-gradient(160deg, #8ccaff 0%, #3f9cf0 100%); }
+.mascot-backdrop.bg-fundo-mar { background: linear-gradient(160deg, #35cdc2 0%, #12908a 100%); }
+.mascot-backdrop.bg-fundo-por-do-sol { background: linear-gradient(160deg, #ffad6e 0%, #ef5f78 100%); }
+.mascot-backdrop.bg-fundo-sol { background: linear-gradient(160deg, #ffd969 0%, #f3a521 100%); }

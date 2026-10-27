@@ -26,8 +26,19 @@ Plataforma demonstrativa para aprendizagem de Libras. O protótipo é a experiê
 ```text
 frontend/
   app/prototipo/
-    index.html              Página do protótipo
-    prototipo.css           Estilos (cores ficam em variáveis no topo)
+    index.html              Página do protótipo (carrega os CSS e JS na ordem certa)
+    css/base.css            Cores (tema claro e escuro), botões, menu e esqueleto das telas
+    css/home.css            Home: destaque, trilha (PC e celular) e lateral
+    css/atividade.css       Atividade: cartões, perguntas e vídeo do sinal
+    css/abas.css            Ligas, missões, lojinha e dicionário
+    css/mascote.css         Desenho do mascote e cores de fundo
+    css/celular.css         Barras de cima e de baixo do celular
+    css/bootstrap.css       Cores do Bootstrap, avisos (Toast) e janelas (Modal)
+    css/arvore.css          Árvore de exercícios (modo foco)
+    css/configuracoes.css   Configurações
+    css/perfil.css          Perfil e guarda-roupa
+    css/boas-vindas.css     Boas-vindas
+    css/cadastro.css        Cadastro e login por etapas
     manifest.webmanifest    Permite instalar o protótipo na tela inicial do celular
     icones/                 Ícones do app (gerados a partir do mascote)
     js/estado.js            Dados do aluno, vidas, energia, recompensas e o que é salvo
@@ -90,8 +101,9 @@ O site publicado é só o frontend (HTML, CSS e JS, sem build). Na Vercel: **Add
 ## Como mexer no protótipo
 
 - **Ícones:** use `icon("nome")` no JavaScript ou `<i class="bi bi-nome" aria-hidden="true"></i>` no HTML, com o nome de [icons.getbootstrap.com](https://icons.getbootstrap.com) (ex.: `icon("heart-fill")`). Nas listas de dados (galhos, missões, conquistas), o campo `icon` guarda só o nome.
-- **Bootstrap:** o CSS dele carrega antes do `prototipo.css`, que liga as cores do Bootstrap às do EduSinal. Componentes em uso: Toast (`showToast`) e Modal (`askConfirm`).
-- **Cores:** variáveis `--primary`, `--accent` e outras no topo de `prototipo.css` (e `landing.css`). Há um bloco separado para o tema escuro.
+- **CSS:** cada parte do app tem o seu arquivo em `css/`. A ordem em que o `index.html` carrega os arquivos importa (quando duas regras brigam, ganha a do arquivo que vem depois), então um arquivo novo entra no fim da lista ou no lugar certo dela. Ao mudar a versão (`?v=`), mude em todos.
+- **Bootstrap:** o CSS dele carrega antes do nosso; `css/bootstrap.css` liga as cores do Bootstrap às do EduSinal. Componentes em uso: Toast (`showToast`) e Modal (`askConfirm`).
+- **Cores:** variáveis `--primary`, `--accent` e outras no topo de `css/base.css` (e `landing.css`). Há um bloco separado para o tema escuro.
 - **Visual estilo Duolingo/Coddy:** botão "fofo" com sombra embaixo é a classe `button-3d` (`button-3d-light` para fundo branco). O degradê do destaque da Home usa `--hero-from` e `--hero-to`.
 - **Etapas, atividades e perguntas:** a lista `learningTopics` em `js/conteudo.js`. Cada atividade tem `kind: "learn"` (com `cards`: sinal e dica) ou `kind: "practice"` (com `questions`, cada uma com um `type`: `video-palavra`, `palavra-video`, `situacao` ou `vf`). Uma atividade pode misturar cartões (`type: "card"`) e perguntas, como as letras do alfabeto. O comentário no topo do arquivo explica cada campo. **Vídeos dos sinais:** quando forem gravados, coloque o caminho em `SIGN_VIDEOS` (no mesmo arquivo), por exemplo `"Oi": "../../assets/videos/oi.mp4"`; enquanto isso aparece um espaço reservado com o nome do sinal. Para mostrar uma etapa nova na Home, coloque o id dela numa unidade de `TRAIL_UNITS` (`js/telas-trilha.js`). **Cuidado ao trocar o `id` de uma atividade:** o progresso salvo usa esse nome (`etapa:atividade`), então quem já tinha feito a atividade perde o "feito". Ao abrir o app, `fixOldProgress()` apaga os nomes que não existem mais. Se a trilha mudar muito (por exemplo, a ordem das etapas), suba `TRAIL_VERSION` em `js/conteudo.js`: na próxima vez que cada aluno abrir o app, o progresso das etapas é zerado uma vez (XP, moedas, ofensiva e as letras do alfabeto continuam).
 - **Regras do jogo:** vidas, energia, XP, moedas, ofensiva e a virada do dia e da semana ficam em `js/estado.js`.
