@@ -297,7 +297,8 @@ function trailStepStatus(topicId) {
 }
 
 // Uma etapa da trilha: bolinha grande (como no Duolingo) e o texto ao lado.
-// No computador, cada etapa sobe ou desce um pouco (--wave), formando a onda.
+// No computador, cada etapa sobe ou desce um pouco (--wave), formando a onda;
+// no celular, a bolinha vai um pouco para um lado ou para o outro (--mwave).
 function renderTrailStep(topicId) {
   const topic = learningTopics[topicId];
   const status = trailStepStatus(topicId);
@@ -323,7 +324,8 @@ function renderTrailStep(topicId) {
   const node = status === "locked"
     ? `<span class="trail-node" aria-label="Etapa ${topic.number}, ${label.toLowerCase()}"><span>${symbol}</span></span>`
     : `<button class="trail-node" type="button" data-action="open-topic" data-topic="${topicId}" aria-label="Abrir ${topic.title}"${ring}><span>${symbol}</span></button>`;
-  return `<li class="trail-step is-${status}" style="--wave:${trailWaveOffset(TOPIC_ORDER.indexOf(topicId))}px">${tooltip}${node}<div class="trail-step-copy"><small>${label}</small><h3>${topic.title}</h3><p>${topic.subtitle}</p></div></li>`;
+  const position = TOPIC_ORDER.indexOf(topicId);
+  return `<li class="trail-step is-${status}" style="--wave:${trailWaveOffset(position)}px;--mwave:${trailMobileOffset(position)}px">${tooltip}${node}<div class="trail-step-copy"><small>${label}</small><h3>${topic.title}</h3><p>${topic.subtitle}</p></div></li>`;
 }
 
 // Uma unidade: a faixa azul com o nome e as etapas dela.
@@ -335,8 +337,35 @@ function renderTrailUnit(unit) {
         <div><small>UNIDADE ${unit.number}</small><h2 id="unit-${unit.number}-title">${unit.title}</h2></div>
         <span>${done}/${unit.topics.length} etapas</span>
       </div>
-      <ol class="trail-route" aria-labelledby="unit-${unit.number}-title">${unit.topics.map(renderTrailStep).join("")}</ol>
+      <ol class="trail-route" style="--m-step:${TRAIL_MOBILE_STEP}px;--lane:${TRAIL_MOBILE_LANE}px" aria-labelledby="unit-${unit.number}-title">
+        ${renderTrailMobileWave(unit)}${unit.topics.map(renderTrailStep).join("")}
+      </ol>
     </div>`;
+}
+
+// ----- Trilha do celular: caminho de cima para baixo, ondulado -----
+// Fica dentro de um quadro que rola sozinho (o resto da Home não se mexe).
+// As bolinhas andam de um lado para o outro numa faixa à esquerda, levando o
+// texto junto, sempre ao lado delas.
+const TRAIL_MOBILE_STEP = 112; // distância entre uma etapa e a próxima
+const TRAIL_MOBILE_LANE = 120; // largura da faixa das bolinhas
+const TRAIL_MOBILE_WAVE = 22;  // quanto a bolinha vai para cada lado
+const TRAIL_MOBILE_NODE = 66;  // tamanho da bolinha no celular
+
+function trailMobileOffset(position) {
+  return Math.round(Math.sin((position * Math.PI) / 2) * TRAIL_MOBILE_WAVE);
+}
+
+// Linha ondulada de uma unidade (no computador ela some: lá a onda é outra).
+function renderTrailMobileWave(unit) {
+  const points = unit.topics.map((topicId, index) => ({
+    x: TRAIL_MOBILE_LANE / 2 + trailMobileOffset(TOPIC_ORDER.indexOf(topicId)),
+    y: index * TRAIL_MOBILE_STEP + TRAIL_MOBILE_NODE / 2,
+  }));
+  const segments = points.slice(0, -1).map((_, index) =>
+    `<path class="${isLessonDone(unit.topics[index], "final") ? "is-done" : ""}" d="${smoothSegment(points, index)}" />`);
+  const height = points[points.length - 1].y + TRAIL_MOBILE_NODE / 2;
+  return `<svg class="trail-wave-mobile" width="${TRAIL_MOBILE_LANE}" height="${height}" viewBox="0 0 ${TRAIL_MOBILE_LANE} ${height}" aria-hidden="true">${segments.join("")}</svg>`;
 }
 
 // ----- Trilha do computador: uma linha só, que rola para o lado -----
@@ -392,6 +421,16 @@ function renderTrailMap() {
 // Etapa que a trilha mostra ao abrir a Home: a última aberta ou, se nenhuma, a atual.
 let trailCenterTopic = null;
 let trailScrollLeft = 0; // para não pular de lugar quando a mesma tela é redesenhada
+let trailScrollTop = 0;  // (no celular, a trilha rola para cima e para baixo)
+
+// Distância de um elemento até o começo da trilha (somando os "pais" com posição).
+function offsetInTrack(element, side) {
+  let total = 0;
+  for (let current = element; current && !current.classList.contains("trail-track"); current = current.offsetParent) {
+    total += side === "top" ? current.offsetTop : current.offsetLeft;
+  }
+  return total;
+}
 
 // Mede a área da trilha, ajusta a largura das etapas e redesenha a onda.
 function layoutTrail(scroller) {
@@ -407,19 +446,22 @@ function setupTrailScroll() {
   const scroller = screenRoot.querySelector(".trail-scroll");
   if (!scroller) return;
   layoutTrail(scroller);
+  const step = scroller.querySelector(`.trail-node[data-topic="${trailCenterTopic || currentTopicId()}"]`)?.closest(".trail-step");
   if (app.dataset.redraw === "on") {
     scroller.scrollLeft = trailScrollLeft;
-  } else {
-    // abre na "página" da unidade da etapa (a última aberta ou a atual);
-    // em tela estreita, anda mais um pouco se a etapa ainda ficar escondida
-    const step = scroller.querySelector(`.trail-node[data-topic="${trailCenterTopic || currentTopicId()}"]`)?.closest(".trail-step");
-    if (step) {
-      const stepEnd = step.offsetLeft + step.offsetWidth + TRAIL_EDGE;
-      scroller.scrollLeft = Math.max(step.closest(".trail-unit").offsetLeft - TRAIL_EDGE, stepEnd - scroller.clientWidth);
-    }
+    scroller.scrollTop = trailScrollTop;
+  } else if (step && isMobileLayout()) {
+    // celular: a etapa (a última aberta ou a atual) fica no meio do quadro
+    scroller.scrollTop = offsetInTrack(step, "top") + TRAIL_MOBILE_NODE / 2 - scroller.clientHeight / 2;
+  } else if (step) {
+    // computador: abre na "página" da unidade da etapa; em tela estreita,
+    // anda mais um pouco se a etapa ainda ficar escondida
+    const stepEnd = offsetInTrack(step, "left") + step.offsetWidth + TRAIL_EDGE;
+    scroller.scrollLeft = Math.max(offsetInTrack(step.closest(".trail-unit"), "left") - TRAIL_EDGE, stepEnd - scroller.clientWidth);
   }
   scroller.addEventListener("scroll", () => {
     trailScrollLeft = scroller.scrollLeft;
+    trailScrollTop = scroller.scrollTop;
     updateTrailArrows(scroller);
   }, { passive: true });
   updateTrailArrows(scroller);
